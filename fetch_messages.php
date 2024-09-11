@@ -7,14 +7,13 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Get logged-in user ID
+
 $loggedInUserId = $_SESSION['user_id'];
 
 // Get search parameters
 $chatMode = isset($_GET['chatMode']) ? $_GET['chatMode'] : 'group';
 $userId = isset($_GET['userId']) ? intval($_GET['userId']) : 0;
 
-// Determine query based on chat mode
 if ($chatMode === 'group') {
     $query = "SELECT messages.*, CONCAT(users.FirstName, ' ', users.LastName) AS fullname, users.avatar_url
               FROM messages

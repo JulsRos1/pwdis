@@ -153,7 +153,7 @@
 
 <body>
     <div class="sidebar">
-        <h4>Chat</h4>
+        <h4>Chatbox</h4>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
         <ul class="chat-options">
             <li id="allChat">All Chat</li>

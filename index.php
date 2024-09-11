@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_login'])) {
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>PWDIS</title>
+  <title>PWDIS GAGO</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

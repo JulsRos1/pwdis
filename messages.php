@@ -4,22 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Community</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Community Chat</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f5f5f5;
+            background: #f0f2f5;
             display: flex;
             height: 100vh;
             margin: 0;
         }
 
         .sidebar {
-            width: 250px;
+            width: 300px;
             background: #ffffff;
             border-right: 1px solid #ddd;
             padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
 
@@ -39,6 +39,8 @@
 
         .user-list li,
         .chat-options li {
+            display: flex;
+            align-items: center;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
@@ -48,7 +50,15 @@
 
         .user-list li:hover,
         .chat-options li:hover {
-            background: #f0f0f0;
+            background: #f1f1f1;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            object-fit: cover;
         }
 
         .chat-container {
@@ -56,6 +66,9 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+            background: #ffffff;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
         .message-list {
@@ -68,26 +81,22 @@
         }
 
         .message {
-            padding: 10px;
-            margin: 5px 0;
-            background: #ffffff;
-            border-radius: 8px;
             display: flex;
             align-items: flex-start;
-            position: relative;
-            border: 1px solid #ddd;
+            margin-bottom: 10px;
         }
 
         .message .avatar {
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
             margin-right: 10px;
-            object-fit: cover;
         }
 
         .message .content {
             flex: 1;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         }
 
         .message .username {
@@ -100,7 +109,7 @@
         }
 
         .message .time {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: #888;
             display: block;
             margin-top: 5px;
@@ -110,6 +119,10 @@
             display: flex;
             align-items: center;
             margin-top: 10px;
+            padding: 10px;
+            background: #ffffff;
+            border-top: 1px solid #ddd;
+            border-radius: 8px;
         }
 
         #messageInput {
@@ -119,6 +132,21 @@
 
         #sendButton {
             flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+                box-shadow: none;
+            }
+
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
@@ -163,7 +191,7 @@
                         $('#userList').append(
                             '<li data-user-id="' + user.id + '">' +
                             '<img src="' + user.avatar_url + '" class="avatar">' +
-                            user.username +
+                            user.fullname +
                             '</li>'
                         );
                     });
@@ -175,6 +203,7 @@
 
         function fetchMessages() {
             let url = chatMode === 'group' ? 'fetch_messages.php' : 'fetch_private_messages.php';
+
             let params = chatMode === 'private' ? {
                 userId: selectedUserId
             } : {};
@@ -189,7 +218,7 @@
                             '<div class="message">' +
                             '<img src="' + message.avatar_url + '" class="avatar">' +
                             '<div class="content">' +
-                            '<span class="username">' + message.username + '</span>' +
+                            '<span class="username">' + message.fullname + '</span>' +
                             '<span class="message-text">' + message.message + '</span>' +
                             '<span class="time">' + new Date(message.timestamp).toLocaleTimeString() + '</span>' +
                             '</div>' +
@@ -231,8 +260,8 @@
 
         $('#userList').on('click', 'li', function() {
             selectedUserId = $(this).data('user-id');
-            var username = $(this).text().trim();
-            $('#chatHeader').text('Chatting with ' + username);
+            var fullname = $(this).text().trim();
+            $('#chatHeader').text('Chatting with ' + fullname);
             chatMode = 'private';
             fetchMessages();
         });

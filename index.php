@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_login'])) {
   header("Location: user_login.php");
   exit;
 }
+
 ?>
 
 <!DOCTYPE html>

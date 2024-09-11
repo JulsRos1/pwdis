@@ -33,20 +33,23 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="messages.php" class="btn btn-primary nav-link">Go to Group Chat</a>
+          <a href="messages.php" class="nav-link"> <i class="fa fa-comments"></i> Chats</a>
         </li>
         <!-- User Profile Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fas fa-user-circle fa-2x"></i>
+            <img src="uploads/default_avatar.jpg" class="rounded-circle" alt="Profile Picture" width="30" height="30">
+          </a>
+
           </a>
           <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userProfileDropdown">
-            <a class="dropdown-item text-center font-weight-bold" href="#">Hi, <?php echo $_SESSION['user'] ?></a>
+            <a class="dropdown-item text-center font-weight-bold" href="#">Hi, <?php echo $_SESSION['name'] . " " . $_SESSION['lname'] ?></a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Change Password</a>
+            <a class="dropdown-item" href="profile.php">View Profile</a>
             <a class="dropdown-item" href="logout.php">Logout</a>
           </div>
         </li>
+
       </ul>
     </div>
   </div>

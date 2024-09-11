@@ -10,13 +10,20 @@ if (!isset($_SESSION['user_id']) || !isset($_GET['userId'])) {
 $loggedInUserId = $_SESSION['user_id'];
 $selectedUserId = intval($_GET['userId']);
 
-$query = "SELECT private_messages.message, private_messages.timestamp, users.username, users.avatar_url
+// Prepare SQL query to fetch messages along with the full name and avatar URL
+$query = "SELECT private_messages.message, private_messages.timestamp, 
+                 CONCAT(users.FirstName, ' ', users.LastName) AS fullname, users.avatar_url
           FROM private_messages
           JOIN users ON private_messages.sender_id = users.id
-          WHERE (private_messages.sender_id = $loggedInUserId AND private_messages.receiver_id = $selectedUserId)
-             OR (private_messages.sender_id = $selectedUserId AND private_messages.receiver_id = $loggedInUserId)
+          WHERE (private_messages.sender_id = ? AND private_messages.receiver_id = ?)
+             OR (private_messages.sender_id = ? AND private_messages.receiver_id = ?)
           ORDER BY private_messages.timestamp ASC";
-$result = mysqli_query($con, $query);
+
+// Prepare the statement
+$stmt = mysqli_prepare($con, $query);
+mysqli_stmt_bind_param($stmt, "iiii", $loggedInUserId, $selectedUserId, $selectedUserId, $loggedInUserId);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
 $messages = [];
 while ($row = mysqli_fetch_assoc($result)) {

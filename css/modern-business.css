@@ -1,0 +1,185 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 54px;
+  font-family: "Poppins", sans-serif;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+/************************************NAVBAR***************************************************************/
+.navbar {
+  background: #fff;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid black;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  padding: 10px 20px;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 5px;
+}
+
+.dropdown-menu {
+  border-radius: 10px;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.dropdown-menu .dropdown-item {
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+.navbar-light .navbar-toggler {
+  border: none;
+  outline: none;
+  padding: 5px;
+}
+
+.navbar-light .navbar-toggler-icon {
+  font-size: 1.5rem;
+}
+
+.navbar-brand img {
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover img {
+  transform: scale(1.05);
+}
+
+.navbar.scrolled {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.dropdown-menu-end {
+  padding: 0.75rem;
+}
+
+/***************************************NAVBAR END*****************************************************************************/
+.recent-uploads {
+  list-style: none; /* Remove default bullets */
+  padding-left: 0; /* Remove padding from the list */
+}
+
+.recent-uploads li {
+  margin-bottom: 10px; /* Add some space between the list items */
+}
+
+.recent-uploads li a {
+  display: inline-block; /* Make the link act like an inline block */
+  padding-left: 30px; /* Space for the image */
+  text-decoration: none; /* Remove underline */
+  color: #333; /* Default color for links */
+}
+
+.recent-uploads li a:hover {
+  color: #007bff; /* Change color on hover */
+}
+
+.carousel-item {
+  height: 65vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.portfolio-item {
+  margin-bottom: 30px;
+}
+.dropdown-item:hover {
+  background-color: #e6e6e6;
+  /* Change the color as desired */
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+}
+
+.category-link,
+.post-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.category-link:hover,
+.post-link:hover {
+  color: #007bff;
+  /* Change the color as desired */
+}
+
+.card-header {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.card-header:hover {
+  background-color: #0056b3;
+  /* Darker color on hover */
+}
+
+.card-body {
+  transition: background-color 0.3s ease;
+}
+
+.card:hover .card-body {
+  background-color: #f8f9fa;
+  /* Lighter background color on hover */
+}
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: none;
+  z-index: 9999;
+}
+
+#loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 3px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

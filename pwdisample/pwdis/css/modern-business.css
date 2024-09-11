@@ -1,0 +1,208 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2017 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+
+body {
+  padding-top: 54px;
+  font-family: "Poppins", sans-serif;
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+.carousel-item {
+  height: 65vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.portfolio-item {
+  margin-bottom: 30px;
+}
+.dropdown-item:hover {
+  background-color: #e6e6e6;
+  /* Change the color as desired */
+}
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.fade-in.show {
+  opacity: 1;
+}
+
+.category-link,
+.post-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.category-link:hover,
+.post-link:hover {
+  color: #007bff;
+  /* Change the color as desired */
+}
+
+.card-header {
+  background-color: #343a40;
+  color: #fff;
+}
+
+.card-header:hover {
+  background-color: #0056b3;
+  /* Darker color on hover */
+}
+
+.card-body {
+  transition: background-color 0.3s ease;
+}
+
+.card:hover .card-body {
+  background-color: #f8f9fa;
+  /* Lighter background color on hover */
+}
+#loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: none;
+  z-index: 9999;
+}
+
+#loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border: 3px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mapping.php css Section */
+.info-window-content {
+  text-align: center;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  margin-top: 5px;
+}
+
+#map-container {
+  position: relative;
+  height: 100vh;
+
+  /* Add margin for hamburger menu */
+}
+#hamburger-menu {
+  margin-top: 1em;
+}
+
+#map {
+  height: 100%;
+  width: calc(100% - 50px);
+  /* Adjust map width */
+  float: right;
+  margin-top: 2em;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: -250px;
+  /* Initially hide the sidebar */
+  width: 250px;
+  height: 100%;
+  background-color: #f8f9fa;
+  /* Background color similar to Google Maps */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  /* Add shadow */
+  overflow-y: auto;
+  /* Add scrollbar when content exceeds height */
+  transition: left 0.3s ease;
+  z-index: 1000;
+  /* Ensure sidebar is above map */
+}
+
+.sidebar.open {
+  left: 0;
+}
+
+.sidebar-header {
+  padding: 40px;
+  border-bottom: 1px solid #ddd;
+  /* Add border bottom */
+  background-color: #fff;
+  /* Header background color */
+  font-weight: bold;
+  text-align: center;
+}
+
+.sidebar-body {
+  padding: 20px;
+}
+
+.sidebar-btn {
+  display: none;
+  /* Hide buttons by default */
+  margin-bottom: 10px;
+}
+
+.hamburger-menu {
+  position: absolute;
+  top: 25px;
+  left: 10px;
+  /* Position hamburger menu on the left */
+  cursor: pointer;
+  z-index: 1001;
+  /* Ensure hamburger menu is above sidebar */
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  /* Position close button on the left */
+  cursor: pointer;
+  display: none;
+  /* Initially hide close button */
+  z-index: 1001;
+  /* Ensure close button is above sidebar */
+}
+
+/* Show buttons when sidebar is open */
+.sidebar.open .sidebar-btn {
+  display: block;
+}
+
+/* Show close button when sidebar is open */
+.sidebar.open .close-btn {
+  display: block;
+}

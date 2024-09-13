@@ -1,8 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm py-3">
   <div class="container">
-    <a class="navbar-brand" href="index.php">
-      <img src="images/logo1.png" height="50" width="100" style="border-radius: 10px;" alt="Logo">
+    <a class="navbar-brand" href="index.php" aria-label="Homepage">
+      <span class="text-logo" style="font-size: 1.5rem; font-weight: bold; color: #333; letter-spacing: 2px;">PWDIS</span>
     </a>
+
 
     <!-- Toggler for mobile view -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">

@@ -1,29 +1,28 @@
 <div class="col-md-4">
-
   <!-- Search Widget -->
-  <div class="card mb-4">
+  <div class="card mb-4 shadow-sm">
     <h5 class="card-header">Search</h5>
     <div class="card-body">
       <form name="search" action="search.php" method="post">
         <div class="input-group">
           <input type="text" name="searchtitle" class="form-control" placeholder="Search for..." required>
-          <span class="input-group-btn">
+          <div class="input-group-append">
             <button class="btn btn-secondary" type="submit">Go!</button>
-          </span>
+          </div>
         </div>
       </form>
     </div>
   </div>
 
   <!-- Categories Widget -->
-  <div class="card my-4">
+  <div class="card my-4 shadow-sm">
     <h5 class="card-header">Filter by Categories</h5>
     <div class="card-body">
       <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
           <ul class="list-unstyled mb-0">
             <?php
-            $query = mysqli_query($con, "select id,CategoryName from tblcategory");
+            $query = mysqli_query($con, "SELECT id, CategoryName FROM tblcategory");
             while ($row = mysqli_fetch_array($query)) {
             ?>
               <li>
@@ -36,14 +35,13 @@
     </div>
   </div>
 
-
   <!-- Side Widget -->
-  <div class="card my-4">
+  <div class="card my-4 shadow-sm">
     <h5 class="card-header">Recently Uploaded</h5>
     <div class="card-body">
       <ul class="recent-uploads mb-0">
         <?php
-        $query = mysqli_query($con, "select tblposts.id as pid,tblposts.PostTitle as posttitle from tblposts left join tblcategory on tblcategory.id=tblposts.CategoryId limit 8");
+        $query = mysqli_query($con, "SELECT tblposts.id as pid, tblposts.PostTitle as posttitle FROM tblposts ORDER BY tblposts.PostingDate DESC LIMIT 8");
         while ($row = mysqli_fetch_array($query)) {
         ?>
           <li>
@@ -53,5 +51,4 @@
       </ul>
     </div>
   </div>
-
 </div>

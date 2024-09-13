@@ -150,7 +150,7 @@ if (isset($_POST['submit'])) {
     <!-- /.row -->
     <!---Comment Section --->
 
-    <div class="row" style="margin-top: -8%">
+    <div class="row comment" style="margin-top: -8%">
       <div class="col-md-8">
         <div class="card my-4">
           <h5 class="card-header">Leave a Comment:</h5>

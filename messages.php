@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Chat</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background: #f0f2f5;
             display: flex;
             height: 100vh;
             margin: 0;
+            font-family: "Poppins", sans-serif;
         }
 
         .sidebar {

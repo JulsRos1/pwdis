@@ -5,27 +5,24 @@
  */
 
 body {
-  padding-top: 54px;
   font-family: "Poppins", sans-serif;
 }
 
 @media (min-width: 992px) {
   body {
-    padding-top: 56px;
+    padding-top: 0;
   }
+}
+.custom-navbar {
+  background-color: #343a40;
 }
 
 /************************************NAVBAR***************************************************************/
-.navbar {
-  background: #fff;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid black;
-}
 
 .navbar-nav .nav-link {
   font-size: 1rem;
   font-weight: 500;
-  color: #333;
+  color: #f8f9fa;
   padding: 10px 20px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
@@ -58,14 +55,6 @@ body {
 
 .navbar-light .navbar-toggler-icon {
   font-size: 1.5rem;
-}
-
-.navbar-brand img {
-  transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover img {
-  transform: scale(1.05);
 }
 
 .navbar.scrolled {

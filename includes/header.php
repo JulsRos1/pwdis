@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm py-3">
+<nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
   <div class="container">
     <a class="navbar-brand" href="index.php" aria-label="Homepage">
-      <span class="text-logo" style="font-size: 1.5rem; font-weight: bold; color: #333; letter-spacing: 2px;">PWDIS</span>
+      <span class="text-logo" style="font-size: 1.5rem; font-weight: bold; color: #f8f9fa; letter-spacing: 2px;">PWDIS</span>
     </a>
 
 

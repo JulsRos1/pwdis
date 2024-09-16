@@ -1,3 +1,14 @@
+<?php
+session_start();
+include('includes/config.php');
+if (!isset($_SESSION['user_login'])) {
+  // Redirect the user to the login page if not logged in
+  header("Location: user_login.php");
+  exit;
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -92,7 +103,7 @@
 <body>
   <!-- Navigation -->
   <?php include('includes/header.php');
-  include('includes/config.php');
+
   ?>
 
   <!-- Page Content -->

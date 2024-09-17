@@ -73,6 +73,7 @@ session_start();
               <input type="hidden" id="rating_input" name="rating" value="">
               <textarea id="review" name="review" rows="4" cols="50"></textarea>
               <br>
+              <input type="hidden" name="display_name" id="display_name_modal">
               <input type="hidden" name="place_id" id="place_id_modal">
               <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
               <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
@@ -83,6 +84,38 @@ session_start();
       </div>
     </div>
   </div>
+
+  <!-- Accessibility Options Modal -->
+  <div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="accessibilityModalLabel">Input Accessibility Options</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="submit_accessibility.php" method="POST">
+            <p>Select Accessibility Options Available:</p>
+            <input type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
+            <label for="parking">Wheelchair Accessible Parking</label><br>
+            <input type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
+            <label for="entrance">Wheelchair Accessible Entrance</label><br>
+            <input type="checkbox" id="restroom" name="accessibilityOptions[]" value="wheelchairAccessibleRestroom">
+            <label for="restroom">Wheelchair Accessible Restroom</label><br>
+            <input type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
+            <label for="seating">Wheelchair Accessible Seating</label><br>
+
+            <input type="hidden" name="display_name" id="display_name_modal1">
+            <input type="hidden" name="place_id" id="place_id_accessibility_modal">
+            <input type="submit" value="Submit" name="submit">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Show Reviews Modal -->
   <div class="modal fade" id="reviewsModal" tabindex="-1" role="dialog" aria-labelledby="reviewsModalLabel" aria-hidden="true">
@@ -216,7 +249,7 @@ session_start();
           zoom: 15,
         });
 
-        // display initial userlocation when accessible places not clicked
+        // Display user's current location
         const userMarker = new google.maps.Marker({
           position: userLocation,
           map: map,
@@ -247,25 +280,28 @@ session_start();
             },
             body: JSON.stringify(request),
           })
-          .then((response) => response.json())
-          .then((data) => {
+          .then(response => response.json())
+          .then(data => {
             const infoWindow = new google.maps.InfoWindow();
-            console.log('Parsed data:', data);
-
-
 
             data.places.forEach((place) => {
               if (place.location && place.location.latitude && place.location.longitude) {
-                fetch(`fetch_reviews.php?place_id=${place.id}`)
-                  .then(response => response.json())
-                  .then(reviewsData => {
-                    const accessibilityCount = [
-                      place.accessibilityOptions?.wheelchairAccessibleParking,
-                      place.accessibilityOptions?.wheelchairAccessibleEntrance,
-                      place.accessibilityOptions?.wheelchairAccessibleRestroom,
-                      place.accessibilityOptions?.wheelchairAccessibleSeating
-                    ].filter(Boolean).length; // Count the true (available) options
+                // Fetch user-provided accessibility options from your local database
+                fetch(`fetch_accessibility_options.php?place_id=${place.id}`)
+                  .then(response => response.json()) // Expect JSON directly
+                  .then(userAccessibility => {
+                    // Merging userAccessibility with Google Places data
+                    const accessibilityOptions = {
+                      wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null ? userAccessibility.wheelchairAccessibleParking : place.accessibilityOptions?.wheelchairAccessibleParking,
+                      wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null ? userAccessibility.wheelchairAccessibleEntrance : place.accessibilityOptions?.wheelchairAccessibleEntrance,
+                      wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null ? userAccessibility.wheelchairAccessibleRestroom : place.accessibilityOptions?.wheelchairAccessibleRestroom,
+                      wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null ? userAccessibility.wheelchairAccessibleSeating : place.accessibilityOptions?.wheelchairAccessibleSeating,
+                    };
 
+                    const accessibilityCount = Object.values(accessibilityOptions).filter(Boolean).length;
+
+                    // Set marker color based on the accessibility count
+                    let markerIcon;
                     if (accessibilityCount === 0) {
                       markerIcon = "images/red-marker.png"; // Not accessible
                     } else if (accessibilityCount <= 2) {
@@ -274,7 +310,7 @@ session_start();
                       markerIcon = "images/green-marker.png"; // Highly accessible
                     }
 
-
+                    // Create a marker for this place
                     const marker = new google.maps.Marker({
                       position: {
                         lat: place.location.latitude,
@@ -283,21 +319,32 @@ session_start();
                       map: map,
                       title: place.displayName.text,
                       icon: {
-                        url: markerIcon, // Use the icon variable based on accessibility
-                        scaledSize: new google.maps.Size(40, 40) // Optional: Resize the icon
+                        url: markerIcon,
+                        scaledSize: new google.maps.Size(40, 40), // Optional: Resize the icon
                       },
                     });
 
-                    const reviews = reviewsData.reviews.map(review => `
-                  <p><strong>Rating:</strong> ${review.rating} - ${review.review}</p>
-                `).join('<br>');
+                    // Dummy reviews data for now, should be fetched from your backend
+                    const reviews = [];
+                    const reviewsData = {
+                      averageRating: 0,
+                      reviewCount: 0
+                    }; // Replace with actual data when ready
 
-                    const content = createInfoWindowContent(place, reviews, reviewsData);
+                    // Create info window content
+                    const content = createInfoWindowContent(place, reviews, reviewsData, accessibilityOptions);
 
                     marker.addListener("click", function() {
-                      infoWindow.setContent(content);
-                      infoWindow.open(map, marker);
+                      // Debugging output to ensure that content is properly generated
+                      console.log('Generated InfoWindow content:', content);
+
+                      infoWindow.setContent(content); // Set InfoWindow content
+                      infoWindow.open(map, marker); // Open the InfoWindow on marker
                     });
+
+                  })
+                  .catch(error => {
+                    console.error('Fetch error:', error);
                   });
               }
             });
@@ -310,20 +357,8 @@ session_start();
       });
     }
 
-    // Function to count available accessibility options
-    function countAccessibilityOptions(accessibilityOptions) {
-      let count = 0;
-      if (accessibilityOptions) {
-        if (accessibilityOptions.wheelchairAccessibleParking) count++;
-        if (accessibilityOptions.wheelchairAccessibleEntrance) count++;
-        if (accessibilityOptions.wheelchairAccessibleRestroom) count++;
-        if (accessibilityOptions.wheelchairAccessibleSeating) count++;
-      }
-      return count;
-    }
-
     // Function to create info window content
-    function createInfoWindowContent(place, reviews, reviewsData) {
+    function createInfoWindowContent(place, reviews, reviewsData, accessibilityOptions) {
       const averageRating = reviewsData.averageRating || 'No ratings yet';
       const reviewCount = reviewsData.reviewCount || 'No reviews';
 
@@ -335,29 +370,31 @@ session_start();
 
       return `
     <div>
-      <hr>
       <h4>${place.displayName.text}</h4>
       <p>${place.formattedAddress}</p>
       <ul>
-        ${place.accessibilityOptions && place.accessibilityOptions.wheelchairAccessibleParking
-          ? "<li>pwdAccessibleParking : <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
-          : "<li>pwdAccessibleParking - Not Available</li>"
+        ${accessibilityOptions.wheelchairAccessibleParking 
+          ? "<li>Wheelchair Accessible Parking: <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
+          : "<li>Wheelchair Accessible Parking - Not Available</li>"
         }
-        ${place.accessibilityOptions && place.accessibilityOptions.wheelchairAccessibleEntrance
-          ? "<li>pwdAccessibleEntrance : <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
-          : "<li>pwdAccessibleEntrance - Not Available</li>"
+        ${accessibilityOptions.wheelchairAccessibleEntrance 
+          ? "<li>Wheelchair Accessible Entrance: <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
+          : "<li>Wheelchair Accessible Entrance - Not Available</li>"
         }
-        ${place.accessibilityOptions && place.accessibilityOptions.wheelchairAccessibleRestroom
-          ? "<li>pwdAccessibleRestroom : <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
-          : "<li>pwdAccessibleRestroom - Not Available</li>"
+        ${accessibilityOptions.wheelchairAccessibleRestroom 
+          ? "<li>Wheelchair Accessible Restroom: <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
+          : "<li>Wheelchair Accessible Restroom - Not Available</li>"
         }
-        ${place.accessibilityOptions && place.accessibilityOptions.wheelchairAccessibleSeating
-          ? "<li>pwdAccessibleSeating : <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
-          : "<li>pwdAccessibleSeating - Not Available</li>"
+        ${accessibilityOptions.wheelchairAccessibleSeating 
+          ? "<li>Wheelchair Accessible Seating: <img class='icon' src='images/check.png' alt='Check Icon' width='5'></li>"
+          : "<li>Wheelchair Accessible Seating - Not Available</li>"
         }
       </ul>
       <div class="d-flex justify-content-center">
-        <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}')">Write a Review</button>
+        <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text}')">Write a Review</button>
+        <button class="btn btn-info btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">
+
+
       </div>
       <hr>
       <div>
@@ -374,10 +411,9 @@ session_start();
   `;
     }
 
-
-
-    function openReviewModal(placeId) {
+    function openReviewModal(placeId, displayName) {
       document.getElementById('place_id_modal').value = placeId;
+      document.getElementById('display_name_modal').value = displayName;
       $('#reviewModal').modal('show');
     }
     // Eto yung logic sa stars in the ratings
@@ -421,6 +457,22 @@ session_start();
           console.error('Error fetching reviews:', error);
           document.getElementById('reviewsContent').innerHTML = 'Error loading reviews.';
           $('#reviewsModal').modal('show');
+        });
+    }
+
+    function openAccessibilityModal(placeId, displayName) {
+      document.getElementById('place_id_accessibility_modal').value = placeId;
+      document.getElementById('display_name_modal1').value = displayName;
+
+      // Fetch existing accessibility options
+      fetch(`fetch_accessibility_options.php?place_id=${placeId}`)
+        .then(response => response.json())
+        .then(data => {
+
+          $('#accessibilityModal').modal('show');
+        })
+        .catch(error => {
+          console.error('Error fetching accessibility options:', error);
         });
     }
   </script>

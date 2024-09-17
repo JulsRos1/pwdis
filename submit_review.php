@@ -4,6 +4,7 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $place_id = $_POST['place_id'];
+    $display_name = $_POST['display_name'];
     $rating = $_POST['rating'];
     $review = $_POST['review'];
     $first_name = $_SESSION['name'];
@@ -13,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $full_name = $first_name . ' ' . $last_name;
 
     // Prepare the SQL query to insert the review
-    $query = $con->prepare("INSERT INTO reviews (place_id, rating, review, full_name) VALUES (?, ?, ?, ?)");
-    $query->bind_param("siss", $place_id, $rating, $review, $full_name);
+    $query = $con->prepare("INSERT INTO reviews (place_id, display_name, rating, review, full_name) VALUES (?, ?, ?, ?, ?)");
+    $query->bind_param("sssss", $place_id, $display_name, $rating, $review, $full_name);
 
     // Check if the query executed successfully
     if ($query->execute()) {

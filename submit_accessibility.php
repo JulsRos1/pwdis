@@ -4,7 +4,10 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $place_id = isset($_POST['place_id']) ? $_POST['place_id'] : '';
-    $display_name = $_POST['display_name'];
+    $display_name = isset($_POST['display_name']) ? $_POST['display_name'] : '';
+
+    // Get the accessibility level
+    $accessibility_level = isset($_POST['accessibility_level']) ? $_POST['accessibility_level'] : '';
 
     // Check if accessibilityOptions is set and is an array
     $accessibilityOptions = isset($_POST['accessibilityOptions']) && is_array($_POST['accessibilityOptions']) ? $_POST['accessibilityOptions'] : [];
@@ -29,16 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     wheelchairAccessibleEntrance = ?,
                     wheelchairAccessibleRestroom = ?,
                     wheelchairAccessibleSeating = ?,
+                    accessibility_level = ?,
                     created_at = NOW()
                   WHERE place_id = ?";
         $stmt = $con->prepare($query);
-        $stmt->bind_param("iiiss", $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $place_id);
+        $stmt->bind_param("iiisss", $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $accessibility_level, $place_id);
     } else {
         // Insert new record
-        $query = "INSERT INTO place_accessibility (place_id, display_name, wheelchairAccessibleParking, wheelchairAccessibleEntrance, wheelchairAccessibleRestroom, wheelchairAccessibleSeating, created_at)
-                  VALUES (?, ?, ?, ?, ?, ?, NOW())";
+        $query = "INSERT INTO place_accessibility (place_id, display_name, wheelchairAccessibleParking, wheelchairAccessibleEntrance, wheelchairAccessibleRestroom, wheelchairAccessibleSeating, accessibility_level, created_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt = $con->prepare($query);
-        $stmt->bind_param("ssiiii", $place_id, $display_name, $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating);
+        $stmt->bind_param("ssiiiss", $place_id, $display_name, $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $accessibility_level);
     }
 
     if ($stmt->execute()) {

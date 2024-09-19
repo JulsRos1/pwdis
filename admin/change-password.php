@@ -116,7 +116,7 @@ return true;
                         <div class="row">
 							<div class="col-xs-12">
 								<div class="page-title-box">
-                                    <h4 class="page-title">Chnage Password</h4>
+                                    <h4 class="page-title">Admin Profile</h4>
                                     <ol class="breadcrumb p-0 m-0">
                                         <li>
                                             <a href="#">Admin</a>

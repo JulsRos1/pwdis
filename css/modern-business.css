@@ -18,7 +18,13 @@ body {
 }
 
 /************************************NAVBAR***************************************************************/
-
+.navbar-brand{
+  font-weight: bold;
+  font-size:1.3rem;
+  background:#ffff;
+  border-radius:7px;
+  padding:5px;
+}
 .navbar-nav .nav-link {
   font-size: 1rem;
   font-weight: 500;

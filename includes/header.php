@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
   <div class="container">
-    <a class="navbar-brand" href="index.php" aria-label="Homepage">
-      <span class="text-logo" style="font-size: 1.5rem; font-weight: bold; color: #f8f9fa; letter-spacing: 2px;">PWDIS</span>
-    </a>
+    <div class="header-logo">
+        <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>   
+     </div>
 
 
     <!-- Toggler for mobile view -->

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community Chat</title>
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             background: #f0f2f5;
@@ -27,6 +26,10 @@
 
         .sidebar h4 {
             margin-top: 0;
+        }
+
+        .sidebar .btn-home {
+            margin-bottom: 20px;
         }
 
         .search-input {
@@ -155,6 +158,7 @@
 
 <body>
     <div class="sidebar">
+        <a href="index.php" class="btn btn-primary btn-home">Home</a>
         <h4>Chatbox</h4>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
         <ul class="chat-options">
@@ -175,6 +179,9 @@
             <button id="sendButton" class="btn btn-primary">Send</button>
         </div>
     </div>
+
+    <!-- Notification Sound -->
+    <audio id="notificationSound" src="notification.mp3"></audio>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -249,6 +256,7 @@
                     if (response.status === 'success') {
                         $('#messageInput').val('');
                         fetchMessages();
+                        document.getElementById('notificationSound').play();
                     } else {
                         alert(response.message);
                     }
@@ -258,6 +266,13 @@
 
         $('#sendButton').click(function() {
             sendMessage();
+        });
+
+        $('#messageInput').keypress(function(e) {
+            if (e.which === 13 && !e.shiftKey) { // Enter key pressed
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         $('#userList').on('click', 'li', function() {
@@ -270,7 +285,7 @@
 
         $('#allChat').click(function() {
             selectedUserId = null;
-            $('#chatHeader').text('All Chat');
+            $('#chatHeader').text('All Chat - Users Forum');
             chatMode = 'group';
             fetchMessages();
         });
@@ -288,7 +303,7 @@
         // Fetch users and messages on page load
         fetchUsers();
         fetchMessages();
-        setInterval(fetchMessages, 2000);
+        setInterval(fetchMessages, 2000); // Poll every 2 seconds for new messages
     </script>
 </body>
 

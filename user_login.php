@@ -19,12 +19,6 @@ if (isset($_POST['login'])) {
   if (mysqli_num_rows($result) == 1) {
     $row = mysqli_fetch_assoc($result);
 
-    // Check the user's approval status
-    $approvalStatus = $row['status'];
-    if ($approvalStatus != 'Approved') {
-      echo "Error: Your account is not yet approved. Please wait for approval.";
-      exit;
-    }
 
     $hashed_password = $row['password'];
 

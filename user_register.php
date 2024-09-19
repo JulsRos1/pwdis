@@ -39,7 +39,7 @@ if (isset($_POST['register'])) {
   $result = $stmt->execute();
 
   if ($result) {
-    echo "Registration successful! Your account is pending approval.";
+    echo "Registration successful! You can now login to the System";
   } else {
     echo "Error: " . $stmt->error;
   }

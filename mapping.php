@@ -91,13 +91,13 @@ session_start();
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="accessibilityModalLabel">Update Accessibility Options</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="btn btn-primary close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <form action="submit_accessibility.php" method="POST">
-          <p>Check the Accessibility Options Available</p>
+          <p>Make an Update on AccessibilityOptions</p>
           <input type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
           <label for="parking">Has PWD Accessible Parking</label><br>
           <input type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
@@ -368,7 +368,7 @@ session_start();
   const photoHtml = photo ? `
     <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=200&maxWidthPx=200" 
          alt="${place.displayName.text}" 
-         style="max-width: 200px; max-height: 200px; object-fit: cover;   display: block; margin-left: auto;  margin-right: auto; width: 100%;">` : '';
+         style="max-width: 25em; max-height: 15em; object-fit: cover;   display: block; margin-left: auto;  margin-right: auto; width: 100%;">` : '';
 
   return `
     <div>
@@ -391,7 +391,7 @@ session_start();
       </ul>
       <div class="d-flex justify-content-center">
         <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text}')">Write a Review</button>
-        <button class="btn btn-info btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">Update Accessibility</button>
+        <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">Update Accessibility</button>
       </div>
       <hr>
       <div>

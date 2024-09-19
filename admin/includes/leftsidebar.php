@@ -11,16 +11,12 @@
 
                             </li>
 
-                            <?php if ($_SESSION['utype'] == '1') : ?>
+                            <li class="has_sub">
+                                <a href="manage_user.php" class="waves-effect"><i class="mdi mdi-clipboard-account"></i> <span> Manage Users</span> </a>
 
-                                <li class="has_sub">
-                                    <a href="javascript:void(0);" class="waves-effect"><i class="ti ti-user"></i> <span> Sub-admins </span> <span class="menu-arrow"></span></a>
-                                    <ul class="list-unstyled">
-                                        <li><a href="add-subadmins.php">Add Sub-admin</a></li>
-                                        <li><a href="manage-subadmins.php">Manage Sub-admin</a></li>
-                                    </ul>
-                                </li>
-                            <?php endif; ?>
+                            </li>
+                            
+
 
                             <li class="has_sub">
                                 <a href="javascript:void(0);" class="waves-effect"><i class="mdi mdi-format-list-bulleted"></i> <span> Category </span> <span class="menu-arrow"></span></a>

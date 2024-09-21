@@ -36,9 +36,7 @@ while($row=mysqli_fetch_array($query))
 {
 
 ?>
-      <h1 class="mt-4 mb-3"><?php echo htmlentities($row['PageTitle'])?>
-  
-      </h1>
+      <h1 class="mt-4 mb-3"><?php echo htmlentities($row['PageTitle'])?> </h1>
 
       <ol class="breadcrumb">
         <li class="breadcrumb-item">

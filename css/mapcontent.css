@@ -81,10 +81,12 @@
 
 #map {
   height: 100%;
-  width: calc(100% - 50px);
-  /* Adjust map width */
-  float: right;
-  margin-top: 2em;
+  width: 100%;
+  transition: width 0.3s ease;
+}
+
+#map.panel-open {
+  width: calc(100% - 400px);
 }
 
 .sidebar {
@@ -236,3 +238,49 @@
 
   border: none;
 }
+
+/* Add these styles for the place details panel */
+.place-details-panel {
+  position: absolute;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.place-details-panel.open {
+  right: 0;
+}
+
+.close-details {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#place-details-content {
+  padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .place-details-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  #map.panel-open {
+    width: 100%;
+  }
+}
+
+/* Adjust other existing styles as needed */

@@ -7,7 +7,6 @@ if (isset($_SESSION['user_login'])) {
   header("Location: index.php");
   exit;
 }
-
 if (isset($_POST['login'])) {
   $usernameOrEmail = ($_POST['usernameOrEmail']);
   $password = ($_POST['password']);

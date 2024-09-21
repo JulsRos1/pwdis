@@ -44,6 +44,10 @@ session_start();
         <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('community_center')">Community Center</button>
       </div>
     </div>
+    <div id="place-details-panel" class="place-details-panel">
+      <button id="close-details" class="close-details">&times;</button>
+      <div id="place-details-content"></div>
+    </div>
   </div>
 </body>
 
@@ -226,6 +230,11 @@ session_start();
             url: "images/usericonmap.png",
           },
         });
+
+        // Add click event listener to the map
+        map.addListener('click', function(event) {
+          handleMapClick(event.latLng);
+        });
       },
       (error) => {
         console.error("Geolocation error:", error);
@@ -304,6 +313,102 @@ session_start();
     toggleSidebar();
   }
 
+  function handleMapClick(latLng) {
+    console.log("Clicked location:", latLng.lat(), latLng.lng());
+    // Clear existing markers
+    clearMarkers();
+
+    // Create a request to find the nearest place
+    const request = {
+      locationRestriction: {
+        circle: {
+          center: {
+            latitude: latLng.lat(),
+            longitude: latLng.lng(),
+          },
+          radius: 50, // Increase the radius to 50 meters
+        },
+      },
+      maxResultCount: 1
+    };
+
+    // Fetch place details
+    fetch(
+      "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
+        },
+        body: JSON.stringify(request),
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.places && data.places.length > 0) {
+          const place = data.places[0];
+          fetchPlaceDetails(place);
+        } else {
+          console.log("No place found at this location");
+          addMarker({
+            location: { latitude: latLng.lat(), longitude: latLng.lng() },
+            displayName: { text: "Clicked Location" },
+            formattedAddress: "Unknown Address",
+            id: "clicked_location",
+          }, {});
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error for places:", error);
+      });
+  }
+
+  function fetchPlaceDetails(place) {
+    console.log("Fetching details for place:", place);
+    fetch(`fetch_accessibility_options.php?place_id=${place.id}`)
+      .then((response) => response.json())
+      .then((userAccessibility) => {
+        const accessibilityOptions = {
+          wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null
+            ? userAccessibility.wheelchairAccessibleParking
+            : place.accessibilityOptions?.wheelchairAccessibleParking,
+          wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null
+            ? userAccessibility.wheelchairAccessibleEntrance
+            : place.accessibilityOptions?.wheelchairAccessibleEntrance,
+          wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null
+            ? userAccessibility.wheelchairAccessibleRestroom
+            : place.accessibilityOptions?.wheelchairAccessibleRestroom,
+          wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null
+            ? userAccessibility.wheelchairAccessibleSeating
+            : place.accessibilityOptions?.wheelchairAccessibleSeating,
+        };
+
+        addMarker(place, accessibilityOptions);
+        
+        // Fetch reviews and display place details
+        fetch(`fetch_reviews.php?place_id=${place.id}`)
+          .then((response) => response.json())
+          .then((reviewsData) => {
+            const content = createPlaceDetailsContent(
+              place,
+              reviewsData,
+              accessibilityOptions,
+              place.photos && place.photos.length > 0 ? place.photos[0] : null
+            );
+            document.getElementById('place-details-content').innerHTML = content;
+            openPlaceDetailsPanel();
+          })
+          .catch((error) => {
+            console.error("Fetch error for reviews:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Fetch error for accessibility options:", error);
+        addMarker(place, {});
+      });
+  }
+
   function addMarker(place, accessibilityOptions) {
     const accessibilityCount =
       Object.values(accessibilityOptions).filter(Boolean).length;
@@ -330,24 +435,24 @@ session_start();
       },
     });
 
-    markers.push(marker); // Add the marker to our array
+    markers.push(marker);
 
     marker.addListener("click", function() {
-    fetch(`fetch_reviews.php?place_id=${place.id}`)
-      .then((response) => response.json())
-      .then((reviewsData) => {
-        const content = createInfoWindowContent(
-          place,
-          reviewsData,
-          accessibilityOptions,
-          place.photos && place.photos.length > 0 ? place.photos[0] : null
-        );
-        infoWindow.setContent(content);
-        infoWindow.open(map, marker);
-      })
-      .catch((error) => {
-        console.error("Fetch error for reviews:", error);
-      });
+      fetch(`fetch_reviews.php?place_id=${place.id}`)
+        .then((response) => response.json())
+        .then((reviewsData) => {
+          const content = createPlaceDetailsContent(
+            place,
+            reviewsData,
+            accessibilityOptions,
+            place.photos && place.photos.length > 0 ? place.photos[0] : null
+          );
+          document.getElementById('place-details-content').innerHTML = content;
+          openPlaceDetailsPanel();
+        })
+        .catch((error) => {
+          console.error("Fetch error for reviews:", error);
+        });
     });
   }
 
@@ -358,55 +463,56 @@ session_start();
     markers = [];
   }
 
-  function createInfoWindowContent(place, reviewsData, accessibilityOptions, photo) {
-  const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
-  const reviewCount = reviewsData.reviewCount || "No reviews";
-  const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
-  const reviewsHtml = reviewsData.reviews.map(review => `<p><strong>Rating:</strong> ${review.rating} - ${review.review}</p>`).join("<br>");
+  function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo) {
+    const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
+    const reviewCount = reviewsData.reviewCount || "No reviews";
+    const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
+    const reviewsHtml = reviewsData.reviews.map(review => `<p><strong>Rating:</strong> ${review.rating} - ${review.review}</p>`).join("<br>");
 
-  // Create the photo HTML if a photo is available
-  const photoHtml = photo ? `
-    <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=200&maxWidthPx=200" 
-         alt="${place.displayName.text}" 
-         style="max-width: 25em; max-height: 15em; object-fit: cover;   display: block; margin-left: auto;  margin-right: auto; width: 100%;">` : '';
+    // Create the photo HTML if a photo is available
+    const photoHtml = photo ? `
+      <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=200&maxWidthPx=200" 
+           alt="${place.displayName.text}" 
+           style="max-width: 25em; max-height: 15em; object-fit: cover;   display: block; margin-left: auto;  margin-right: auto; width: 100%;">` : '';
 
-  return `
-    <div>
-      ${photoHtml}
-      <h4>${place.displayName.text}</h4>
-      <p>${place.formattedAddress}</p>
-      <ul>
-        ${accessibilityOptions.wheelchairAccessibleParking
-          ? "<li>Has PWD Accessible Parking: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-          : "<li>Has PWD Accessible Parking - Not Accessible</li>"}
-        ${accessibilityOptions.wheelchairAccessibleEntrance
-          ? "<li>Has PWD Accessible Entrance: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-          : "<li>Has PWD Accessible Entrance - Not Accessible</li>"}
-        ${accessibilityOptions.wheelchairAccessibleRestroom
-          ? "<li>Has PWD Accessible Restroom: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-          : "<li>Has PWD Accessible Restroom - Not Accessible</li>"}
-        ${accessibilityOptions.wheelchairAccessibleSeating
-          ? "<li>Has PWD Accessible Seating: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-          : "<li>Has PWD Accessible Seating - Not Accessible</li>"}
-      </ul>
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text}')">Write a Review</button>
-        <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">Update Accessibility</button>
-      </div>
-      <hr>
+    return `
       <div>
-        <h4>Reviews Summary:</h4>
-        <p><strong>Average Rating:</strong> ${averageRating} / 5</p>
-        <div class="stars">${starsHtml}</div>
-        <p><strong>Total Reviews:</strong> ${reviewCount}</p>
+        <button onclick="closePlaceDetailsPanel()" class="close-details">&times;</button>
+        ${photoHtml}
+        <h4>${place.displayName.text}</h4>
+        <p>${place.formattedAddress}</p>
+        <ul>
+          ${accessibilityOptions.wheelchairAccessibleParking
+            ? "<li>Has PWD Accessible Parking: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
+            : "<li>Has PWD Accessible Parking - Not Accessible</li>"}
+          ${accessibilityOptions.wheelchairAccessibleEntrance
+            ? "<li>Has PWD Accessible Entrance: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
+            : "<li>Has PWD Accessible Entrance - Not Accessible</li>"}
+          ${accessibilityOptions.wheelchairAccessibleRestroom
+            ? "<li>Has PWD Accessible Restroom: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
+            : "<li>Has PWD Accessible Restroom - Not Accessible</li>"}
+          ${accessibilityOptions.wheelchairAccessibleSeating
+            ? "<li>Has PWD Accessible Seating: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
+            : "<li>Has PWD Accessible Seating - Not Accessible</li>"}
+        </ul>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text}')">Write a Review</button>
+          <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">Update Accessibility</button>
+        </div>
         <hr>
+        <div>
+          <h4>Reviews Summary:</h4>
+          <p><strong>Average Rating:</strong> ${averageRating} / 5</p>
+          <div class="stars">${starsHtml}</div>
+          <p><strong>Total Reviews:</strong> ${reviewCount}</p>
+          <hr>
+        </div>
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-primary btn-sm" onclick="showReviews('${place.id}')">Show Reviews</button>
+        </div>
       </div>
-      <div class="d-flex justify-content-center">
-        <button class="btn btn-primary btn-sm" onclick="showReviews('${place.id}')">Show Reviews</button>
-      </div>
-    </div>
-  `;
-}
+    `;
+  }
 
   function openReviewModal(placeId, displayName) {
     document.getElementById('place_id_modal').value = placeId;
@@ -534,6 +640,18 @@ function showReviews(placeId) {
       $("#reviewsModal").modal("show");
     });
 }
+
+function openPlaceDetailsPanel() {
+  document.getElementById('place-details-panel').classList.add('open');
+  document.getElementById('map').classList.add('panel-open');
+}
+
+function closePlaceDetailsPanel() {
+  document.getElementById('place-details-panel').classList.remove('open');
+  document.getElementById('map').classList.remove('panel-open');
+}
+
+document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
 </script>
 </body>
 

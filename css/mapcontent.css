@@ -10,15 +10,15 @@
   padding: 10px;
   font-family: Arial, sans-serif;
   position: absolute;
-  top: 10px; /* Distance from the top of the map */
-  right: 10px; /* Distance from the right side of the map */
+  bottom: 20px;
+  right: 20px;
   z-index: 999;
-  border-radius: 5px;
+  border-radius: 8px;
   border: 1px solid #ccc;
   margin-top: 1.5em;
   /* Make the legend responsive */
   max-width: calc(100% - 20px); /* Ensure it doesn’t exceed the map width */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   /* Add some shadow for better visibility */
   overflow: auto;
 }
@@ -71,96 +71,122 @@
 
 #map-container {
   position: relative;
-  height: 100vh;
-
-  /* Add margin for hamburger menu */
-}
-#hamburger-menu {
-  margin-top: 1em;
-}
-
-#map {
-  height: 100%;
   width: 100%;
-  transition: width 0.3s ease;
+  height: 100vh;
 }
 
-#map.panel-open {
-  width: calc(100% - 400px);
-}
+/* Remove or comment out the existing .sidebar styles */
 
-.sidebar {
+/* New styles for the top button bar */
+.top-button-bar {
   position: absolute;
-  top: 0;
-  left: -250px;
-  /* Initially hide the sidebar */
-  width: 250px;
-  height: 100%;
-  background-color: #f8f9fa;
-  /* Background color similar to Google Maps */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  /* Add shadow */
-  overflow-y: auto;
-  /* Add scrollbar when content exceeds height */
-  transition: left 0.3s ease;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 1000;
-  /* Ensure sidebar is above map */
+  overflow-x: auto;
+  max-width: 90%;
+  padding: 5px;
+  margin-left:5em;
 }
 
-.sidebar.open {
+.category-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 14px;
+  color: #5f6368;
+}
+
+.category-button:hover {
+  background-color: #f1f3f4;
+}
+
+.category-button i {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+/* Update place-details-panel styles */
+.place-details-panel {
+  position: absolute;
+  left: -400px;
+  top: 0;
+  width: 400px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 999;
+}
+
+.place-details-panel.open {
   left: 0;
 }
 
-.sidebar-header {
-  padding: 40px;
-  border-bottom: 1px solid #ddd;
-  /* Add border bottom */
-  background-color: #fff;
-  /* Header background color */
-  font-weight: bold;
-  text-align: center;
+/* Adjust the hamburger menu position */
+.hamburger-menu {
+  left: 10px;
+  top: 60px; /* Moved below the top button bar */
 }
 
-.sidebar-body {
+.close-details {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1001; /* Ensure it's above the photo */
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+#place-details-content {
   padding: 20px;
 }
 
-.sidebar-btn {
-  display: none;
-  /* Hide buttons by default */
-  margin-bottom: 10px;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #map-container {
+    flex-direction: column;
+  }
+
+  .sidebar, .place-details-panel {
+    width: 100%;
+    height: auto;
+    max-height: 50%;
+    position: relative;
+    left: 0;
+  }
+
+  .sidebar.open, .place-details-panel.open {
+    width: 100%;
+  }
+
+  #map {
+    height: 50%;
+  }
 }
 
-.hamburger-menu {
-  position: absolute;
-  top: 25px;
-  left: 10px;
-  /* Position hamburger menu on the left */
-  cursor: pointer;
-  z-index: 1001;
-  /* Ensure hamburger menu is above sidebar */
-}
+/* Adjust other existing styles as needed */
 
-.close-btn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  /* Position close button on the left */
-  cursor: pointer;
-  display: none;
-  /* Initially hide close button */
-  z-index: 1001;
-  /* Ensure close button is above sidebar */
-}
-
-/* Show buttons when sidebar is open */
-.sidebar.open .sidebar-btn {
-  display: block;
-}
-
-/* Show close button when sidebar is open */
-.sidebar.open .close-btn {
-  display: block;
+.no-bullet{
+  list-style-type: none;
 }
 .star-rating {
   display: flex;
@@ -208,7 +234,7 @@
 
 .stars i {
   color: #e6e6e6;
-  font-size: 35px;
+  font-size: 25px;
   cursor: pointer;
   transition: color 0.2s ease;
 }
@@ -239,48 +265,4 @@
   border: none;
 }
 
-/* Add these styles for the place details panel */
-.place-details-panel {
-  position: absolute;
-  top: 0;
-  right: -400px;
-  width: 400px;
-  height: 100%;
-  background-color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-  transition: right 0.3s ease;
-  z-index: 1000;
-}
 
-.place-details-panel.open {
-  right: 0;
-}
-
-.close-details {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-#place-details-content {
-  padding: 20px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .place-details-panel {
-    width: 100%;
-    right: -100%;
-  }
-
-  #map.panel-open {
-    width: 100%;
-  }
-}
-
-/* Adjust other existing styles as needed */

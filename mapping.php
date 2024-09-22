@@ -18,37 +18,42 @@ session_start();
 <body>
   <?php include("includes/header.php"); ?>
   <div id="map-container">
-    <div class="legend">
-      <h4>Legend</h4>
-      <ul>
-        <li><span style="background-color: red"></span> Not Accessible (0 Options)</li>
-        <li><span style="background-color: blue"></span> Accessible (1-2 Options)</li>
-        <li><span style="background-color: green"></span> Highly Accessible (3-4 Options)</li>
-      </ul>
-    </div>
-
-    <div id="map"></div>
-    <div class="hamburger-menu" id="hamburger-menu" onclick="toggleSidebar()">
-      <i class="fas fa-bars fa-2x"></i>
-    </div>
-    <div class="close-btn" id="close-btn" onclick="toggleSidebar()">
-      <i class="fas fa-times fa-2x"></i>
-    </div>
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">Point of Interest Categories</div>
-      <div class="sidebar-body">
-        <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('restaurant')">Restaurants</button>
-        <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('school')">Schools</button>
-        <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('hospital')">Healthcare</button>
-        <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('grocery_store')">Grocery Store</button>
-        <button class="btn btn-primary sidebar-btn" onclick="updatePlaces('community_center')">Community Center</button>
-      </div>
-    </div>
-    <div id="place-details-panel" class="place-details-panel">
-      <button id="close-details" class="close-details">&times;</button>
-      <div id="place-details-content"></div>
-    </div>
+  <div id="map"></div>
+  <div class="top-button-bar">
+    <button class="category-button" onclick="updatePlaces('restaurant')">
+      <i class="fas fa-utensils"></i>
+      Restaurants
+    </button>
+    <button class="category-button" onclick="updatePlaces('school')">
+      <i class="fas fa-school"></i>
+      Schools
+    </button>
+    <button class="category-button" onclick="updatePlaces('hospital')">
+      <i class="fas fa-hospital"></i>
+      Healthcare
+    </button>
+    <button class="category-button" onclick="updatePlaces('grocery_store')">
+      <i class="fas fa-shopping-cart"></i>
+      Grocery Store
+    </button>
+    <button class="category-button" onclick="updatePlaces('community_center')">
+      <i class="fas fa-users"></i>
+      Community Center
+    </button>
   </div>
+  <div class="legend">
+    <h4>Legend</h4>
+    <ul>
+      <li><span style="background-color: red"></span> Not Accessible (0 Options)</li>
+      <li><span style="background-color: blue"></span> Accessible (1-2 Options)</li>
+      <li><span style="background-color: green"></span> Highly Accessible (3-4 Options)</li>
+    </ul>
+  </div>
+  <div id="place-details-panel" class="place-details-panel">
+    <button id="close-details" class="close-details">&times;</button>
+    <div id="place-details-content"></div>
+  </div>
+</div>
 </body>
 
 
@@ -88,6 +93,7 @@ session_start();
     </div>
   </div>
 </div>
+
 
 <!-- Accessibility Options Modal -->
 <div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
@@ -188,7 +194,7 @@ session_start();
         .catch(error => {
           console.error("Error submitting review:", error);
           Swal.fire({
-            title: "Error!",
+            title: "Error!", 
             text: "There was an error submitting your review. Please try again.",
             icon: "error",
             confirmButtonText: "OK",
@@ -196,15 +202,6 @@ session_start();
         });
     });
   });
-
-  function toggleSidebar() {
-    const sidebar = document.getElementById("sidebar");
-    sidebar.classList.toggle("open");
-    const hamburgerMenu = document.getElementById("hamburger-menu");
-    const closeBtn = document.getElementById("close-btn");
-    hamburgerMenu.style.display = sidebar.classList.contains("open") ? "none" : "block";
-    closeBtn.style.display = sidebar.classList.contains("open") ? "block" : "none";
-  }
 
   function initMap() {
     navigator.geolocation.getCurrentPosition(
@@ -243,35 +240,38 @@ session_start();
   }
 
   function updatePlaces(type) {
-    // Clear existing markers (if any)
-    clearMarkers();
-    const request = {
-      includedTypes: [type],
-      locationRestriction: {
-        circle: {
-          center: {
-            latitude: userLocation.lat,
-            longitude: userLocation.lng,
-          },
-          radius: 3000,
+  // Clear existing markers (if any)
+  clearMarkers();
+  const request = {
+    includedTypes: [type],
+    locationRestriction: {
+      circle: {
+        center: {
+          latitude: userLocation.lat,
+          longitude: userLocation.lng,
         },
+        radius: 3000,
       },
-    };
+    },
+  };
 
-    fetch(
-        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
-          },
-          body: JSON.stringify(request),
-        }
-      )
-      .then((response) => response.json())
-      .then((data) => {
+  fetch(
+    "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
+      },
+      body: JSON.stringify(request),
+    }
+  )
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Parsed data: ", data); // Log the entire response once
+
+      if (data.places && Array.isArray(data.places)) {
         data.places.forEach((place) => {
-          console.log("Parsed data: ", data);
           if (
             place.location &&
             place.location.latitude &&
@@ -281,18 +281,18 @@ session_start();
               .then((response) => response.json())
               .then((userAccessibility) => {
                 const accessibilityOptions = {
-                  wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null ?
-                    userAccessibility.wheelchairAccessibleParking : place.accessibilityOptions
-                    ?.wheelchairAccessibleParking,
-                  wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null ?
-                    userAccessibility.wheelchairAccessibleEntrance : place.accessibilityOptions
-                    ?.wheelchairAccessibleEntrance,
-                  wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null ?
-                    userAccessibility.wheelchairAccessibleRestroom : place.accessibilityOptions
-                    ?.wheelchairAccessibleRestroom,
-                  wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null ?
-                    userAccessibility.wheelchairAccessibleSeating : place.accessibilityOptions
-                    ?.wheelchairAccessibleSeating,
+                  wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null
+                    ? userAccessibility.wheelchairAccessibleParking
+                    : place.accessibilityOptions?.wheelchairAccessibleParking,
+                  wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null
+                    ? userAccessibility.wheelchairAccessibleEntrance
+                    : place.accessibilityOptions?.wheelchairAccessibleEntrance,
+                  wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null
+                    ? userAccessibility.wheelchairAccessibleRestroom
+                    : place.accessibilityOptions?.wheelchairAccessibleRestroom,
+                  wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null
+                    ? userAccessibility.wheelchairAccessibleSeating
+                    : place.accessibilityOptions?.wheelchairAccessibleSeating,
                 };
 
                 addMarker(place, accessibilityOptions);
@@ -305,13 +305,14 @@ session_start();
               });
           }
         });
-      })
-      .catch((error) => {
-        console.error("Fetch error for places:", error);
-      });
-
-    toggleSidebar();
-  }
+      } else {
+        console.error("No places found in the response");
+      }
+    })
+    .catch((error) => {
+      console.error("Fetch error for places:", error);
+    });
+}
 
   function handleMapClick(latLng) {
     console.log("Clicked location:", latLng.lat(), latLng.lng());
@@ -326,7 +327,7 @@ session_start();
             latitude: latLng.lat(),
             longitude: latLng.lng(),
           },
-          radius: 50, // Increase the radius to 50 meters
+          radius: 25, // Increase the radius to 50 meters
         },
       },
       maxResultCount: 1
@@ -370,18 +371,10 @@ session_start();
       .then((response) => response.json())
       .then((userAccessibility) => {
         const accessibilityOptions = {
-          wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null
-            ? userAccessibility.wheelchairAccessibleParking
-            : place.accessibilityOptions?.wheelchairAccessibleParking,
-          wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null
-            ? userAccessibility.wheelchairAccessibleEntrance
-            : place.accessibilityOptions?.wheelchairAccessibleEntrance,
-          wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null
-            ? userAccessibility.wheelchairAccessibleRestroom
-            : place.accessibilityOptions?.wheelchairAccessibleRestroom,
-          wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null
-            ? userAccessibility.wheelchairAccessibleSeating
-            : place.accessibilityOptions?.wheelchairAccessibleSeating,
+          wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking ?? place.accessibilityOptions?.wheelchairAccessibleParking ?? false,
+          wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance ?? place.accessibilityOptions?.wheelchairAccessibleEntrance ?? false,
+          wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom ?? place.accessibilityOptions?.wheelchairAccessibleRestroom ?? false,
+          wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating ?? place.accessibilityOptions?.wheelchairAccessibleSeating ?? false,
         };
 
         addMarker(place, accessibilityOptions);
@@ -482,22 +475,22 @@ session_start();
         <h4>${place.displayName.text}</h4>
         <p>${place.formattedAddress}</p>
         <ul>
-          ${accessibilityOptions.wheelchairAccessibleParking
-            ? "<li>Has PWD Accessible Parking: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-            : "<li>Has PWD Accessible Parking - Not Accessible</li>"}
+      ${accessibilityOptions.wheelchairAccessibleParking
+            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking - Not Accessible</li>"}
           ${accessibilityOptions.wheelchairAccessibleEntrance
-            ? "<li>Has PWD Accessible Entrance: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-            : "<li>Has PWD Accessible Entrance - Not Accessible</li>"}
+            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance - Not Accessible</li>"}
           ${accessibilityOptions.wheelchairAccessibleRestroom
-            ? "<li>Has PWD Accessible Restroom: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-            : "<li>Has PWD Accessible Restroom - Not Accessible</li>"}
+            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom - Not Accessible</li>"}
           ${accessibilityOptions.wheelchairAccessibleSeating
-            ? "<li>Has PWD Accessible Seating: <img class='icon' src='images/check.png' alt='Check Icon' width='15'></li>"
-            : "<li>Has PWD Accessible Seating - Not Accessible</li>"}
+            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
         </ul>
         <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text}')">Write a Review</button>
-          <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text}')">Update Accessibility</button>
+          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Write a Review</button>
+          <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
         </div>
         <hr>
         <div>
@@ -515,6 +508,7 @@ session_start();
   }
 
   function openReviewModal(placeId, displayName) {
+    console.log("Opening review modal for:", placeId, displayName);
     document.getElementById('place_id_modal').value = placeId;
     document.getElementById('display_name_modal').value = displayName;
     $('#reviewModal').modal('show');
@@ -535,6 +529,7 @@ session_start();
   });
 
   function openAccessibilityModal(placeId, displayName) {
+    console.log("Opening accessibility modal for:", placeId, displayName);
     document.getElementById("place_id_accessibility_modal").value = placeId;
     document.getElementById("display_name_modal1").value = displayName;
 
@@ -554,6 +549,7 @@ session_start();
       })
       .catch((error) => {
         console.error("Error fetching accessibility options:", error);
+        $("#accessibilityModal").modal("show"); // Show modal even if fetch fails
       });
   }
 
@@ -611,7 +607,7 @@ session_start();
 document.querySelectorAll('#accessibilityModal input[type="checkbox"]')
   .forEach(checkbox => checkbox.addEventListener("change", updateAccessibilityLevel));
 
-function showReviews(placeId) {
+  function showReviews(placeId) {
   fetch(`fetch_reviews.php?place_id=${placeId}`)
     .then(response => response.json())
     .then(reviewsData => {

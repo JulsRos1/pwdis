@@ -1,0 +1,452 @@
+The Autocomplete (New) service is a web service that returns place predictions and query predictions in response to an HTTP request. In the request, specify a text search string and geographic bounds that controls the search area.
+
+The Autocomplete (New) service can match on full words and substrings of the input, resolving place names, addresses, and plus codes. Applications can therefore send queries as the user types, to provide on-the-fly place and query predictions.
+
+The response from the Autocomplete (New) API can contain two types of predictions:
+
+Place predictions: Places, such as businesses, addresses and points of interest, based on the specified input text string and search area. Place predictions are returned by default.
+Query predictions: Query strings matching the input text string and search area. Query predictions are not returned by default. Use the includeQueryPredictions request parameter to add query predictions to the response.
+For example, you call the API using as input a string that contains a partial user input, "Sicilian piz", with the search area limited to San Francisco, CA. The response then contains a list of place predictions that match the search string and search area, such as the restaurant named "Sicilian Pizza Kitchen", along with details about the place.
+
+The returned place predictions are designed to be presented to the user to aid them in selecting the desired place. You can make a Place Details (New) request to get more information about any of the returned place predictions.
+
+The response can also contain a list of query predictions that match the search string and search area, such as "Sicilian Pizza & Pasta". Each query prediction in the response includes the text field containing a recommended text search string. Use that string as an input to Text Search (New) to perform a more detailed search.
+
+Note: You can use Autocomplete (New) even without a map. If you do show a map, it must be a Google map. When you display predictions from the Autocomplete (New) service without a map, you must include the Google logo displayed inline with the search field/results. For more information, see Displaying the Google logo and attributions.
+The API Explorer lets you make live requests so that you can get familiar with the API and the API options:
+
+Try it!
+Autocomplete (New) requests
+An Autocomplete (New) request is an HTTP POST request to a URL in the form:
+
+
+https://places.googleapis.com/v1/places:autocomplete
+Pass all parameters in the JSON request body or in headers as part of the POST request. For example:
+
+
+curl -X POST -d '{
+  "input": "pizza",
+  "locationBias": {
+    "circle": {
+      "center": {
+        "latitude": 37.7937,
+        "longitude": -122.3965
+      },
+      "radius": 500.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+About the response
+Autocomplete (New) returns a JSON object as a response. In the response:
+
+The suggestions array contains all of the predicted places and queries in order based on their perceived relevance. Each place is represented by a placePrediction field and each query is represented by a queryPrediction field.
+A placePrediction field contains detailed information about a single place prediction, including the place ID, and text description.
+A queryPrediction field contains detailed information about a single query prediction.
+Note: Autocomplete (New) returns five total predictions, either as placePredictions, queryPredictions, or a combination of both, depending on the request. For example, if the request does not set includeQueryPredictions, the response body includes up to five placePredictions. If the request sets includeQueryPredictions, the response body includes up to five predictions in a combination of placePredictions and queryPredictions.
+The complete JSON object is in the form:
+
+
+{
+  "suggestions": [
+    {
+      "placePrediction": {
+        "place": "places/ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "placeId": "ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "text": {
+          "text": "Amoeba Music, Haight Street, San Francisco, CA, USA",
+          "matches": [
+            {
+              "endOffset": 6
+            }]
+        },
+      ...
+    },
+    {
+      "queryPrediction": {
+        "text": {
+          "text": "Amoeba Music",
+          "matches": [
+            {
+              "endOffset": 6
+            }]
+        },
+        ...
+    }
+  ...]
+}
+Required parameters
+input
+The text string on which to search. Specify full words and substrings, place names, addresses, and plus codes. The Autocomplete (New) service returns candidate matches based on this string and orders results based on their perceived relevance.
+
+Optional parameters
+includedPrimaryTypes
+A place can only have a single primary type from types listed in Table A or Table B. For example, the primary type might be "mexican_restaurant" or "steak_house".
+
+By default, the API returns all places based on the input parameter, regardless of the primary type value associated with the place. Restrict results to be of a certain primary type or primary types by passing the includedPrimaryTypes parameter.
+
+Use this parameter to specify up to five type values from Table A or Table B. A place must match one of the specified primary type values to be included in the response.
+
+This parameter may also include, instead, one of (regions) or (cities). The (regions) type collection filters for areas or divisions, such as neighborhoods and postal codes. The (cities) type collection filters for places that Google identifies as a city.
+
+The request is rejected with an INVALID_REQUEST error if:
+
+More than five types are specified.
+Any type is specified in addition to (cities) or (regions).
+Any unrecognized types are specified.
+Note: The includedPrimaryTypes parameter only works on the primary type of the place, not all types associated with the place. Although every place has a primary type, not every primary type is supported by Places API (New). Supported types include those listed in Table A or Table B.
+includeQueryPredictions
+If true, the response includes both place and query predictions. The default value is false, meaning the response only includes place predictions.
+
+includedRegionCodes
+Only include results from the list of specified regions, specified as an array of up to 15 ccTLD ("top-level domain") two-character values. If omitted, no restrictions are applied to the response. For example, to limit the regions to Germany and France:
+
+
+    "includedRegionCodes": ["de", "fr"]
+If you specify both locationRestriction and includedRegionCodes, the results are located in the area of intersection of the two settings.
+
+inputOffset
+The zero-based Unicode character offset indicating the cursor position in input. The cursor position can influence what predictions are returned. If empty, it defaults to the length of input.
+
+Note: In the initial Private Preview release, this property was called predictionTermOffset.
+languageCode
+The preferred language in which to return results. The results might be in mixed languages if the language used in input is different from the value specified by languageCode, or if the returned place does not have a translation from the local language to languageCode.
+
+You must use IETF BCP-47 language codes to specify the preferred language.
+If languageCode is not supplied, the API uses the value specified in the Accept-Language header. If neither is specified, the default is en. If you specify an invalid language code, the API returns an INVALID_ARGUMENT error.
+The preferred language has a small influence on the set of results that the API chooses to return, and the order in which they are returned. This also affects the API's ability to correct spelling errors.
+The API attempts to provide a street address that is readable for both the user and local population, while at the same time reflecting the user input. Place predictions are formatted differently depending on the user input in each request.
+Matching terms in the input parameter are chosen first, using names aligned with the language preference indicated by the languageCode parameter when available, while otherwise using names that best match the user input.
+Street addresses are formatted in the local language, in a script readable by the user when possible, only after matching terms have been picked to match the terms in the input parameter.
+All other addresses are returned in the preferred language, after matching terms have been chosen to match the terms in the input parameter. If a name is not available in the preferred language, the API uses the closest match.
+locationBias or locationRestriction
+You can specify locationBias or locationRestriction, but not both, to define the search area. Think of locationRestriction as specifying the region which the results must be within, and locationBias as specifying the region that the results must be near but can be outside of the area.
+
+Note: If you omit both locationBias and locationRestriction, then the API uses IP biasing by default. With IP biasing, the API uses the IP address of the device to bias the results.
+locationBias
+Specifies an area to search. This location serves as a bias which means results around the specified location can be returned, including results outside the specified area.
+
+locationRestriction
+Specifies an area to search. Results outside the specified area are not returned.
+
+Specify the locationBias or locationRestriction region as a rectangular Viewport or as a circle.
+
+A circle is defined by center point and radius in meters. The radius must be between 0.0 and 50000.0, inclusive. The default value is 0.0. For locationRestriction, you must set the radius to a value greater than 0.0. Otherwise, the request returns no results.
+
+For example:
+
+
+"locationBias": {
+  "circle": {
+    "center": {
+      "latitude": 37.7937,
+      "longitude": -122.3965
+    },
+    "radius": 500.0
+  }
+}
+A rectangle is a latitude-longitude viewport, represented as two diagonally opposite low and high points. A viewport is considered a closed region, meaning it includes its boundary. The latitude bounds must range between -90 to 90 degrees inclusive, and the longitude bounds must range between -180 to 180 degrees inclusive:
+
+If low = high, the viewport consists of that single point.
+If low.longitude > high.longitude, the longitude range is inverted (the viewport crosses the 180 degree longitude line).
+If low.longitude = -180 degrees and high.longitude = 180 degrees, the viewport includes all longitudes.
+If low.longitude = 180 degrees and high.longitude = -180 degrees, the longitude range is empty.
+Both low and high must be populated, and the represented box cannot be empty. An empty viewport results in an error.
+
+For example, this viewport fully encloses New York City:
+
+
+"locationBias": {
+  "rectangle": {
+    "low": {
+      "latitude": 40.477398,
+      "longitude": -74.259087
+    },
+    "high": {
+      "latitude": 40.91618,
+      "longitude": -73.70018
+    }
+  }
+}
+origin
+The origin point from which to calculate straight-line distance to the destination (returned as distanceMeters). If this value is omitted, straight-line distance will not be returned. Must be specified as latitude and longitude coordinates:
+
+
+"origin": {
+    "latitude": 40.477398,
+    "longitude": -74.259087
+}
+regionCode
+The region code used to format the response, specified as a ccTLD ("top-level domain") two-character value. Most ccTLD codes are identical to ISO 3166-1 codes, with some notable exceptions. For example, the United Kingdom's ccTLD is "uk" (.co.uk) while its ISO 3166-1 code is "gb" (technically for the entity of "The United Kingdom of Great Britain and Northern Ireland").
+
+If you specify an invalid region code, the API returns an INVALID_ARGUMENT error. The parameter can affect results based on applicable law.
+
+sessionToken
+Session tokens are user-generated strings that track Autocomplete (New) calls as "sessions." Autocomplete (New) uses session tokens to group the query and selection phases of a user autocomplete search into a discrete session for billing purposes. For more information, see Session tokens.
+
+Autocomplete (New) examples
+Use locationRestriction and locationBias
+The API uses IP biasing by default to control the search area. With IP biasing, the API uses the IP address of the device to bias the results. You can optionally use locationRestriction or locationBias, but not both, to specify an area to search.
+
+locationRestriction specifies the area to search. Results outside the specified area are not returned. In the following example, you use locationRestriction to limit the request to a circle 5000 meters in radius centered on San Francisco:
+
+
+curl -X POST -d '{
+  "input": "Amoeba",
+  "locationRestriction": {
+    "circle": {
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 5000.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+All results from within the specified areas are contained in the suggestions array:
+
+
+{
+  "suggestions": [
+    {
+      "placePrediction": {
+        "place": "places/ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "placeId": "ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "text": {
+          "text": "Amoeba Music, Haight Street, San Francisco, CA, USA",
+          "matches": [
+            {
+              "endOffset": 6
+            }
+          ]
+        },
+        "structuredFormat": {
+          "mainText": {
+            "text": "Amoeba Music",
+            "matches": [
+              {
+                "endOffset": 6
+              }
+            ]
+          },
+          "secondaryText": {
+            "text": "Haight Street, San Francisco, CA, USA"
+          }
+        },
+        "types": [
+          "home_goods_store",
+          "establishment",
+          "store",
+          "point_of_interest",
+          "electronics_store"
+        ]
+      }
+    }
+  ]
+}
+With locationBias, the location serves as a bias which means results around the specified location can be returned, including results outside the specified area. In the next example, you change the request to use locationBias:
+
+
+curl -X POST -d '{
+  "input": "Amoeba",
+  "locationBias": {
+    "circle": {
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 5000.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+The results now contain many more items, including results outside of the 5000 meter radius:
+
+
+{
+  "suggestions": [
+    {
+      "placePrediction": {
+        "place": "places/ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "placeId": "ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "text": {
+          "text": "Amoeba Music, Haight Street, San Francisco, CA, USA",
+          "matches": [
+            {
+              "endOffset": 6
+            }
+          ]
+        },
+        "structuredFormat": {
+          "mainText": {
+            "text": "Amoeba Music",
+            "matches": [
+              {
+                "endOffset": 6
+              }
+            ]
+          },
+          "secondaryText": {
+            "text": "Haight Street, San Francisco, CA, USA"
+          }
+        },
+        "types": [
+          "electronics_store",
+          "point_of_interest",
+          "store",
+          "establishment",
+          "home_goods_store"
+        ]
+      }
+    },
+    {
+      "placePrediction": {
+        "place": "places/ChIJr7uwwy58hYARBY-e7-QVwqw",
+        "placeId": "ChIJr7uwwy58hYARBY-e7-QVwqw",
+        "text": {
+          "text": "Amoeba Music, Telegraph Avenue, Berkeley, CA, USA",
+          "matches": [
+            {
+              "endOffset": 6
+            }
+          ]
+        },
+        "structuredFormat": {
+          "mainText": {
+            "text": "Amoeba Music",
+            "matches": [
+              {
+                "endOffset": 6
+              }
+            ]
+          },
+          "secondaryText": {
+            "text": "Telegraph Avenue, Berkeley, CA, USA"
+          }
+        },
+        "types": [
+          "electronics_store",
+          "point_of_interest",
+          "establishment",
+          "home_goods_store",
+          "store"
+        ]
+      }
+    },
+    ...
+  ]
+}
+Use includedPrimaryTypes
+Use the includedPrimaryTypes parameter to specify up to five type values from Table A, Table B, or only (regions), or only (cities). A place must match one of the specified primary type values to be included in the response.
+
+In the following example, you specify an input string of "Soccer" and use the includedPrimaryTypes parameter to restrict results to establishments of type "sporting_goods_store":
+
+
+curl -X POST -d '{
+  "input": "Soccer",
+  "includedPrimaryTypes": ["sporting_goods_store"],
+  "locationBias": {
+    "circle": {
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 500.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+If you omit the includedPrimaryTypes parameter, then the results can include establishments of a type that you do not want, such as "athletic_field".
+
+Request query predictions
+Query predictions are not returned by default. Use the includeQueryPredictions request parameter to add query predictions to the response. For example:
+
+
+curl -X POST -d '{
+  "input": "Amoeba",
+  "includeQueryPredictions": true,
+  "locationBias": {
+    "circle": {
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 5000.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+The suggestions array now contains both place predictions and query predictions as shown above in About the response. Each query prediction includes the text field containing a recommended text search string. You can make a Text Search (New) request to get more information about any of the returned query predictions.
+
+Note: Query predictions are not returned when the includedRegionCodes parameter is set.
+Use origin
+In this example, include origin in the request as latitude and longitude coordinates. When you include origin, the API includes the distanceMeters field in the response which contains the straight-line distance from the origin to the destination. This example sets the origin to the center of San Francisco:
+
+
+curl -X POST -d '{
+  "input": "Amoeba",
+  "origin": {
+    "latitude": 37.7749,
+    "longitude": -122.4194
+  },
+  "locationRestriction": {
+    "circle": {
+      "center": {
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "radius": 5000.0
+    }
+  }
+}' \
+-H 'Content-Type: application/json' -H "X-Goog-Api-Key: API_KEY" \
+https://places.googleapis.com/v1/places:autocomplete
+The response now includes distanceMeters:
+
+
+{
+  "suggestions": [
+    {
+      "placePrediction": {
+        "place": "places/ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "placeId": "ChIJ5YQQf1GHhYARPKG7WLIaOko",
+        "text": {
+          "text": "Amoeba Music, Haight Street, San Francisco, CA, USA",
+          "matches": [
+            {
+              "endOffset": 6
+            }
+          ]
+        },
+        "structuredFormat": {
+          "mainText": {
+            "text": "Amoeba Music",
+            "matches": [
+              {
+                "endOffset": 6
+              }
+            ]
+          },
+          "secondaryText": {
+            "text": "Haight Street, San Francisco, CA, USA"
+          }
+        },
+        "types": [
+          "home_goods_store",
+          "establishment",
+          "point_of_interest",
+          "store",
+          "electronics_store"
+        ],
+        "distanceMeters": 3012
+      }
+    }
+  ]
+}
+Try it!

@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
   <div class="container">
     <div class="header-logo">
-        <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>   
+        <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair custom-wheelchair blue-icon'></i>PWDIS</a>   
      </div>
 
 
     <!-- Toggler for mobile view -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+      <span class="navbar-toggler-icon">&#9776;</span>
     </button>
 
     <!-- Navbar links -->
@@ -39,9 +39,12 @@
         <!-- User Profile Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img src="uploads/default_avatar.jpg" class="rounded-circle" alt="Profile Picture" width="30" height="30">
-          </a>
-
+          <?php
+              $avatarUrl = isset($_SESSION['avatar_url']) && !empty($_SESSION['avatar_url']) 
+                          ? $_SESSION['avatar_url'] 
+                          : 'path/to/default/avatar.png';
+          ?>
+          <img src="<?php echo htmlspecialchars($avatarUrl); ?>" alt="User Avatar" class="user-avatar rounded-circle" width="30" height="30">
           </a>
           <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userProfileDropdown">
             <a class="dropdown-item text-center font-weight-bold" href="#">Hi, <?php echo $_SESSION['name'] . " " . $_SESSION['lname'] ?></a>

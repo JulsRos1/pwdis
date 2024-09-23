@@ -14,21 +14,25 @@ body {
   }
 }
 .custom-navbar {
-  background-color: #343a40;
+  background-color: #1F2937;
 }
 
 /************************************NAVBAR***************************************************************/
+.blue-icon {
+  color: #007bff;
+}
+
 .navbar-brand{
   font-weight: bold;
   font-size:1.3rem;
-  background:#ffff;
   border-radius:7px;
   padding:5px;
+  color:#D1D5DB;
 }
 .navbar-nav .nav-link {
   font-size: 1rem;
   font-weight: 500;
-  color: #f8f9fa;
+  color:#D1D5DB;
   padding: 10px 20px;
   transition: color 0.3s ease, background-color 0.3s ease;
 }
@@ -50,25 +54,19 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.dropdown-menu .dropdown-item:hover {
-  background-color: rgba(0, 123, 255, 0.1);
+.navbar-toggler-icon {
+  color:#D1D5DB;
+  font-size: 1.5rem; /* adjust as needed */
 }
-.navbar-light .navbar-toggler {
-  border: none;
+.navbar-toggler:focus {
   outline: none;
-  padding: 5px;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Bootstrap's default focus color */
+}
+.navbar-toggler:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
-.navbar-light .navbar-toggler-icon {
-  font-size: 1.5rem;
-}
-
-.navbar.scrolled {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.dropdown-menu-end {
-  padding: 0.75rem;
-}
 
 /***************************************NAVBAR END*****************************************************************************/
 .recent-uploads {
@@ -132,7 +130,7 @@ body {
 }
 
 .card-header {
-  background-color: #343a40;
+  background-color: #1F2937;
   color: #fff;
 }
 

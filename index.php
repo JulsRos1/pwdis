@@ -102,7 +102,9 @@ if (!isset($_SESSION['user_login'])) {
 
 <body>
   <!-- Navigation -->
+  
   <?php include('includes/header.php');
+
 
   ?>
 
@@ -211,6 +213,9 @@ if (!isset($_SESSION['user_login'])) {
         });
       });
     });
+    document.getElementById('mobileMenuToggle').addEventListener('click', function() {
+    document.getElementById('mobileMenu').classList.toggle('hidden');
+  });
   </script>
 </body>
 

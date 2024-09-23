@@ -2,6 +2,7 @@
 session_start();
 include('includes/config.php');
 
+
 if (isset($_SESSION['user_login'])) {
   // Redirect the user to another page, for example, index.php
   header("Location: index.php");
@@ -30,6 +31,7 @@ if (isset($_POST['login'])) {
       $_SESSION['name'] = ($row['FirstName']);
       $_SESSION['lname'] = ($row['LastName']);
       $_SESSION['Email'] = ($row['Email']);
+      $_SESSION['avatar_url'] = !empty($row['avatar_url']) ? $row['avatar_url'] : './uploads/default_avatar.png';
 
       header("Location: index.php");
       die;

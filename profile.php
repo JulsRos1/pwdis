@@ -50,6 +50,9 @@ if (isset($_POST['update_profile'])) {
                     $alert = "Profile picture updated successfully!";
                     $alert_type = "success";
                     $userData['avatar_url'] = $target_file; // Update the local variable to reflect the change
+                    $_SESSION['avatar_url'] = $target_file; // Store the avatar URL in the session
+                    
+                    
                 } else {
                     $alert = "Error updating profile picture: " . mysqli_error($con);
                     $alert_type = "danger";

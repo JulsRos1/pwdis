@@ -45,13 +45,6 @@ include('includes/config.php');
         if ($_GET['catid'] != '') {
           $_SESSION['catid'] = intval($_GET['catid']);
         }
-
-
-
-
-
-
-
         if (isset($_GET['pageno'])) {
           $pageno = $_GET['pageno'];
         } else {
@@ -77,7 +70,7 @@ include('includes/config.php');
 
 
         ?>
-            <h1><?php echo htmlentities($row['category']); ?> Page</h1>
+            <h4><?php echo htmlentities($row['category']); ?> </h4>
             <div class="card mb-4">
               <img class="card-img-top" src="admin/postimages/<?php echo htmlentities($row['PostImage']); ?>" alt="<?php echo htmlentities($row['posttitle']); ?>">
               <div class="card-body">

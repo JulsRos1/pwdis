@@ -158,7 +158,7 @@
 
 <body>
     <div class="sidebar">
-        <a href="index.php" class="btn btn-primary btn-home">Home</a>
+        <a href="index.php" class="btn btn-primary btn-home">Exit</a>
         <h4>Chatbox</h4>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
         <ul class="chat-options">
@@ -170,7 +170,7 @@
         </ul>
     </div>
     <div class="chat-container">
-        <h4 id="chatHeader">Select a chat option</h4>
+        <h4 id="chatHeader">All Chat - Users Forum</h4>
         <div class="message-list" id="messageList">
             <!-- Messages will be displayed here -->
         </div>
@@ -187,6 +187,8 @@
     <script>
         let selectedUserId = null;
         let chatMode = 'group'; // 'group' or 'private'
+        let isUserScrolling = false; // To track if the user is scrolling
+        let shouldScrollToBottom = true; // To track if we should auto-scroll
 
         function fetchUsers(searchQuery = '') {
             $.get('fetch_users.php', {
@@ -209,6 +211,19 @@
                 }
             });
         }
+
+        $('#messageList').on('scroll', function() {
+            const scrollTop = $(this).scrollTop();
+            const scrollHeight = $(this)[0].scrollHeight;
+            const clientHeight = $(this).innerHeight();
+
+            // If user is near the bottom, we set shouldScrollToBottom to true
+            if (scrollTop + clientHeight >= scrollHeight - 5) {
+                shouldScrollToBottom = true; // User is at the bottom
+            } else {
+                shouldScrollToBottom = false; // User is scrolling up
+            }
+        });
 
         function fetchMessages() {
             let url = chatMode === 'group' ? 'fetch_messages.php' : 'fetch_private_messages.php';
@@ -234,11 +249,13 @@
                             '</div>'
                         );
                     });
-                    $('#messageList').scrollTop($('#messageList')[0].scrollHeight);
+                     if (shouldScrollToBottom) {
+                         $('#messageList').scrollTop($('#messageList')[0].scrollHeight);
+                         }
                 } else {
                     alert('Error fetching messages');
                 }
-            });
+                    });
         }
 
         function sendMessage() {

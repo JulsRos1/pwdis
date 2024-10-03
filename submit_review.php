@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $display_name = $_POST['display_name'];
     $rating = $_POST['rating'];
     $review = $_POST['review'];
+    $accessibility_level = isset($_POST['accessibility_level']) ? $_POST['accessibility_level'] : '';
+
 
     // Check if user is logged in
     if (!isset($_SESSION['name']) || !isset($_SESSION['lname'])) {

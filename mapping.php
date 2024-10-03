@@ -6,7 +6,7 @@ session_start();
 <html>
 
 <head>
-  <title>Wheelchair Accessible Places in Los Baños, Laguna</title>
+  <title>Discover PWD Accessible Places in Los Baños, Laguna</title>
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="css/modern-business.css" rel="stylesheet" />
@@ -117,6 +117,7 @@ session_start();
           <input type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
           <label for="seating">Has PWD Accessible Seating</label><br>
 
+          <input type="hidden" name="accessibility_level" id="accessibility_level">
           <input type="hidden" name="display_name" id="display_name_modal1">
           <input type="hidden" name="place_id" id="place_id_accessibility_modal">
           <input type="submit" value="Submit" name="submit">
@@ -152,7 +153,6 @@ session_start();
 
 <script>
   let map;
-  let infoWindow;
   let userLocation;
   let markers = [];
   document.addEventListener("DOMContentLoaded", function() {
@@ -213,10 +213,11 @@ session_start();
 
         map = new google.maps.Map(document.getElementById("map"), {
           center: userLocation,
-          zoom: 15,
+          zoom: 17,
+          mapTypeControl: false, // This disables the default "Map" and "Satellite" buttons
+          streetViewControl: false, // Optionally disable the Street View button
+          fullscreenControl: false // Optionally disable the fullscreen control
         });
-
-        infoWindow = new google.maps.InfoWindow();
 
         // Display user's current location
         new google.maps.Marker({
@@ -230,6 +231,7 @@ session_start();
 
         // Add click event listener to the map
         map.addListener('click', function(event) {
+          event.stop(); // Stop any default actions
           handleMapClick(event.latLng);
         });
       },
@@ -315,7 +317,7 @@ session_start();
 }
 
   function handleMapClick(latLng) {
-    console.log("Clicked location:", latLng.lat(), latLng.lng());
+    console.log("Unknown Clicked Location:", latLng.lat(), latLng.lng());
     // Clear existing markers
     clearMarkers();
 
@@ -327,7 +329,7 @@ session_start();
             latitude: latLng.lat(),
             longitude: latLng.lng(),
           },
-          radius: 25, // Increase the radius to 50 meters
+          radius: 15, // Increase the radius to 50 meters
         },
       },
       maxResultCount: 1
@@ -354,7 +356,7 @@ session_start();
           console.log("No place found at this location");
           addMarker({
             location: { latitude: latLng.lat(), longitude: latLng.lng() },
-            displayName: { text: "Clicked Location" },
+            displayName: { text: "Unknown Location" },
             formattedAddress: "Unknown Address",
             id: "clicked_location",
           }, {});
@@ -455,57 +457,77 @@ session_start();
     }
     markers = [];
   }
-
   function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo) {
     const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
     const reviewCount = reviewsData.reviewCount || "No reviews";
     const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
-    const reviewsHtml = reviewsData.reviews.map(review => `<p><strong>Rating:</strong> ${review.rating} - ${review.review}</p>`).join("<br>");
+    const reviewsHtml = reviewsData.reviews.map(review => {
+        const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`).join("");
+        return `
+            <div class="review">
+              <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
+              <div class="stars">${starsHtml}</div>
+              <p>${review.review}</p>
+            </div>
+            <hr>
+        `;
+    }).join("");
 
-    // Create the photo HTML if a photo is available
+    // Create the photo HTML if a photo is available with higher quality
     const photoHtml = photo ? `
-      <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=200&maxWidthPx=200" 
-           alt="${place.displayName.text}" 
-           style="max-width: 25em; max-height: 15em; object-fit: cover;   display: block; margin-left: auto;  margin-right: auto; width: 100%;">` : '';
+      <div style="position: relative;">
+        <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600"
+             alt="${place.displayName.text}"
+             style="max-width: 100%; max-height: 20em; object-fit: cover; display: block; margin-left: auto; margin-right: auto;">
+      </div>` : `
+    `;
 
     return `
-      <div>
-        <button onclick="closePlaceDetailsPanel()" class="close-details">&times;</button>
-        ${photoHtml}
-        <h4>${place.displayName.text}</h4>
-        <p>${place.formattedAddress}</p>
-        <ul>
+  <div>
+    ${photoHtml}
+    <h4>${place.displayName.text}</h4>
+    <p>${place.formattedAddress}</p>
+    <ul>
       ${accessibilityOptions.wheelchairAccessibleParking
-            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking - Not Accessible</li>"}
-          ${accessibilityOptions.wheelchairAccessibleEntrance
-            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance - Not Accessible</li>"}
-          ${accessibilityOptions.wheelchairAccessibleRestroom
-            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom - Not Accessible</li>"}
-          ${accessibilityOptions.wheelchairAccessibleSeating
-            ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-            : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
-        </ul>
-        <div class="d-flex justify-content-center">
+        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking - Not Accessible</li>"}
+      ${accessibilityOptions.wheelchairAccessibleEntrance
+        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance - Not Accessible</li>"}
+      ${accessibilityOptions.wheelchairAccessibleRestroom
+        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom - Not Accessible</li>"}
+      ${accessibilityOptions.wheelchairAccessibleSeating
+        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
+    </ul>
+    <div class="d-flex justify-content-center">
           <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Write a Review</button>
           <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
-        </div>
-        <hr>
-        <div>
-          <h4>Reviews Summary:</h4>
-          <p><strong>Average Rating:</strong> ${averageRating} / 5</p>
-          <div class="stars">${starsHtml}</div>
-          <p><strong>Total Reviews:</strong> ${reviewCount}</p>
-          <hr>
-        </div>
-        <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-sm" onclick="showReviews('${place.id}')">Show Reviews</button>
-        </div>
+   <!-- #endregion --> </div>
+    
+    <hr>
+    <div class="review-summary">
+      <div class="average-rating">
+        <span class="rating-number">${averageRating}</span>
+        <div class="stars">${starsHtml}</div>
+        <p class="total-reviews">${reviewCount} reviews</p>
       </div>
-    `;
-  }
+      <hr>
+    </div>
+
+    <div class="recent-reviews">
+      <div class="reviews-list">
+       <h4>Recent Reviews:</h4>
+        ${reviewsHtml}
+      </div>
+    </div>
+  </div>
+`;
+}
+
+// Adjust other functions as needed
+
 
   function openReviewModal(placeId, displayName) {
     console.log("Opening review modal for:", placeId, displayName);

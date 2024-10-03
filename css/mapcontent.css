@@ -10,16 +10,14 @@
   padding: 10px;
   font-family: Arial, sans-serif;
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 0px; /* Change from bottom to top */
+  right: 0px; /* Keep the right property */
   z-index: 999;
   border-radius: 8px;
   border: 1px solid #ccc;
   margin-top: 1.5em;
-  /* Make the legend responsive */
   max-width: calc(100% - 20px); /* Ensure it doesn’t exceed the map width */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  /* Add some shadow for better visibility */
+  box-shadow: 0 2px 4px #42171733;
   overflow: auto;
 }
 
@@ -33,6 +31,7 @@
   display: flex;
   align-items: center;
   margin-bottom: 5px;
+  font-size: 0.85rem;
 }
 
 .legend span {
@@ -46,6 +45,7 @@
   margin: 0 0 10px 0;
   font-size: 14px;
 }
+
 @media (max-width: 768px) {
   .legend {
     top: 10px;
@@ -97,17 +97,18 @@
 .category-button {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
+  padding: 8px 10px;
   border: none;
   background: none;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 14px;
+  font-size: 13px;
   color: #5f6368;
 }
 
 .category-button:hover {
-  background-color: #f1f3f4;
+  background-color: black;
+  color:white;
 }
 
 .category-button i {
@@ -133,16 +134,10 @@
   left: 0;
 }
 
-/* Adjust the hamburger menu position */
-.hamburger-menu {
-  left: 10px;
-  top: 60px; /* Moved below the top button bar */
-}
-
 .close-details {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0px;
+  right: 0px;
   background: none;
   border: none;
   font-size: 24px;
@@ -188,6 +183,68 @@
 .no-bullet{
   list-style-type: none;
 }
+/*Reviews Summary Style */
+.review-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.average-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 24px;
+}
+
+.rating-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #34A853;
+}
+
+.stars {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+.stars i {
+  font-size: 22px;
+  color: #FFD700;
+}
+
+.total-reviews {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #666;
+}
+
+/* Reviews list section */
+.recent-reviews {
+  margin-top: 20px;
+}
+
+.recent-reviews h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.reviews-list {
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+}
+
+.reviews-list p {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+/*REviews summary style end*/
+
+
+/*Write Reviews modal */
 .star-rating {
   display: flex;
   flex-direction: row-reverse;
@@ -264,5 +321,6 @@
 
   border: none;
 }
+/*Write Reviews modal END*/
 
 

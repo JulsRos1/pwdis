@@ -101,7 +101,7 @@ if (!isset($_SESSION['user_login'])) {
 </head>
 
 <body>
-  <!-- Navigation -->
+
   
   <?php include('includes/header.php');
 

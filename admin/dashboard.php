@@ -214,7 +214,7 @@ if (strlen($_SESSION['login']) == 0) {
                     x: {
                         title: {
                             display: true,
-                            text: 'Accessibility Level'
+                           
                         }
                     },
                     y: {

@@ -21,7 +21,6 @@ if (!isset($_SESSION['user_login'])) {
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <link href="css/modern-business.css" rel="stylesheet">
 
   <!-- Custom styles -->

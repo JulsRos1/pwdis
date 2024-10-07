@@ -6,7 +6,7 @@ session_start();
 <html>
 
 <head>
-  <title>Discover PWD Accessible Places in Los Baños, Laguna</title>
+  <title>Navigate Accessibility  in Los Baños, Laguna</title>
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="css/modern-business.css" rel="stylesheet" />
@@ -84,6 +84,8 @@ session_start();
             <br>
             <input type="hidden" name="display_name" id="display_name_modal">
             <input type="hidden" name="place_id" id="place_id_modal">
+            <input type="hidden" name="photo_url" id="photo_url_modal">
+            <input type="hidden" name="formatted_address" id="formatted_address_modal">
             <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
             <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
             <input type="submit" value="Submit" name="submit">
@@ -106,8 +108,8 @@ session_start();
         </button>
       </div>
       <div class="modal-body">
-        <form action="submit_accessibility.php" method="POST">
-          <p>Make an Update on AccessibilityOptions</p>
+        <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
+          <p>Make an Update on Accessibility Options</p>
           <input type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
           <label for="parking">Has PWD Accessible Parking</label><br>
           <input type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
@@ -342,7 +344,7 @@ session_start();
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
+          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos"
         },
         body: JSON.stringify(request),
       }
@@ -474,13 +476,17 @@ session_start();
     }).join("");
 
     // Create the photo HTML if a photo is available with higher quality
-    const photoHtml = photo ? `
+    
+    const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600` : '';
+
+    // Create the photo HTML if a photo is available
+    const photoHtml = photoUrl ? `
       <div style="position: relative;">
-        <img src="https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600"
-             alt="${place.displayName.text}"
-             style="max-width: 100%; max-height: 20em; object-fit: cover; display: block; margin-left: auto; margin-right: auto;">
-      </div>` : `
-    `;
+        <img src="${photoUrl}"
+            alt="${place.displayName.text}"
+            style="max-width: 100%; max-height: 20em; object-fit: cover; display: block; margin-left: auto; margin-right: auto;">
+      </div>` : '';
+
 
     return `
   <div>
@@ -502,7 +508,7 @@ session_start();
         : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
     </ul>
     <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Write a Review</button>
+          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}')">Write a Review</button>
           <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
    <!-- #endregion --> </div>
     
@@ -529,12 +535,14 @@ session_start();
 // Adjust other functions as needed
 
 
-  function openReviewModal(placeId, displayName) {
-    console.log("Opening review modal for:", placeId, displayName);
-    document.getElementById('place_id_modal').value = placeId;
-    document.getElementById('display_name_modal').value = displayName;
-    $('#reviewModal').modal('show');
-  }
+function openReviewModal(placeId, displayName, formattedAddress, photoUrl) {
+  console.log("Opening review modal for:", placeId, displayName, formattedAddress);
+  document.getElementById('place_id_modal').value = placeId;
+  document.getElementById('photo_url_modal').value = photoUrl || ''; // Set to empty string if undefined
+  document.getElementById('display_name_modal').value = displayName;
+  document.getElementById('formatted_address_modal').value = formattedAddress;
+  $('#reviewModal').modal('show');
+}
   // Eto yung logic sa stars in the ratings
   document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.stars i');
@@ -551,29 +559,32 @@ session_start();
   });
 
   function openAccessibilityModal(placeId, displayName) {
-    console.log("Opening accessibility modal for:", placeId, displayName);
-    document.getElementById("place_id_accessibility_modal").value = placeId;
-    document.getElementById("display_name_modal1").value = displayName;
+  console.log("Opening accessibility modal for:", placeId, displayName);
+  
+  // Set place ID and display name
+  document.getElementById("place_id_accessibility_modal").value = placeId;
+  document.getElementById("display_name_modal1").value = displayName;
 
-    fetch(`fetch_accessibility_options.php?place_id=${placeId}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // Update checkboxes based on fetched data
-        for (const [key, value] of Object.entries(data)) {
-          const checkbox = document.querySelector(
-            `#accessibilityModal input[name="accessibilityOptions[]"][value="${key}"]`
-          );
-          if (checkbox) {
-            checkbox.checked = value;
-          }
+  // Fetch accessibility options and update the checkboxes
+  fetch(`fetch_accessibility_options.php?place_id=${placeId}`)
+    .then(response => response.json())
+    .then(data => {
+      // Update checkboxes based on fetched data
+      for (const [key, value] of Object.entries(data)) {
+        const checkbox = document.querySelector(`#accessibilityModal input[name="accessibilityOptions[]"][value="${key}"]`);
+        if (checkbox) {
+          checkbox.checked = value;
         }
-        $("#accessibilityModal").modal("show");
-      })
-      .catch((error) => {
-        console.error("Error fetching accessibility options:", error);
-        $("#accessibilityModal").modal("show"); // Show modal even if fetch fails
-      });
-  }
+      }
+      // Show the modal
+      $("#accessibilityModal").modal("show");
+    })
+    .catch(error => {
+      console.error("Error fetching accessibility options:", error);
+      // Show the modal even if fetch fails
+      $("#accessibilityModal").modal("show");
+    });
+}
 
   // Add event listener for accessibility form submission
   document.querySelector("#accessibilityModal form").addEventListener("submit", function(event) {
@@ -615,15 +626,15 @@ session_start();
         });
     });
 
-  function updateAccessibilityLevel() {
-  const checkboxes = document.querySelectorAll('#accessibilityModal input[type="checkbox"]');
-  const accessibilityCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
-  
-  let accessibilityLevel = "Not Accessible";
-  if (accessibilityCount > 2) accessibilityLevel = "Highly Accessible";
-  else if (accessibilityCount > 0) accessibilityLevel = "Accessible";
-  
-  document.getElementById("accessibility_level").value = accessibilityLevel;
+    function updateAccessibilityLevel() {
+      const checkboxes = document.querySelectorAll('#accessibilityModal input[type="checkbox"]');
+      const accessibilityCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+
+      let accessibilityLevel = "Not Accessible";
+      if (accessibilityCount > 2) accessibilityLevel = "Highly Accessible";
+      else if (accessibilityCount > 0) accessibilityLevel = "Accessible";
+
+      document.getElementById("accessibility_level").value = accessibilityLevel;
 }
 
 document.querySelectorAll('#accessibilityModal input[type="checkbox"]')

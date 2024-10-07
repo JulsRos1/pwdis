@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 <nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
   <div class="container">
     <div class="header-logo">
@@ -19,13 +21,18 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="about-us.php">
-            <i class="fas fa-info-circle"></i> About
+          <a class="nav-link" href="mapping.php">
+            <i class="fas fa-map-marked-alt"></i> Map Accessibility
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="mapping.php">
-            <i class="fas fa-map-marked-alt"></i> Map Accessibility
+          <a class="nav-link" href="top_rated_places.php">
+            <i class="fas fa-map-marked-alt"></i> Popular Places
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="about-us.php">
+            <i class="fas fa-info-circle"></i> About
           </a>
         </li>
         <li class="nav-item">

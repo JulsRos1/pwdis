@@ -6,7 +6,7 @@ header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate input
-    $required_fields = ['place_id', 'display_name', 'rating', 'review'];
+    $required_fields = ['place_id', 'display_name', 'formatted_address', 'rating', 'review', 'photo_url'];
     foreach ($required_fields as $field) {
         if (!isset($_POST[$field]) || empty($_POST[$field])) {
             echo json_encode(['status' => 'error', 'message' => "Missing required field: $field"]);
@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $place_id = $_POST['place_id'];
     $display_name = $_POST['display_name'];
+    $formatted_address = $_POST['formatted_address'];
     $rating = $_POST['rating'];
     $review = $_POST['review'];
-    $accessibility_level = isset($_POST['accessibility_level']) ? $_POST['accessibility_level'] : '';
-
+    $photo_url = $_POST['photo_url'];
 
     // Check if user is logged in
     if (!isset($_SESSION['name']) || !isset($_SESSION['lname'])) {
@@ -34,14 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $full_name = $first_name . ' ' . $last_name;
 
     // Prepare the SQL query to insert the review
-    $query = $con->prepare("INSERT INTO reviews (place_id, display_name, rating, review, full_name) VALUES (?, ?, ?, ?, ?)");
+    $query = $con->prepare("INSERT INTO reviews (place_id, display_name, formatted_address, rating, review, full_name, photo_url) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
     if (!$query) {
         echo json_encode(['status' => 'error', 'message' => 'Error preparing query: ' . $con->error]);
         exit;
     }
 
-    $query->bind_param("sssss", $place_id, $display_name, $rating, $review, $full_name);
+    $query->bind_param("sssssss", $place_id, $display_name, $formatted_address, $rating, $review, $full_name, $photo_url);
 
     // Check if the query executed successfully
     if ($query->execute()) {

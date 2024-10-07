@@ -57,6 +57,7 @@ $con->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="manifest" href="js/manifest.json">
   <script type="text/javascript" src="js/login_validation.js" defer></script>
 </head>
 

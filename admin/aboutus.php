@@ -35,7 +35,7 @@ $error="Something went wrong . Please try again.";
         <!-- App favicon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
         <!-- App title -->
-        <title>Newsportal | About us Page</title>
+        <title>PWDIS | About us Page</title>
 
         <!-- Summernote css -->
         <link href="../plugins/summernote/summernote.css" rel="stylesheet" />
@@ -52,10 +52,8 @@ $error="Something went wrong . Please try again.";
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-		<link rel="stylesheet" href="../plugins/switchery/switchery.min.css">
         <script src="assets/js/modernizr.min.js"></script>
 
     </head>
@@ -194,10 +192,8 @@ while($row=mysqli_fetch_array($query))
         <script src="assets/js/detect.js"></script>
         <script src="assets/js/fastclick.js"></script>
         <script src="assets/js/jquery.blockUI.js"></script>
-        <script src="assets/js/waves.js"></script>
         <script src="assets/js/jquery.slimscroll.js"></script>
         <script src="assets/js/jquery.scrollTo.min.js"></script>
-        <script src="../plugins/switchery/switchery.min.js"></script>
 
         <!--Summernote js-->
         <script src="../plugins/summernote/summernote.min.js"></script>
@@ -231,7 +227,6 @@ while($row=mysqli_fetch_array($query))
                 });
             });
         </script>
-  <script src="../plugins/switchery/switchery.min.js"></script>
 
         <!--Summernote js-->
         <script src="../plugins/summernote/summernote.min.js"></script>

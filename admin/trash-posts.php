@@ -71,12 +71,11 @@ if (strlen($_SESSION['login']) == 0) {
         <!-- App css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="../plugins/switchery/switchery.min.css">
+
 
         <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -225,7 +224,7 @@ if (strlen($_SESSION['login']) == 0) {
                 var resizefunc = [];
             </script>
 
-            <!-- jQuery  -->
+             <!-- jQuery  -->
             <script src="assets/js/jquery.min.js"></script>
             <script src="assets/js/bootstrap.min.js"></script>
             <script src="assets/js/detect.js"></script>
@@ -234,22 +233,6 @@ if (strlen($_SESSION['login']) == 0) {
             <script src="assets/js/waves.js"></script>
             <script src="assets/js/jquery.slimscroll.js"></script>
             <script src="assets/js/jquery.scrollTo.min.js"></script>
-            <script src="../plugins/switchery/switchery.min.js"></script>
-
-            <!-- CounterUp  -->
-            <script src="../plugins/waypoints/jquery.waypoints.min.js"></script>
-            <script src="../plugins/counterup/jquery.counterup.min.js"></script>
-
-            <!--Morris Chart-->
-            <script src="../plugins/morris/morris.min.js"></script>
-            <script src="../plugins/raphael/raphael-min.js"></script>
-
-            <!-- Load page level scripts-->
-            <script src="../plugins/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
-            <script src="../plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-            <script src="../plugins/jvectormap/gdp-data.js"></script>
-            <script src="../plugins/jvectormap/jquery-jvectormap-us-aea-en.js"></script>
-
 
             <!-- Dashboard Init js -->
             <script src="assets/pages/jquery.blog-dashboard.js"></script>

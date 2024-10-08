@@ -141,7 +141,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                         <td><?php echo htmlentities($row['category']) ?></td>
 
                                                         <td><a href="edit-post.php?pid=<?php echo htmlentities($row['postid']); ?>"><i class="fa fa-pencil" style="color: #29b6f6;"></i></a>
-                                                            &nbsp;<a href="manage-posts.php?pid=<?php echo htmlentities($row['postid']); ?>&&action=del" onclick="return confirm('Do you reaaly want to delete ?')"> <i class="fa fa-trash-o" style="color: #f05050"></i></a> </td>
+                                                            &nbsp;<a href="manage-posts.php?pid=<?php echo htmlentities($row['postid']); ?>&&action=del" onclick="return confirm('Do you really want to delete ?')"> <i class="fa fa-trash-o" style="color: #f05050"></i></a> </td>
                                                     </tr>
                                             <?php }
                                                     } ?>
@@ -187,22 +187,6 @@ if (strlen($_SESSION['login']) == 0) {
         <script src="assets/js/waves.js"></script>
         <script src="assets/js/jquery.slimscroll.js"></script>
         <script src="assets/js/jquery.scrollTo.min.js"></script>
-        <script src="../plugins/switchery/switchery.min.js"></script>
-
-        <!-- CounterUp  -->
-        <script src="../plugins/waypoints/jquery.waypoints.min.js"></script>
-        <script src="../plugins/counterup/jquery.counterup.min.js"></script>
-
-        <!--Morris Chart-->
-        <script src="../plugins/morris/morris.min.js"></script>
-        <script src="../plugins/raphael/raphael-min.js"></script>
-
-        <!-- Load page level scripts-->
-        <script src="../plugins/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
-        <script src="../plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
-        <script src="../plugins/jvectormap/gdp-data.js"></script>
-        <script src="../plugins/jvectormap/jquery-jvectormap-us-aea-en.js"></script>
-
 
         <!-- Dashboard Init js -->
         <script src="assets/pages/jquery.blog-dashboard.js"></script>

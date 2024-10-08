@@ -53,7 +53,7 @@ if (strlen($_SESSION['login']) == 0) {
         <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="../plugins/switchery/switchery.min.css">
+
         <script src="assets/js/modernizr.min.js"></script>
     </head>
 

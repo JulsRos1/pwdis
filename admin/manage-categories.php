@@ -33,13 +33,75 @@ if (strlen($_SESSION['login']) == 0) {
         <title> PWDIS | Manage Categories</title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
-        <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="../plugins/switchery/switchery.min.css">
         <script src="assets/js/modernizr.min.js"></script>
+        <style>
+            .table-modern {
+                border-collapse: separate;
+                border-spacing: 0;
+                width: 100%;
+                background-color: #fff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            }
+
+            .table-modern thead {
+                background-color: #343a40;
+                color: #fff;
+            }
+
+            .table-modern tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+            .table-modern th, .table-modern td {
+                padding: 12px 15px;
+                text-align: left;
+                vertical-align: middle;
+                border-top: 1px solid #dee2e6;
+            }
+
+            .table-modern th {
+                font-weight: bold;
+            }
+
+            .table-modern td {
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            .table-modern td .text-primary {
+                color: #007bff !important;
+            }
+
+            .table-modern td .text-danger {
+                color: #dc3545 !important;
+            }
+
+            .table-modern .fa {
+                font-size: 1.2em;
+            }
+
+            .table-modern .fa-pencil-alt {
+                transition: color 0.2s ease;
+            }
+
+            .table-modern .fa-pencil-alt:hover {
+                color: #0056b3;
+            }
+
+            .table-modern .fa-trash {
+                transition: color 0.2s ease;
+            }
+
+            .table-modern .fa-trash:hover {
+                color: #c82333;
+            }
+
+        </style>
 
     </head>
 
@@ -124,31 +186,29 @@ if (strlen($_SESSION['login']) == 0) {
                                         </div>
 
                                         <div class="table-responsive">
-                                            <table class="table m-0 table-colored-bordered table-bordered-primary">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th> Category</th>
-                                                        <th>Description</th>
-
-                                                        <th>Posting Date</th>
-                                                        <th>Last updation Date</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from  tblcategory where Is_Active=1");
-                                                    $cnt = 1;
-                                                    while ($row = mysqli_fetch_array($query)) {
-                                                    ?>
-
-                                                        <tr>
-                                                            <th scope="row"><?php echo htmlentities($cnt); ?></th>
-                                                            <td><?php echo htmlentities($row['CategoryName']); ?></td>
-                                                            <td><?php echo htmlentities($row['Description']); ?></td>
-                                                            <td><?php echo htmlentities($row['PostingDate']); ?></td>
-                                                            <td><?php echo htmlentities($row['UpdationDate']); ?></td>
+    <table class="table table-striped table-hover table-bordered table-modern">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Posting Date</th>
+                <th>Last Updation Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from tblcategory where Is_Active=1");
+            $cnt = 1;
+            while ($row = mysqli_fetch_array($query)) {
+            ?>
+                <tr>
+                    <th scope="row"><?php echo htmlentities($cnt); ?></th>
+                    <td><?php echo htmlentities($row['CategoryName']); ?></td>
+                    <td><?php echo htmlentities($row['Description']); ?></td>
+                    <td><?php echo htmlentities($row['PostingDate']); ?></td>
+                    <td><?php echo htmlentities($row['UpdationDate']); ?></td>
                                                             <td><a href="edit-category.php?cid=<?php echo htmlentities($row['id']); ?>"><i class="fa fa-pencil" style="color: #29b6f6;"></i></a>
                                                                 &nbsp;<a href="manage-categories.php?rid=<?php echo htmlentities($row['id']); ?>&&action=del"> <i class="fa fa-trash-o" style="color: #f05050"></i></a> </td>
                                                         </tr>
@@ -173,52 +233,48 @@ if (strlen($_SESSION['login']) == 0) {
 
 
 
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="demo-box m-t-20">
-                                        <div class="m-b-30">
-
-                                            <h4><i class="fa fa-trash-o"></i> Deleted Categories</h4>
-
-                                        </div>
-
-                                        <div class="table-responsive">
-                                            <table class="table m-0 table-colored-bordered table-bordered-danger">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th> Category</th>
-                                                        <th>Description</th>
-
-                                                        <th>Posting Date</th>
-                                                        <th>Last updation Date</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from  tblcategory where Is_Active=0");
-                                                    $cnt = 1;
-                                                    while ($row = mysqli_fetch_array($query)) {
-                                                    ?>
-
-                                                        <tr>
-                                                            <th scope="row"><?php echo htmlentities($cnt); ?></th>
-                                                            <td><?php echo htmlentities($row['CategoryName']); ?></td>
-                                                            <td><?php echo htmlentities($row['Description']); ?></td>
-                                                            <td><?php echo htmlentities($row['PostingDate']); ?></td>
-                                                            <td><?php echo htmlentities($row['UpdationDate']); ?></td>
-                                                            <td><a href="manage-categories.php?resid=<?php echo htmlentities($row['id']); ?>"><i class="ion-arrow-return-right" title="Restore this category"></i></a>
-                                                                &nbsp;<a href="manage-categories.php?rid=<?php echo htmlentities($row['id']); ?>&&action=parmdel" title="Delete forever"> <i class="fa fa-trash-o" style="color: #f05050"></i> </td>
-                                                        </tr>
-                                                    <?php
-                                                        $cnt++;
-                                                    } ?>
-                                                </tbody>
-
-                                            </table>
-                                        </div>
-
+                            <!-- Deleted Categories Table -->
+                            <div class="table-responsive m-t-40">
+                                <h4><i class="fa fa-trash-alt"></i> Deleted Categories</h4>
+                                <table class="table table-striped table-hover table-bordered table-modern">
+                                    <thead class="thead-danger">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Category</th>
+                                            <th>Description</th>
+                                            <th>Posting Date</th>
+                                            <th>Last Updation Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from tblcategory where Is_Active=0");
+                                        $cnt = 1;
+                                        while ($row = mysqli_fetch_array($query)) {
+                                        ?>
+                                            <tr>
+                                                <th scope="row"><?php echo htmlentities($cnt); ?></th>
+                                                <td><?php echo htmlentities($row['CategoryName']); ?></td>
+                                                <td><?php echo htmlentities($row['Description']); ?></td>
+                                                <td><?php echo htmlentities($row['PostingDate']); ?></td>
+                                                <td><?php echo htmlentities($row['UpdationDate']); ?></td>
+                                                <td>
+                                                    <a href="manage-categories.php?resid=<?php echo htmlentities($row['id']); ?>" class="text-success">
+                                                        <i class="fa fa-undo"></i>
+                                                    </a>
+                                                    &nbsp;
+                                                    <a href="manage-categories.php?rid=<?php echo htmlentities($row['id']); ?>&&action=parmdel" class="text-danger">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php
+                                            $cnt++;
+                                        } ?>
+                                    </tbody>
+                                </table>
+                            </div>
 
 
 

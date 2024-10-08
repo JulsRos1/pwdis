@@ -204,6 +204,7 @@ body.fixed-left .side-menu.left {
   font-size: 13px;
 }
 #sidebar-menu ul ul a:hover {
+  background-color: black;
   color: #ffffff;
 }
 #sidebar-menu ul ul a i {

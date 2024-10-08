@@ -117,6 +117,7 @@ usort($places, function($a, $b) {
             padding: 5px 10px;
             border-radius: 3px;
         }
+        
     </style>
 </head>
 <body>

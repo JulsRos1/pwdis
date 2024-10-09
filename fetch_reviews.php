@@ -4,8 +4,8 @@ include('includes/config.php');
 if (isset($_GET['place_id'])) {
     $place_id = $_GET['place_id'];
 
-    // Prepare the SQL query to prevent SQL injection
-    $query = $con->prepare("SELECT rating, review, full_name FROM reviews WHERE place_id = ?");
+    // Prepare the SQL query to prevent SQL injection, including review_date and photo_url
+    $query = $con->prepare("SELECT rating, review, full_name, photo_url, review_date FROM reviews WHERE place_id = ?");
     $query->bind_param("s", $place_id);
     $query->execute();
     $result = $query->get_result();
@@ -26,7 +26,7 @@ if (isset($_GET['place_id'])) {
 
     // Return the reviews, average rating, and review count in JSON format
     echo json_encode([
-        'reviews' => $reviews,
+        'reviews' => $reviews,  // Now includes photo_url and review_date
         'averageRating' => $averageRating,
         'reviewCount' => $reviewCount
     ]);

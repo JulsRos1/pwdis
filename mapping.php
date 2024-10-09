@@ -88,6 +88,7 @@ session_start();
             <input type="hidden" name="formatted_address" id="formatted_address_modal">
             <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
             <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
+            <input type="hidden" name="review_date" id="review_date_modal" value="<?php echo date('Y-m-d H:i:s'); ?>">
             <input type="submit" value="Submit" name="submit">
           </div>
         </form>
@@ -242,6 +243,7 @@ session_start();
       }
     );
   }
+  
 
   function updatePlaces(type) {
   // Clear existing markers (if any)
@@ -459,78 +461,108 @@ session_start();
     }
     markers = [];
   }
+
   function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo) {
     const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
     const reviewCount = reviewsData.reviewCount || "No reviews";
     const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
+
+    // Helper function to calculate time ago
+    function timeAgo(reviewDate) {
+        const date = new Date(reviewDate);  // Make sure reviewDate is a valid Date string
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        let interval = Math.floor(seconds / 31536000);
+        if (interval >= 1) return interval === 1 ? "1 year ago" : `${interval} years ago`;
+
+        interval = Math.floor(seconds / 2592000);
+        if (interval >= 1) return interval === 1 ? "1 month ago" : `${interval} months ago`;
+
+        interval = Math.floor(seconds / 86400);
+        if (interval >= 1) return interval === 1 ? "1 day ago" : `${interval} days ago`;
+
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) return interval === 1 ? "1 hour ago" : `${interval} hours ago`;
+
+        interval = Math.floor(seconds / 60);
+        if (interval >= 1) return interval === 1 ? "1 minute ago" : `${interval} minutes ago`;
+
+        return seconds < 5 ? "just now" : `${Math.floor(seconds)} seconds ago`;
+    }
+    
+
+    // Generate reviews HTML
     const reviewsHtml = reviewsData.reviews.map(review => {
         const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`).join("");
+        const reviewTimeAgo = timeAgo(review.review_date);  // Use the review_date field here
+
         return `
             <div class="review">
               <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
               <div class="stars">${starsHtml}</div>
               <p>${review.review}</p>
+              <p><small>${reviewTimeAgo}</small></p>  <!-- Display the time ago -->
             </div>
             <hr>
         `;
     }).join("");
 
-    // Create the photo HTML if a photo is available with higher quality
-    
     const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600` : '';
 
     // Create the photo HTML if a photo is available
     const photoHtml = photoUrl ? `
-      <div style="position: relative;">
+      <div style="position: relative; width: 100%; max-height: 230px;">
         <img src="${photoUrl}"
             alt="${place.displayName.text}"
-            style="max-width: 100%; max-height: 20em; object-fit: cover; display: block; margin-left: auto; margin-right: auto;">
+            style="width: 100%; height: 230px; object-fit: cover;">   
       </div>` : '';
 
 
     return `
-  <div>
-    ${photoHtml}
-    <h4>${place.displayName.text}</h4>
-    <p>${place.formattedAddress}</p>
-    <ul>
-      ${accessibilityOptions.wheelchairAccessibleParking
-        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking - Not Accessible</li>"}
-      ${accessibilityOptions.wheelchairAccessibleEntrance
-        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance - Not Accessible</li>"}
-      ${accessibilityOptions.wheelchairAccessibleRestroom
-        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom - Not Accessible</li>"}
-      ${accessibilityOptions.wheelchairAccessibleSeating
-        ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating: <i class='fa-solid fa-check' style='color: green;'></i></li>"
-        : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
-    </ul>
-    <div class="d-flex justify-content-center">
-          <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}')">Write a Review</button>
-          <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
-   <!-- #endregion --> </div>
-    
-    <hr>
-    <div class="review-summary">
-      <div class="average-rating">
-        <span class="rating-number">${averageRating}</span>
-        <div class="stars">${starsHtml}</div>
-        <p class="total-reviews">${reviewCount} reviews</p>
-      </div>
-      <hr>
-    </div>
+        <div>
+            ${photoHtml}
+            <h4>${place.displayName.text}</h4>
+            <p>${place.formattedAddress}</p>
+            <ul>
+              ${accessibilityOptions.wheelchairAccessibleParking
+                ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+                : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Parking - Not Accessible</li>"}
+              ${accessibilityOptions.wheelchairAccessibleEntrance
+                ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+                : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Entrance - Not Accessible</li>"}
+              ${accessibilityOptions.wheelchairAccessibleRestroom
+                ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+                : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Restroom - Not Accessible</li>"}
+              ${accessibilityOptions.wheelchairAccessibleSeating
+                ? "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating: <i class='fa-solid fa-check' style='color: green;'></i></li>"
+                : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
+            </ul>
+            <div class="d-flex justify-content-center">
+                <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}')">Write a Review</button>
+                <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
+            </div>
+            
+            <hr>
+            <div class="review-summary">
+              <div class="average-rating">
+                <span class="rating-number">${averageRating}</span>
+                <div class="stars">${starsHtml}</div>
+                <p class="total-reviews">${reviewCount} reviews</p> 
+              </div>
+              <hr>
+            </div>
 
-    <div class="recent-reviews">
-      <div class="reviews-list">
-       <h4>Recent Reviews:</h4>
-        ${reviewsHtml}
-      </div>
-    </div>
-  </div>
-`;
+            <div class="recent-reviews">
+              <div class="reviews-list">
+                <h4>Recent Reviews:</h4>
+                ${reviewsHtml}
+              </div>
+            </div>
+        </div>
+    `;
 }
+
 
 // Adjust other functions as needed
 

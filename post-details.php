@@ -14,14 +14,14 @@ if (isset($_POST['submit'])) {
       $email = $_SESSION['Email'];
       $comment = $_POST['comment'];
       $postid = intval($_GET['nid']);
-      $st1 = '0';
+      $st1 = '1';
       $query = mysqli_query($con, "insert into tblcomments(postId,name,email,comment,status) values('$postid','$name','$email','$comment','$st1')");
       if ($query) :
         echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
                   Swal.fire({
                     title: 'Success!',
-                    text: 'Comment successfully submitted. Comment will be displayed after admin review.',
+                    text: 'Comment successfully submitted, Thank you for your feedback!',
                     icon: 'success',
                     confirmButtonText: 'OK'
                   }).then(() => {
@@ -29,7 +29,6 @@ if (isset($_POST['submit'])) {
                   });
                 });
               </script>";
-        unset($_SESSION['token']);
       else :
         echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {

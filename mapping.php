@@ -110,7 +110,7 @@ session_start();
       </div>
       <div class="modal-body">
         <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
-          <p>Make an Update on Accessibility Options</p>
+          <p>Check the accessibility features available, if there is none, dont check any and submit the form</p>
           <input type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
           <label for="parking">Has PWD Accessible Parking</label><br>
           <input type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
@@ -247,83 +247,63 @@ session_start();
 
   function updatePlaces(type) {
   // Clear existing markers (if any)
-  clearMarkers();
-  const request = {
-    includedTypes: [type],
-    locationRestriction: {
-      circle: {
-        center: {
-          latitude: userLocation.lat,
-          longitude: userLocation.lng,
+    clearMarkers();
+    map.setZoom(15);
+    const request = {
+      includedTypes: [type],
+      locationRestriction: {
+        circle: {
+          center: {
+            latitude: userLocation.lat,
+            longitude: userLocation.lng,
+          },
+          radius: 3000,
         },
-        radius: 3000,
       },
-    },
-  };
+    };
 
-  fetch(
-    "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
-      },
-      body: JSON.stringify(request),
-    }
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Parsed data: ", data); // Log the entire response once
-
-      if (data.places && Array.isArray(data.places)) {
-        data.places.forEach((place) => {
-          if (
-            place.location &&
-            place.location.latitude &&
-            place.location.longitude
-          ) {
-            fetch(`fetch_accessibility_options.php?place_id=${place.id}`)
-              .then((response) => response.json())
-              .then((userAccessibility) => {
-                const accessibilityOptions = {
-                  wheelchairAccessibleParking: userAccessibility?.wheelchairAccessibleParking !== null
-                    ? userAccessibility.wheelchairAccessibleParking
-                    : place.accessibilityOptions?.wheelchairAccessibleParking,
-                  wheelchairAccessibleEntrance: userAccessibility?.wheelchairAccessibleEntrance !== null
-                    ? userAccessibility.wheelchairAccessibleEntrance
-                    : place.accessibilityOptions?.wheelchairAccessibleEntrance,
-                  wheelchairAccessibleRestroom: userAccessibility?.wheelchairAccessibleRestroom !== null
-                    ? userAccessibility.wheelchairAccessibleRestroom
-                    : place.accessibilityOptions?.wheelchairAccessibleRestroom,
-                  wheelchairAccessibleSeating: userAccessibility?.wheelchairAccessibleSeating !== null
-                    ? userAccessibility.wheelchairAccessibleSeating
-                    : place.accessibilityOptions?.wheelchairAccessibleSeating,
-                };
-
-                addMarker(place, accessibilityOptions);
-              })
-              .catch((error) => {
-                console.error(
-                  "Fetch error for accessibility options:",
-                  error
-                );
-              });
-          }
-        });
-      } else {
-        console.error("No places found in the response");
+    fetch(
+      "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
+        },
+        body: JSON.stringify(request),
       }
-    })
-    .catch((error) => {
-      console.error("Fetch error for places:", error);
-    });
-}
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Parsed data: ", data);
+
+        if (data.places && Array.isArray(data.places)) {
+          data.places.forEach((place) => {
+            if (
+              place.location &&
+              place.location.latitude &&
+              place.location.longitude
+            ) {
+              fetchPlaceDetails(place, false);  // Pass false to indicate we don't want to open the panel
+            }
+          });
+        } else {
+          console.error("No places found in the response");
+        }
+      })
+      .catch((error) => {
+        console.error("Fetch error for places:", error);
+      });
+  }
 
   function handleMapClick(latLng) {
-    console.log("Unknown Clicked Location:", latLng.lat(), latLng.lng());
+  
     // Clear existing markers
+    console.log("Handled Map Click")
     clearMarkers();
+
+    map.setCenter(latLng);
+    map.setZoom(19); // You can adjust this zoom level as needed
 
     // Create a request to find the nearest place
     const request = {
@@ -355,7 +335,7 @@ session_start();
       .then((data) => {
         if (data.places && data.places.length > 0) {
           const place = data.places[0];
-          fetchPlaceDetails(place);
+          fetchPlaceDetails(place, true);
         } else {
           console.log("No place found at this location");
           addMarker({
@@ -371,8 +351,7 @@ session_start();
       });
   }
 
-  function fetchPlaceDetails(place) {
-    console.log("Fetching details for place:", place);
+  function fetchPlaceDetails(place, shouldOpenPanel = true) {
     fetch(`fetch_accessibility_options.php?place_id=${place.id}`)
       .then((response) => response.json())
       .then((userAccessibility) => {
@@ -385,28 +364,31 @@ session_start();
 
         addMarker(place, accessibilityOptions);
         
-        // Fetch reviews and display place details
-        fetch(`fetch_reviews.php?place_id=${place.id}`)
-          .then((response) => response.json())
-          .then((reviewsData) => {
-            const content = createPlaceDetailsContent(
-              place,
-              reviewsData,
-              accessibilityOptions,
-              place.photos && place.photos.length > 0 ? place.photos[0] : null
-            );
-            document.getElementById('place-details-content').innerHTML = content;
-            openPlaceDetailsPanel();
-          })
-          .catch((error) => {
-            console.error("Fetch error for reviews:", error);
-          });
+        if (shouldOpenPanel) {
+          // Fetch reviews and display place details
+          fetch(`fetch_reviews.php?place_id=${place.id}`)
+            .then((response) => response.json())
+            .then((reviewsData) => {
+              const content = createPlaceDetailsContent(
+                place,
+                reviewsData,
+                accessibilityOptions,
+                place.photos && place.photos.length > 0 ? place.photos[0] : null
+              );
+              document.getElementById('place-details-content').innerHTML = content;
+              openPlaceDetailsPanel();
+            })
+            .catch((error) => {
+              console.error("Fetch error for reviews:", error);
+            });
+        }
       })
       .catch((error) => {
         console.error("Fetch error for accessibility options:", error);
         addMarker(place, {});
       });
   }
+
 
   function addMarker(place, accessibilityOptions) {
     const accessibilityCount =
@@ -506,20 +488,16 @@ session_start();
             </div>
             <hr>
         `;
-    }).join("");
+      }).join("");
 
     const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600` : '';
 
     // Create the photo HTML if a photo is available
     const photoHtml = photoUrl ? `
       <div style="position: relative; width: 100%; max-height: 230px;">
-        <img src="${photoUrl}"
-            alt="${place.displayName.text}"
-            style="width: 100%; height: 230px; object-fit: cover;">   
-      </div>` : '';
+        <img src="${photoUrl}" alt="${place.displayName.text}" style="width: 100%; height: 230px; object-fit: cover;">  </div>` : '';
+      return `
 
-
-    return `
         <div>
             ${photoHtml}
             <h4>${place.displayName.text}</h4>
@@ -563,10 +541,6 @@ session_start();
     `;
 }
 
-
-// Adjust other functions as needed
-
-
 function openReviewModal(placeId, displayName, formattedAddress, photoUrl) {
   console.log("Opening review modal for:", placeId, displayName, formattedAddress);
   document.getElementById('place_id_modal').value = placeId;
@@ -591,86 +565,97 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl) {
   });
 
   function openAccessibilityModal(placeId, displayName) {
-  console.log("Opening accessibility modal for:", placeId, displayName);
-  
-  // Set place ID and display name
-  document.getElementById("place_id_accessibility_modal").value = placeId;
-  document.getElementById("display_name_modal1").value = displayName;
+    console.log("Opening accessibility modal for:", placeId, displayName);
+    
+    // Set place ID and display name
+    document.getElementById("place_id_accessibility_modal").value = placeId;
+    document.getElementById("display_name_modal1").value = displayName;
 
-  // Fetch accessibility options and update the checkboxes
-  fetch(`fetch_accessibility_options.php?place_id=${placeId}`)
-    .then(response => response.json())
-    .then(data => {
-      // Update checkboxes based on fetched data
-      for (const [key, value] of Object.entries(data)) {
-        const checkbox = document.querySelector(`#accessibilityModal input[name="accessibilityOptions[]"][value="${key}"]`);
-        if (checkbox) {
-          checkbox.checked = value;
-        }
-      }
-      // Show the modal
-      $("#accessibilityModal").modal("show");
-    })
-    .catch(error => {
-      console.error("Error fetching accessibility options:", error);
-      // Show the modal even if fetch fails
-      $("#accessibilityModal").modal("show");
-    });
-}
-
-  // Add event listener for accessibility form submission
-  document.querySelector("#accessibilityModal form").addEventListener("submit", function(event) {
-      event.preventDefault();
-      const formData = new FormData(this);
-      fetch("submit_accessibility.php", {
-          method: "POST",
-          body: formData,
-        })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.status === "success") {
-            Swal.fire({
-              title: "Success!",
-              text: data.message,
-              icon: "success",
-              confirmButtonText: "OK",
-            }).then(() => {
-              $("#accessibilityModal").modal("hide");
-              updatePlaceInfo(formData.get("place_id"));
-            });
-          } else {
-            Swal.fire({
-              title: "Error!",
-              text: data.message,
-              icon: "error",
-              confirmButtonText: "OK",
-            });
+    // Fetch accessibility options and update the checkboxes
+    fetch(`fetch_accessibility_options.php?place_id=${placeId}`)
+      .then(response => response.json())
+      .then(data => {
+        // Update checkboxes based on fetched data
+        for (const [key, value] of Object.entries(data)) {
+          const checkbox = document.querySelector(`#accessibilityModal input[name="accessibilityOptions[]"][value="${key}"]`);
+          if (checkbox) {
+            checkbox.checked = value;
           }
-        })
-        .catch((error) => {
-          console.error("Error updating accessibility options:", error);
+        }
+        // Show the modal
+        $("#accessibilityModal").modal("show");
+      })
+      .catch(error => {
+        console.error("Error fetching accessibility options:", error);
+        // Show the modal even if fetch fails
+        $("#accessibilityModal").modal("show");
+      });
+  }
+
+    // Add event listener for accessibility form submission
+  document.querySelector("#accessibilityModal form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    const formData = new FormData(this);
+    fetch("submit_accessibility.php", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          Swal.fire({
+            title: "Success!",
+            text: data.message,
+            icon: "success",
+            confirmButtonText: "OK",
+          }).then(() => {
+            $("#accessibilityModal").modal("hide");
+            
+            // Get the place details
+            const placeId = formData.get('place_id');
+            const displayName = formData.get('display_name');
+            // Find the place's location
+            const place = markers.find(marker => marker.getTitle() === displayName);
+            if (place) {
+              // Simulate a click on the place's location
+              handleMapClick(place.getPosition());
+            } else {
+              console.error("Place not found for updating marker");
+            }
+          });
+        } else {
           Swal.fire({
             title: "Error!",
-            text: "There was an error updating accessibility options. Please try again.",
+            text: data.message,
             icon: "error",
             confirmButtonText: "OK",
           });
+        }
+      })
+      .catch((error) => {
+        console.error("Error updating accessibility options:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "There was an error updating accessibility options. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
         });
-    });
+      });
+  });
 
-    function updateAccessibilityLevel() {
-      const checkboxes = document.querySelectorAll('#accessibilityModal input[type="checkbox"]');
-      const accessibilityCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+  function updateAccessibilityLevel() {
+    const checkboxes = document.querySelectorAll('#accessibilityModal input[type="checkbox"]');
+    const accessibilityCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
 
-      let accessibilityLevel = "Not Accessible";
-      if (accessibilityCount > 2) accessibilityLevel = "Highly Accessible";
-      else if (accessibilityCount > 0) accessibilityLevel = "Accessible";
+    let accessibilityLevel = "Not Accessible";
+    if (accessibilityCount > 2) accessibilityLevel = "Highly Accessible";
+    else if (accessibilityCount > 0) accessibilityLevel = "Accessible";
 
-      document.getElementById("accessibility_level").value = accessibilityLevel;
-}
+    document.getElementById("accessibility_level").value = accessibilityLevel;
+  }
 
-document.querySelectorAll('#accessibilityModal input[type="checkbox"]')
-  .forEach(checkbox => checkbox.addEventListener("change", updateAccessibilityLevel));
+  document.querySelectorAll('#accessibilityModal input[type="checkbox"]')
+    .forEach(checkbox => checkbox.addEventListener("change", updateAccessibilityLevel));
 
   function showReviews(placeId) {
   fetch(`fetch_reviews.php?place_id=${placeId}`)
@@ -696,21 +681,21 @@ document.querySelectorAll('#accessibilityModal input[type="checkbox"]')
       $("#reviewsModal").modal("show");
     })
     .catch(error => {
-      console.error("Error fetching reviews:", error);
+      console.error("Error fetching reviews:", error);    
       document.getElementById("reviewsContent").innerHTML = "Error loading reviews.";
       $("#reviewsModal").modal("show");
     });
-}
+  }
 
-function openPlaceDetailsPanel() {
-  document.getElementById('place-details-panel').classList.add('open');
-  document.getElementById('map').classList.add('panel-open');
-}
+  function openPlaceDetailsPanel() {
+    document.getElementById('place-details-panel').classList.add('open');
+    document.getElementById('map').classList.add('panel-open');
+  }
 
-function closePlaceDetailsPanel() {
-  document.getElementById('place-details-panel').classList.remove('open');
-  document.getElementById('map').classList.remove('panel-open');
-}
+  function closePlaceDetailsPanel() {
+    document.getElementById('place-details-panel').classList.remove('open');
+    document.getElementById('map').classList.remove('panel-open');
+  }
 
 document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
 </script>

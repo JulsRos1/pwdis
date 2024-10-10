@@ -21,13 +21,13 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="mapping.php">
-            <i class="fas fa-map-marked-alt"></i> Map Accessibility
+          <a class="nav-link" href="top_rated_places.php">
+            <i class="fas fa-map-marked-alt"></i> Popular Places
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="top_rated_places.php">
-            <i class="fas fa-map-marked-alt"></i> Popular Places
+          <a class="nav-link" href="mapping.php">
+            <i class="fas fa-map-marked-alt"></i> Map Accessibility
           </a>
         </li>
         <li class="nav-item">

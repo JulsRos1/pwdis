@@ -260,7 +260,7 @@ usort($places, function($a, $b) {
                                 </div>`;
                         }
 
-                        // Average rating and review count centered
+                        // Average rating and review count centered 
                         reviewsHtml += `
                                 <div class="starsaverage">
                                     ${getStars(data.averageRating)}

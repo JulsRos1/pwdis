@@ -76,7 +76,7 @@ include('includes/config.php');
               <div class="card-body">
                 <h2 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h2>
 
-                <a href="news-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary">Read More &rarr;</a>
+                <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary">Read More &rarr;</a>
               </div>
               <div class="card-footer text-muted">
                 Posted on <?php echo htmlentities($row['postingdate']); ?>

@@ -66,7 +66,7 @@ include('includes/config.php');
         $total_pages = ceil($total_rows / $no_of_records_per_page);
 
 
-        $query = mysqli_query($con, "select tblposts.id as pid,tblposts.PostTitle as posttitle,tblcategory.CategoryName as category,tblposts.PostDetails as postdetails,tblposts.PostingDate as postingdate,tblposts.PostUrl as url from tblposts left join tblcategory on tblcategory.id=tblposts.CategoryId where tblposts.PostTitle like '%$st%' and tblposts.Is_Active=1 LIMIT $offset, $no_of_records_per_page");
+        $query = mysqli_query($con, "select tblposts.PostImage as pimg, tblposts.id as pid,tblposts.PostTitle as posttitle,tblcategory.CategoryName as category,tblposts.PostDetails as postdetails,tblposts.PostingDate as postingdate,tblposts.PostUrl as url from tblposts left join tblcategory on tblcategory.id=tblposts.CategoryId where tblposts.PostTitle like '%$st%' and tblposts.Is_Active=1 LIMIT $offset, $no_of_records_per_page");
 
         $rowcount = mysqli_num_rows($query);
         if ($rowcount == 0) {
@@ -78,7 +78,7 @@ include('includes/config.php');
         ?>
 
             <div class="card mb-4">
-
+            <img class="card-img-top" src="admin/postimages/<?php echo htmlentities($row['pimg']);?>" alt="<?php echo htmlentities($row['posttitle']);?>">
               <div class="card-body">
                 <h2 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h2>
 

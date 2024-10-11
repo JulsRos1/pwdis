@@ -30,7 +30,11 @@ session_start();
     </button>
     <button class="category-button" onclick="updatePlaces('hospital')">
       <i class="fas fa-hospital"></i>
-      Healthcare
+      Hospital
+    </button>
+    <button class="category-button" onclick="updatePlaces('cafe')">
+      <i class="fas fa-coffee"></i>
+      Cafe
     </button>
     <button class="category-button" onclick="updatePlaces('grocery_store')">
       <i class="fas fa-shopping-cart"></i>
@@ -82,6 +86,7 @@ session_start();
             <input type="hidden" id="rating_input" name="rating" value="">
             <textarea id="review" name="review" rows="4" cols="50"></textarea>
             <br>
+            <input type="hidden" name="place_type" id="place_type_modal">
             <input type="hidden" name="display_name" id="display_name_modal">
             <input type="hidden" name="place_id" id="place_id_modal">
             <input type="hidden" name="photo_url" id="photo_url_modal">
@@ -207,6 +212,7 @@ session_start();
   });
 
   function initMap() {
+    const losBanosLocation = { lat: 14.1846, lng: 121.2385 }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         userLocation = {
@@ -215,7 +221,7 @@ session_start();
         };
 
         map = new google.maps.Map(document.getElementById("map"), {
-          center: userLocation,
+          center: losBanosLocation,
           zoom: 17,
           mapTypeControl: false, // This disables the default "Map" and "Satellite" buttons
           streetViewControl: false, // Optionally disable the Street View button
@@ -246,7 +252,8 @@ session_start();
   
 
   function updatePlaces(type) {
-  // Clear existing markers (if any)
+    currentPlaceType = type;
+    // Clear existing markers (if any)
     clearMarkers();
     map.setZoom(15);
     const request = {
@@ -254,8 +261,8 @@ session_start();
       locationRestriction: {
         circle: {
           center: {
-            latitude: userLocation.lat,
-            longitude: userLocation.lng,
+            latitude: 14.1846,
+            longitude: 121.2385,
           },
           radius: 3000,
         },
@@ -284,7 +291,7 @@ session_start();
               place.location.latitude &&
               place.location.longitude
             ) {
-              fetchPlaceDetails(place, false);  // Pass false to indicate we don't want to open the panel
+              fetchPlaceDetails(place, false, currentPlaceType, false);  // Pass currentPlaceType and false for isFromMapClick
             }
           });
         } else {
@@ -294,18 +301,17 @@ session_start();
       .catch((error) => {
         console.error("Fetch error for places:", error);
       });
-  }
+}
+
+  let currentPlaceType = '';
 
   function handleMapClick(latLng) {
-  
-    // Clear existing markers
-    console.log("Handled Map Click")
+    console.log("Handled Map Click");
     clearMarkers();
 
     map.setCenter(latLng);
-    map.setZoom(19); // You can adjust this zoom level as needed
+    map.setZoom(19);
 
-    // Create a request to find the nearest place
     const request = {
       locationRestriction: {
         circle: {
@@ -313,29 +319,30 @@ session_start();
             latitude: latLng.lat(),
             longitude: latLng.lng(),
           },
-          radius: 15, // Increase the radius to 50 meters
+          radius: 10,
         },
       },
       maxResultCount: 1
     };
 
-    // Fetch place details
     fetch(
       "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos"
+          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos,places.primaryType"
         },
         body: JSON.stringify(request),
       }
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("Place: ", data);
         if (data.places && data.places.length > 0) {
           const place = data.places[0];
-          fetchPlaceDetails(place, true);
+          // Use primaryType from API for handleMapClick
+          fetchPlaceDetails(place, true, place.primaryType || 'Unknown', true);
         } else {
           console.log("No place found at this location");
           addMarker({
@@ -343,7 +350,7 @@ session_start();
             displayName: { text: "Unknown Location" },
             formattedAddress: "Unknown Address",
             id: "clicked_location",
-          }, {});
+          }, {}, 'Unknown', true);
         }
       })
       .catch((error) => {
@@ -351,7 +358,7 @@ session_start();
       });
   }
 
-  function fetchPlaceDetails(place, shouldOpenPanel = true) {
+  function fetchPlaceDetails(place, shouldOpenPanel = true, placeType = "", isFromMapClick = false) {
     fetch(`fetch_accessibility_options.php?place_id=${place.id}`)
       .then((response) => response.json())
       .then((userAccessibility) => {
@@ -365,7 +372,6 @@ session_start();
         addMarker(place, accessibilityOptions);
         
         if (shouldOpenPanel) {
-          // Fetch reviews and display place details
           fetch(`fetch_reviews.php?place_id=${place.id}`)
             .then((response) => response.json())
             .then((reviewsData) => {
@@ -373,7 +379,9 @@ session_start();
                 place,
                 reviewsData,
                 accessibilityOptions,
-                place.photos && place.photos.length > 0 ? place.photos[0] : null
+                place.photos && place.photos.length > 0 ? place.photos[0] : null,
+                placeType,
+                isFromMapClick
               );
               document.getElementById('place-details-content').innerHTML = content;
               openPlaceDetailsPanel();
@@ -385,7 +393,7 @@ session_start();
       })
       .catch((error) => {
         console.error("Fetch error for accessibility options:", error);
-        addMarker(place, {});
+        addMarker(place, {}, placeType, isFromMapClick);
       });
   }
 
@@ -444,7 +452,7 @@ session_start();
     markers = [];
   }
 
-  function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo) {
+  function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo, placeType, isFromMapClick) {
     const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
     const reviewCount = reviewsData.reviewCount || "No reviews";
     const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
@@ -517,7 +525,7 @@ session_start();
                 : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
             </ul>
             <div class="d-flex justify-content-center">
-                <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}')">Write a Review</button>
+               <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}', '${placeType}', ${isFromMapClick})">Write a Review</button>
                 <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
             </div>
             
@@ -541,12 +549,13 @@ session_start();
     `;
 }
 
-function openReviewModal(placeId, displayName, formattedAddress, photoUrl) {
-  console.log("Opening review modal for:", placeId, displayName, formattedAddress);
+function openReviewModal(placeId, displayName, formattedAddress, photoUrl, placeType, isFromMapClick) {
+  console.log("Opening review modal for:", placeId, displayName, formattedAddress, placeType, isFromMapClick);
   document.getElementById('place_id_modal').value = placeId;
-  document.getElementById('photo_url_modal').value = photoUrl || ''; // Set to empty string if undefined
+  document.getElementById('photo_url_modal').value = photoUrl || '';
   document.getElementById('display_name_modal').value = displayName;
   document.getElementById('formatted_address_modal').value = formattedAddress;
+  document.getElementById('place_type_modal').value = isFromMapClick ? placeType : currentPlaceType;
   $('#reviewModal').modal('show');
 }
   // Eto yung logic sa stars in the ratings

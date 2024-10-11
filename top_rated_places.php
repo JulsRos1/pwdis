@@ -8,24 +8,45 @@ ini_set('display_errors', 1);
 
 // Function to calculate weighted rating
 function calculateWeightedRating($rating, $numReviews) {
-    $minReviews = 5; // Minimum number of reviews to be considered
-    $averageRating = 3.5; // Assumed average rating
-    
-    // Cap the effect of review count to prevent too much influence from very high review counts
-    $effectiveReviews = min($numReviews, 10); // Limit the effect of reviews after 10
-
+    $minReviews = 5;
+    $averageRating = 3.5;
+    $effectiveReviews = min($numReviews, 10);
     return ($rating * $effectiveReviews + $averageRating * $minReviews) / ($effectiveReviews + $minReviews);
 }
 
-// Fetch top-rated places
+// Function to format place type for display
+function formatPlaceType($placeType) {
+    $formatted = str_replace(['_', '-'], ' ', $placeType);
+    return ucwords($formatted);
+}
+
+// Fetch all unique place types
+$placeTypesQuery = "SELECT DISTINCT place_type FROM reviews WHERE place_type IS NOT NULL AND place_type != '' ORDER BY place_type ASC";
+$placeTypesResult = $con->query($placeTypesQuery);
+$placeTypes = [];
+while ($row = $placeTypesResult->fetch_assoc()) {
+    $placeTypes[] = $row['place_type'];
+}
+
+// Get the selected place type from the URL parameter
+$selectedType = isset($_GET['type']) ? $_GET['type'] : 'all';
+
+// Modify the main query to include place type filtering
 $query = "SELECT r.place_id, r.display_name, AVG(r.rating) as avg_rating, COUNT(*) as review_count, 
           (SELECT photo_url FROM reviews WHERE place_id = r.place_id AND photo_url IS NOT NULL LIMIT 1) as photo_url,
-          (SELECT formatted_address FROM reviews WHERE place_id = r.place_id LIMIT 1) as formatted_address
+          (SELECT formatted_address FROM reviews WHERE place_id = r.place_id LIMIT 1) as formatted_address,
+          r.place_type
           FROM reviews r
-          GROUP BY r.place_id 
-          HAVING review_count >= 1  -- Temporarily lowered for testing
-          ORDER BY avg_rating DESC, review_count DESC 
-          LIMIT 10";
+          WHERE 1=1 ";
+
+if ($selectedType != 'all') {
+    $query .= "AND r.place_type = '" . $con->real_escape_string($selectedType) . "' ";
+}
+
+$query .= "GROUP BY r.place_id 
+           HAVING review_count >= 1
+           ORDER BY avg_rating DESC, review_count DESC 
+           LIMIT 10";
 
 $result = $con->query($query);
 
@@ -36,33 +57,23 @@ if (!$result) {
 $places = [];
 while ($row = $result->fetch_assoc()) {
     $row['weighted_rating'] = calculateWeightedRating($row['avg_rating'], $row['review_count']);
+    $row['formatted_place_type'] = formatPlaceType($row['place_type']);
     $places[] = $row;
 }
 
-// Sort places by weighted rating with strict prioritization for ratings above 4.5
+// Sort places by weighted rating
 usort($places, function($a, $b) {
-    // Strict prioritization for places with a rating above 4.5
     if ($a['avg_rating'] >= 4.5 && $b['avg_rating'] < 4.5) {
         return -1;
     } elseif ($a['avg_rating'] < 4.5 && $b['avg_rating'] >= 4.5) {
         return 1;
     }
-
-    // Compare the weighted ratings
-    if ($a['weighted_rating'] > $b['weighted_rating']) {
-        return -1;
-    } elseif ($a['weighted_rating'] < $b['weighted_rating']) {
-        return 1;
+    if ($a['weighted_rating'] != $b['weighted_rating']) {
+        return $b['weighted_rating'] <=> $a['weighted_rating'];
     }
-
-    // If both have similar weighted ratings, sort by average rating (prefer higher-rated)
-    if ($a['avg_rating'] > $b['avg_rating']) {
-        return -1;
-    } elseif ($a['avg_rating'] < $b['avg_rating']) {
-        return 1;
+    if ($a['avg_rating'] != $b['avg_rating']) {
+        return $b['avg_rating'] <=> $a['avg_rating'];
     }
-
-    // Lastly, if both the weighted and avg ratings are equal, sort by number of reviews
     return $b['review_count'] <=> $a['review_count'];
 });
 ?>
@@ -174,18 +185,38 @@ usort($places, function($a, $b) {
       border-bottom: 1px solid #ddd;
       margin-bottom: 10px;
     }
+    .filter-button {
+        margin-bottom: 20px;
+    }
+    .place-type {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 5px;
+    }
+    #filterModal .modal-body {
+        max-height: 300px;
+        overflow-y: auto;
+    }
     </style>
 </head>
 <body>
 <?php include('includes/header.php'); ?>
     <div class="container mt-4">
+        <div class="filter-button">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
+                Filter Place
+            </button>
+            <?php if ($selectedType != 'all'): ?>
+                <a href="?type=all" class="btn btn-outline-secondary">Clear Filter</a>
+            <?php endif; ?>
+        </div>
         
         <?php if (empty($places)): ?>
-            <div class="alert alert-warning">No places found. Make sure your database has reviews.</div>
+            <div class="alert alert-warning">No places found for the selected type. Try a different filter.</div>
         <?php else: ?>
             <div class="row">
                 <?php foreach ($places as $index => $place): ?>
-                    <div class="col-md-4 mb-4"> <!-- Add mb-4 for bottom margin -->
+                    <div class="col-md-4 mb-4">
                         <div class="place-card position-relative" data-place-id="<?php echo htmlspecialchars($place['place_id']); ?>">
                             <div class="rank-badge"><?php echo $index + 1; ?></div>
                             <img src="<?php echo $place['photo_url'] ? htmlspecialchars($place['photo_url']) : 'https://via.placeholder.com/350x150'; ?>" 
@@ -198,12 +229,13 @@ usort($places, function($a, $b) {
                                     <span class="place-rating"><?php echo number_format($place['avg_rating'], 1); ?></span>
                                     <span class="review-count">(<?php echo $place['review_count']; ?> reviews)</span>
                                 </div>
-                                <button class="btn btn-primary mt-2 read-reviews-btn">See Reviews</button> <!-- Read Reviews button -->
+                                <div class="place-type"><?php echo htmlspecialchars($place['formatted_place_type']); ?></div>
+                                <button class="btn btn-primary mt-2 read-reviews-btn">See Reviews</button>
                             </div>
-                   </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
-    <?php endforeach; ?>
-</div>
         <?php endif; ?>
     </div>
 
@@ -224,6 +256,41 @@ usort($places, function($a, $b) {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Filter by Place Type</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="filterForm" action="" method="get">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="type" id="typeAll" value="all" <?php echo $selectedType == 'all' ? 'checked' : ''; ?>>
+                            <label class="form-check-label" for="typeAll">
+                                All Types
+                            </label>
+                        </div>
+                        <?php foreach ($placeTypes as $type): ?>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="type" id="type<?php echo htmlspecialchars($type); ?>" value="<?php echo htmlspecialchars($type); ?>" <?php echo $selectedType == $type ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="type<?php echo htmlspecialchars($type); ?>">
+                                    <?php echo formatPlaceType($type); ?>
+                                </label>
+                            </div>
+                        <?php endforeach; ?>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('filterForm').submit();">Apply Filter</button>
                 </div>
             </div>
         </div>

@@ -9,7 +9,7 @@ date_default_timezone_set('Asia/Manila');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Validate input
-    $required_fields = ['place_id', 'display_name', 'formatted_address', 'rating', 'review', 'review_date'];
+    $required_fields = ['place_id', 'display_name', 'formatted_address', 'rating', 'review', 'review_date', 'place_type'];
     foreach ($required_fields as $field) {
         if (!isset($_POST[$field]) || empty($_POST[$field])) {
             echo json_encode(['status' => 'error', 'message' => "Missing required field: $field"]);
@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $review = $_POST['review'];
     $photo_url = $_POST['photo_url'];
     $review_date = date('Y-m-d H:i:s');  // Set current date/time using the correct timezone
+    $place_type = $_POST['place_type'];
 
     // Check if user is logged in
     if (!isset($_SESSION['name']) || !isset($_SESSION['lname'])) {
@@ -37,14 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $full_name = $first_name . ' ' . $last_name;
 
     // Prepare the SQL query to insert the review
-    $query = $con->prepare("INSERT INTO reviews (place_id, display_name, formatted_address, rating, review, full_name, photo_url, review_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $query = $con->prepare("INSERT INTO reviews (place_id, display_name, formatted_address, rating, review, full_name, photo_url, review_date, place_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     if (!$query) {
         echo json_encode(['status' => 'error', 'message' => 'Error preparing query: ' . $con->error]);
         exit;
     }
 
-    $query->bind_param("ssssssss", $place_id, $display_name, $formatted_address, $rating, $review, $full_name, $photo_url, $review_date);
+    $query->bind_param("sssssssss", $place_id, $display_name, $formatted_address, $rating, $review, $full_name, $photo_url, $review_date, $place_type);
 
     if ($query->execute()) {
         echo json_encode(['status' => 'success', 'message' => 'Thanks for submitting a review..']);

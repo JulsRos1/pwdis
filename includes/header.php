@@ -4,16 +4,24 @@
   <div class="container">
     <div class="header-logo">
         <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair custom-wheelchair blue-icon'></i>PWDIS</a>   
-     </div>
-
+    </div>
 
     <!-- Toggler for mobile view -->
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon">&#9776;</span>
     </button>
 
-    <!-- Navbar links -->
+    <!-- Navbar links and Search Form -->
     <div class="collapse navbar-collapse" id="navbarResponsive">
+       <!-- Search Form (appears on mobile within the collapsible menu) -->
+      <form class="form-inline d-lg-none mt-3" name="search" action="search.php" method="post">
+          <div class="input-group w-100">
+            <input type="text" name="searchtitle" class="form-control" placeholder="Search for..." required>
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="submit">Go!</button>
+            </div>
+          </div>
+      </form>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           <a class="nav-link active" href="index.php">
@@ -36,13 +44,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="contact-us.php">
-            <i class="fas fa-envelope"></i> Contact Us
-          </a>
-        </li>
-        <li class="nav-item">
           <a href="messages.php" class="nav-link"> <i class="fa fa-comments"></i> Chats</a>
         </li>
+
         <!-- User Profile Dropdown -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -60,8 +64,9 @@
             <a class="dropdown-item" href="logout.php">Logout</a>
           </div>
         </li>
-
       </ul>
+
+    
     </div>
   </div>
 </nav>

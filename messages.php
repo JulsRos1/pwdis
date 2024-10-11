@@ -180,9 +180,6 @@
         </div>
     </div>
 
-    <!-- Notification Sound -->
-    <audio id="notificationSound" src="notification.mp3"></audio>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         let selectedUserId = null;
@@ -273,7 +270,6 @@
                     if (response.status === 'success') {
                         $('#messageInput').val('');
                         fetchMessages();
-                        document.getElementById('notificationSound').play();
                     } else {
                         alert(response.message);
                     }

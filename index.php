@@ -22,81 +22,6 @@ if (!isset($_SESSION['user_login'])) {
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/modern-business.css" rel="stylesheet">
-
-  <!-- Custom styles -->
-  <style>
-    /* Container for images */
-    .image-container {
-      width: 100%;
-      height: 450px;
-      /* Fixed height */
-      overflow: hidden;
-      /* Ensures image does not overflow container */
-      position: relative;
-    }
-
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;/
-    }
-
-    .card {
-      border: none;
-      transition: transform 0.3s, box-shadow 0.3s;
-      margin-bottom: 20px;
-    }
-
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-read-more {
-      background-color: #007bff;
-      border: none;
-      color: white;
-      transition: background-color 0.3s, box-shadow 0.3s;
-    }
-
-    .btn-read-more:hover {
-      background-color: #0056b3;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .pagination .page-item .page-link {
-      border-radius: 20px;
-      transition: background-color 0.3s;
-    }
-
-    .pagination .page-item .page-link:hover {
-      background-color: #007bff;
-      color: white;
-    }
-
-    .fade-in {
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .fade-in.show {
-      opacity: 1;
-    }
-
-    .card-container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .card-body p {
-      font-size: 12px
-    }
-
-    .card-footer {
-      font-size: 12px
-    }
-  </style>
 </head>
 
 <body>
@@ -108,14 +33,14 @@ if (!isset($_SESSION['user_login'])) {
   ?>
 
   <!-- Page Content -->
-  <div class="container mt-5 pt-3">
+  <div class="container mt-5">
     <div id="loading-overlay">
       <div id="loading-spinner"></div>
     </div>
 
     <div class="row" style="margin-top: 4%">
       <!-- Blog Entries Column -->
-      <div class="col-md-8 card-container">
+      <div class="col-md-8 card-container card-custom">
         <!-- Blog Post -->
         <?php
         if (isset($_GET['pageno'])) {

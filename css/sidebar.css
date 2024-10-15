@@ -1,0 +1,90 @@
+body {
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+}
+
+/* Sidebar Styles */
+#sidebar-wrapper {
+  min-height: 100vh;
+  width: 250px;
+  margin-left: 0;
+  transition: margin 0.25s ease-out;
+  background-color: #1f2937 !important;
+  position: fixed;
+  z-index: 1;
+}
+btn-link {
+  background-color: black;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+#sidebar-wrapper .list-group {
+  width: 250px;
+}
+
+#sidebar-wrapper .list-group-item {
+  background-color: transparent;
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+}
+
+#sidebar-wrapper .list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #007bff;
+}
+
+.blue-icon {
+  color: #007bff;
+}
+
+/* Custom styles for the toggle button */
+#menu-toggle {
+  display: none;
+}
+.list-group-item.active {
+  background-color: #007bff; /* Change this color as needed */
+  color: white; /* Change text color if necessary */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 767px) {
+  #sidebar-wrapper {
+    margin-left: -250px;
+  }
+  .mobvar {
+    background-color: #1f2937 !important;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #menu-toggle {
+    display: block;
+    border: none;
+    background-color: transparent;
+    color: white;
+  }
+  #menu-toggle:hover {
+    color: #007bff;
+  }
+}
+@media (min-width: 951px) {
+  footer {
+    width: calc(100% - 250px); /* Account for sidebar width */
+    margin-left: 250px; /* Align with content */
+    position: relative;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .exit-button {
+    display: none;
+  }
+}

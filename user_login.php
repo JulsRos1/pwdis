@@ -57,8 +57,9 @@ $con->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="manifest" href="js/manifest.json">
   <script type="text/javascript" src="js/login_validation.js" defer></script>
+  <link rel="manifest" href="manifest.json">
+
 </head>
 
 <body>
@@ -93,6 +94,19 @@ $con->close();
     </form>
     <p>New here? <a href="user_register.php">Create an Account</a></p>
   </div>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('service-worker.js').then((registration) => {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }).catch((error) => {
+        console.log('ServiceWorker registration failed: ', error);
+      });
+    });
+  }
+</script>
+
 </body>
+
 
 </html>

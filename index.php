@@ -15,7 +15,6 @@ if (!isset($_SESSION['user_login'])) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
   <meta name="author" content="">
   <title>PWDIS</title>
 
@@ -26,22 +25,13 @@ if (!isset($_SESSION['user_login'])) {
 
 <body>
 
-  
   <?php include('includes/header.php');
 
-
   ?>
-
   <!-- Page Content -->
-  <div class="container mt-5">
-    <div id="loading-overlay">
-      <div id="loading-spinner"></div>
-    </div>
-
+  <div class="container">
     <div class="row" style="margin-top: 4%">
-      <!-- Blog Entries Column -->
       <div class="col-md-8 card-container card-custom">
-        <!-- Blog Post -->
         <?php
         if (isset($_GET['pageno'])) {
           $pageno = $_GET['pageno'];
@@ -88,7 +78,7 @@ if (!isset($_SESSION['user_login'])) {
       </div>
 
       <!-- Sidebar Widgets Column -->
-      <?php include('includes/sidebar.php'); ?>
+      <?php include('includes/right-sidebar.php'); ?>
     </div>
   </div>
 
@@ -138,8 +128,11 @@ if (!isset($_SESSION['user_login'])) {
       });
     });
     document.getElementById('mobileMenuToggle').addEventListener('click', function() {
-    document.getElementById('mobileMenu').classList.toggle('hidden');
-  });
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+  </script>
+  <script>
+
   </script>
 </body>
 

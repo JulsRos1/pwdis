@@ -120,7 +120,7 @@ include('includes/config.php');
       </div>
 
       <!-- Sidebar Widgets Column -->
-      <?php include('includes/sidebar.php'); ?>
+      <?php include('includes/right-sidebar.php'); ?>
     </div>
     <!-- /.row -->
 

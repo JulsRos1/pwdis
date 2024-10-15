@@ -119,7 +119,7 @@ if (isset($_POST['register'])) {
 
       <!-- Barangay -->
       <div>
-        <label for="barangay-input">Brgy</label>
+        <label for="barangay-input" class="barangay-label">Brgy</label>
         <select name="Barangay" id="barangay-input" required>
           <option value="" disabled selected>Select Barangay</option>
           <option value="Lalakay">Lalakay</option>
@@ -131,7 +131,7 @@ if (isset($_POST['register'])) {
       <button type="submit" name="register">Signup</button>
     </form>
 
-    <p>Already have an Account? <a href="user_login.php">Login</a></p>
+    <p class = "already">Already have an Account? <a href="user_login.php">Login</a></p>
   </div>
 </body>
 

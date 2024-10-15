@@ -78,7 +78,7 @@ include('includes/config.php');
         ?>
 
             <div class="card mb-4">
-            <img class="card-img-top" src="admin/postimages/<?php echo htmlentities($row['pimg']);?>" alt="<?php echo htmlentities($row['posttitle']);?>">
+              <img class="card-img-top" src="admin/postimages/<?php echo htmlentities($row['pimg']); ?>" alt="<?php echo htmlentities($row['posttitle']); ?>">
               <div class="card-body">
                 <h2 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h2>
 
@@ -126,7 +126,7 @@ include('includes/config.php');
       </div>
 
       <!-- Sidebar Widgets Column -->
-      <?php include('includes/sidebar.php'); ?>
+      <?php include('includes/right-sidebar.php'); ?>
     </div>
     <!-- /.row -->
 

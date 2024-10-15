@@ -22,6 +22,7 @@
             padding: 20px;
             box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
         }
 
         .sidebar h4 {
@@ -74,6 +75,7 @@
             background: #ffffff;
             box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            overflow: hidden;
         }
 
         .message-list {
@@ -139,16 +141,38 @@
             flex-shrink: 0;
         }
 
+        /* Hamburger menu */
+        .hamburger {
+            display: none;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Hiding sidebar only on mobile screens */
         @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
             .sidebar {
-                width: 100%;
-                height: auto;
-                border-right: none;
-                border-bottom: 1px solid #ddd;
-                box-shadow: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 999;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
             }
 
             .chat-container {
+                width: 100%;
                 height: 100vh;
                 border-radius: 0;
             }
@@ -157,18 +181,21 @@
 </head>
 
 <body>
-    <div class="sidebar">
+    <!-- Hamburger Menu for Mobile -->
+    <div class="hamburger" id="hamburgerMenu">☰</div>
+
+    <div class="sidebar hidden" id="sidebar">
         <a href="index.php" class="btn btn-primary btn-home">Exit</a>
         <h4>Chatbox</h4>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
         <ul class="chat-options">
             <li id="allChat">All Chat</li>
-            <li id="userListHeader">Users</li>
         </ul>
         <ul id="userList" class="user-list">
             <!-- User list will be populated here -->
         </ul>
     </div>
+
     <div class="chat-container">
         <h4 id="chatHeader">All Chat - Users Forum</h4>
         <div class="message-list" id="messageList">
@@ -186,6 +213,12 @@
         let chatMode = 'group'; // 'group' or 'private'
         let isUserScrolling = false; // To track if the user is scrolling
         let shouldScrollToBottom = true; // To track if we should auto-scroll
+        const notificationSound = new Audio('sent.mp3');
+
+        // Toggle sidebar visibility
+        $('#hamburgerMenu').click(function() {
+            $('#sidebar').toggleClass('hidden open');
+        });
 
         function fetchUsers(searchQuery = '') {
             $.get('fetch_users.php', {
@@ -214,11 +247,10 @@
             const scrollHeight = $(this)[0].scrollHeight;
             const clientHeight = $(this).innerHeight();
 
-            // If user is near the bottom, we set shouldScrollToBottom to true
             if (scrollTop + clientHeight >= scrollHeight - 5) {
-                shouldScrollToBottom = true; // User is at the bottom
+                shouldScrollToBottom = true;
             } else {
-                shouldScrollToBottom = false; // User is scrolling up
+                shouldScrollToBottom = false;
             }
         });
 
@@ -246,13 +278,13 @@
                             '</div>'
                         );
                     });
-                     if (shouldScrollToBottom) {
-                         $('#messageList').scrollTop($('#messageList')[0].scrollHeight);
-                         }
+                    if (shouldScrollToBottom) {
+                        $('#messageList').scrollTop($('#messageList')[0].scrollHeight);
+                    }
                 } else {
                     alert('Error fetching messages');
                 }
-                    });
+            });
         }
 
         function sendMessage() {
@@ -270,6 +302,7 @@
                     if (response.status === 'success') {
                         $('#messageInput').val('');
                         fetchMessages();
+                        notificationSound.play();
                     } else {
                         alert(response.message);
                     }
@@ -282,7 +315,7 @@
         });
 
         $('#messageInput').keypress(function(e) {
-            if (e.which === 13 && !e.shiftKey) { // Enter key pressed
+            if (e.which === 13 && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
@@ -303,20 +336,14 @@
             fetchMessages();
         });
 
-        $('#userListHeader').click(function() {
-            chatMode = 'private';
-            fetchUsers();
-        });
-
         $('#searchInput').on('input', function() {
             let searchQuery = $(this).val();
             fetchUsers(searchQuery);
         });
 
-        // Fetch users and messages on page load
         fetchUsers();
         fetchMessages();
-        setInterval(fetchMessages, 2000); // Poll every 2 seconds for new messages
+        setInterval(fetchMessages, 2000);
     </script>
 </body>
 

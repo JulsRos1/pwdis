@@ -6,58 +6,128 @@ session_start();
 <html>
 
 <head>
-  <title>Navigate Accessibility  in Los Baños, Laguna</title>
+  <title>Navigate Accessibility in Los Baños, Laguna</title>
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link href="css/modern-business.css" rel="stylesheet" />
   <link rel="stylesheet" href="css/mapcontent.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&libraries=places" defer async></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
-  <?php include("includes/header.php"); ?>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
+    <div class="container-fluid">
+      <div class="header-logo">
+        <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair custom-wheelchair blue-icon'></i>PWDIS</a>
+      </div>
+
+      <!-- Toggler for mobile view -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon">&#9776;</span>
+      </button>
+
+      <!-- Navbar links and Search Form -->
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <!-- Search Form (appears on mobile within the collapsible menu) -->
+        <form class="form-inline d-lg-none mt-3" name="search" action="search.php" method="post">
+          <div class="input-group w-100">
+            <input type="text" name="searchtitle" class="form-control" placeholder="Search for..." required>
+            <div class="input-group-append">
+              <button class="btn btn-secondary" type="submit">Go!</button>
+            </div>
+          </div>
+        </form>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="index.php">
+              <i class="fas fa-home"></i> Home <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="view_uploaded_files.php">
+              <i class="far fa-file"></i> Materials
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="mapping.php">
+              <i class="fas fa-map-marked-alt"></i> Map Accessibility
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="top_rated_places.php">
+              <i class="fas fa-map-marked-alt"></i> Popular Places
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about-us.php">
+              <i class="fas fa-info-circle"></i> About
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto mr-5">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <?php
+              $avatarUrl = isset($_SESSION['avatar_url']) && !empty($_SESSION['avatar_url'])
+                ? $_SESSION['avatar_url']
+                : 'path/to/default/avatar.png';
+              ?>
+              <img src="<?php echo htmlspecialchars($avatarUrl); ?>" alt="User Avatar" class="user-avatar rounded-circle" width="30" height="30">
+            </a>
+            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userProfileDropdown">
+              <a class="dropdown-item text-center font-weight-bold" href="#">Hi, <?php echo $_SESSION['name'] . " " . $_SESSION['lname'] ?></a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="profile.php">View Profile</a>
+              <a class="dropdown-item" href="logout.php">Logout</a>
+            </div>
+          </li>
+          <li class="nav-item mt-1">
+            <a href="messages.php" class="nav-link"> <i class="fa-solid fa-message"></i> Chats</a>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
   <div id="map-container">
-  <div id="map"></div>
-  <div class="top-button-bar">
-    <button class="category-button" onclick="updatePlaces('restaurant')">
-      <i class="fas fa-utensils"></i>
-      Restaurants
-    </button>
-    <button class="category-button" onclick="updatePlaces('school')">
-      <i class="fas fa-school"></i>
-      Schools
-    </button>
-    <button class="category-button" onclick="updatePlaces('hospital')">
-      <i class="fas fa-hospital"></i>
-      Hospital
-    </button>
-    <button class="category-button" onclick="updatePlaces('cafe')">
-      <i class="fas fa-coffee"></i>
-      Cafe
-    </button>
-    <button class="category-button" onclick="updatePlaces('grocery_store')">
-      <i class="fas fa-shopping-cart"></i>
-      Grocery Store
-    </button>
-    <button class="category-button" onclick="updatePlaces('community_center')">
-      <i class="fas fa-users"></i>
-      Community Center
-    </button>
+    <div id="map"></div>
+    <div class="top-button-bar">
+      <button class="category-button" onclick="updatePlaces('restaurant')">
+        <i class="fas fa-utensils"></i>
+        Restaurants
+      </button>
+      <button class="category-button" onclick="updatePlaces('school')">
+        <i class="fas fa-school"></i>
+        Schools
+      </button>
+      <button class="category-button" onclick="updatePlaces('hospital')">
+        <i class="fas fa-hospital"></i>
+        Healthcare
+      </button>
+      <button class="category-button" onclick="updatePlaces('grocery_store')">
+        <i class="fas fa-shopping-cart"></i>
+        Grocery Store
+      </button>
+    </div>
+    <div class="legend">
+      <h4>Legend</h4>
+      <ul>
+        <li><span style="background-color: red"></span> Not Accessible (0 Options)</li>
+        <li><span style="background-color: blue"></span> Accessible (1-2 Options)</li>
+        <li><span style="background-color: green"></span> Highly Accessible (3-4 Options)</li>
+      </ul>
+    </div>
+    <div id="place-details-panel" class="place-details-panel">
+      <button id="close-details" class="close-details">&times;</button>
+      <div id="place-details-content"></div>
+    </div>
   </div>
-  <div class="legend">
-    <h4>Legend</h4>
-    <ul>
-      <li><span style="background-color: red"></span> Not Accessible (0 Options)</li>
-      <li><span style="background-color: blue"></span> Accessible (1-2 Options)</li>
-      <li><span style="background-color: green"></span> Highly Accessible (3-4 Options)</li>
-    </ul>
-  </div>
-  <div id="place-details-panel" class="place-details-panel">
-    <button id="close-details" class="close-details">&times;</button>
-    <div id="place-details-content"></div>
-  </div>
-</div>
 </body>
 
 
@@ -202,7 +272,7 @@ session_start();
         .catch(error => {
           console.error("Error submitting review:", error);
           Swal.fire({
-            title: "Error!", 
+            title: "Error!",
             text: "There was an error submitting your review. Please try again.",
             icon: "error",
             confirmButtonText: "OK",
@@ -212,17 +282,21 @@ session_start();
   });
 
   function initMap() {
-    const losBanosLocation = { lat: 14.1846, lng: 121.2385 }
+    const losBanosLocation = {
+      lat: 14.1846,
+      lng: 121.2385
+    }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         userLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-
+        // Adjust zoom level based on screen width
+        const zoomLevel = window.innerWidth <= 768 ? 14 : 16; // Zoom out for mobile devices
         map = new google.maps.Map(document.getElementById("map"), {
           center: losBanosLocation,
-          zoom: 17,
+          zoom: zoomLevel,
           mapTypeControl: false, // This disables the default "Map" and "Satellite" buttons
           streetViewControl: false, // Optionally disable the Street View button
           fullscreenControl: false // Optionally disable the fullscreen control
@@ -249,13 +323,14 @@ session_start();
       }
     );
   }
-  
+
 
   function updatePlaces(type) {
     currentPlaceType = type;
     // Clear existing markers (if any)
     clearMarkers();
-    map.setZoom(15);
+    map.setZoom(14);
+    $('#moreCategoriesModal').modal('hide');
     const request = {
       includedTypes: [type],
       locationRestriction: {
@@ -270,16 +345,15 @@ session_start();
     };
 
     fetch(
-      "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
-        },
-        body: JSON.stringify(request),
-      }
-    )
+        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos",
+          },
+          body: JSON.stringify(request),
+        }
+      )
       .then((response) => response.json())
       .then((data) => {
         console.log("Parsed data: ", data);
@@ -291,7 +365,7 @@ session_start();
               place.location.latitude &&
               place.location.longitude
             ) {
-              fetchPlaceDetails(place, false, currentPlaceType, false);  // Pass currentPlaceType and false for isFromMapClick
+              fetchPlaceDetails(place, false, currentPlaceType, false); // Pass currentPlaceType and false for isFromMapClick
             }
           });
         } else {
@@ -301,7 +375,7 @@ session_start();
       .catch((error) => {
         console.error("Fetch error for places:", error);
       });
-}
+  }
 
   let currentPlaceType = '';
 
@@ -326,16 +400,15 @@ session_start();
     };
 
     fetch(
-      "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos,places.primaryType"
-        },
-        body: JSON.stringify(request),
-      }
-    )
+        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-FieldMask": "places.id,places.displayName,places.formattedAddress,places.accessibilityOptions,places.location,places.photos,places.primaryType"
+          },
+          body: JSON.stringify(request),
+        }
+      )
       .then((response) => response.json())
       .then((data) => {
         console.log("Place: ", data);
@@ -346,8 +419,13 @@ session_start();
         } else {
           console.log("No place found at this location");
           addMarker({
-            location: { latitude: latLng.lat(), longitude: latLng.lng() },
-            displayName: { text: "Unknown Location" },
+            location: {
+              latitude: latLng.lat(),
+              longitude: latLng.lng()
+            },
+            displayName: {
+              text: "Unknown Location"
+            },
             formattedAddress: "Unknown Address",
             id: "clicked_location",
           }, {}, 'Unknown', true);
@@ -370,7 +448,7 @@ session_start();
         };
 
         addMarker(place, accessibilityOptions);
-        
+
         if (shouldOpenPanel) {
           fetch(`fetch_reviews.php?place_id=${place.id}`)
             .then((response) => response.json())
@@ -455,39 +533,43 @@ session_start();
   function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo, placeType, isFromMapClick) {
     const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
     const reviewCount = reviewsData.reviewCount || "No reviews";
-    const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
+    const starsHtml = Array.from({
+      length: 5
+    }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
 
     // Helper function to calculate time ago
     function timeAgo(reviewDate) {
-        const date = new Date(reviewDate);  // Make sure reviewDate is a valid Date string
-        const now = new Date();
-        const seconds = Math.floor((now - date) / 1000);
+      const date = new Date(reviewDate); // Make sure reviewDate is a valid Date string
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
 
-        let interval = Math.floor(seconds / 31536000);
-        if (interval >= 1) return interval === 1 ? "1 year ago" : `${interval} years ago`;
+      let interval = Math.floor(seconds / 31536000);
+      if (interval >= 1) return interval === 1 ? "1 year ago" : `${interval} years ago`;
 
-        interval = Math.floor(seconds / 2592000);
-        if (interval >= 1) return interval === 1 ? "1 month ago" : `${interval} months ago`;
+      interval = Math.floor(seconds / 2592000);
+      if (interval >= 1) return interval === 1 ? "1 month ago" : `${interval} months ago`;
 
-        interval = Math.floor(seconds / 86400);
-        if (interval >= 1) return interval === 1 ? "1 day ago" : `${interval} days ago`;
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) return interval === 1 ? "1 day ago" : `${interval} days ago`;
 
-        interval = Math.floor(seconds / 3600);
-        if (interval >= 1) return interval === 1 ? "1 hour ago" : `${interval} hours ago`;
+      interval = Math.floor(seconds / 3600);
+      if (interval >= 1) return interval === 1 ? "1 hour ago" : `${interval} hours ago`;
 
-        interval = Math.floor(seconds / 60);
-        if (interval >= 1) return interval === 1 ? "1 minute ago" : `${interval} minutes ago`;
+      interval = Math.floor(seconds / 60);
+      if (interval >= 1) return interval === 1 ? "1 minute ago" : `${interval} minutes ago`;
 
-        return seconds < 5 ? "just now" : `${Math.floor(seconds)} seconds ago`;
+      return seconds < 5 ? "just now" : `${Math.floor(seconds)} seconds ago`;
     }
-    
+
 
     // Generate reviews HTML
     const reviewsHtml = reviewsData.reviews.map(review => {
-        const starsHtml = Array.from({ length: 5 }, (v, i) => `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`).join("");
-        const reviewTimeAgo = timeAgo(review.review_date);  // Use the review_date field here
+      const starsHtml = Array.from({
+        length: 5
+      }, (v, i) => `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`).join("");
+      const reviewTimeAgo = timeAgo(review.review_date); // Use the review_date field here
 
-        return `
+      return `
             <div class="review">
               <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
               <div class="stars">${starsHtml}</div>
@@ -496,15 +578,15 @@ session_start();
             </div>
             <hr>
         `;
-      }).join("");
+    }).join("");
 
     const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600` : '';
 
     // Create the photo HTML if a photo is available
     const photoHtml = photoUrl ? `
-      <div style="position: relative; width: 100%; max-height: 230px;">
-        <img src="${photoUrl}" alt="${place.displayName.text}" style="width: 100%; height: 230px; object-fit: cover;">  </div>` : '';
-      return `
+      <div style="position: relative; width: 100%; max-height: 230px;" class="placeimage">
+        <img src="${photoUrl}" alt="${place.displayName.text}"  </div>` : '';
+    return `
 
         <div>
             ${photoHtml}
@@ -547,17 +629,17 @@ session_start();
             </div>
         </div>
     `;
-}
+  }
 
-function openReviewModal(placeId, displayName, formattedAddress, photoUrl, placeType, isFromMapClick) {
-  console.log("Opening review modal for:", placeId, displayName, formattedAddress, placeType, isFromMapClick);
-  document.getElementById('place_id_modal').value = placeId;
-  document.getElementById('photo_url_modal').value = photoUrl || '';
-  document.getElementById('display_name_modal').value = displayName;
-  document.getElementById('formatted_address_modal').value = formattedAddress;
-  document.getElementById('place_type_modal').value = isFromMapClick ? placeType : currentPlaceType;
-  $('#reviewModal').modal('show');
-}
+  function openReviewModal(placeId, displayName, formattedAddress, photoUrl, placeType, isFromMapClick) {
+    console.log("Opening review modal for:", placeId, displayName, formattedAddress, placeType, isFromMapClick);
+    document.getElementById('place_id_modal').value = placeId;
+    document.getElementById('photo_url_modal').value = photoUrl || '';
+    document.getElementById('display_name_modal').value = displayName;
+    document.getElementById('formatted_address_modal').value = formattedAddress;
+    document.getElementById('place_type_modal').value = isFromMapClick ? placeType : currentPlaceType;
+    $('#reviewModal').modal('show');
+  }
   // Eto yung logic sa stars in the ratings
   document.addEventListener('DOMContentLoaded', function() {
     const stars = document.querySelectorAll('.stars i');
@@ -575,7 +657,7 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
 
   function openAccessibilityModal(placeId, displayName) {
     console.log("Opening accessibility modal for:", placeId, displayName);
-    
+
     // Set place ID and display name
     document.getElementById("place_id_accessibility_modal").value = placeId;
     document.getElementById("display_name_modal1").value = displayName;
@@ -601,14 +683,14 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
       });
   }
 
-    // Add event listener for accessibility form submission
+  // Add event listener for accessibility form submission
   document.querySelector("#accessibilityModal form").addEventListener("submit", function(event) {
     event.preventDefault();
     const formData = new FormData(this);
     fetch("submit_accessibility.php", {
-      method: "POST",
-      body: formData,
-    })
+        method: "POST",
+        body: formData,
+      })
       .then((response) => response.json())
       .then((data) => {
         if (data.status === "success") {
@@ -619,7 +701,7 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
             confirmButtonText: "OK",
           }).then(() => {
             $("#accessibilityModal").modal("hide");
-            
+
             // Get the place details
             const placeId = formData.get('place_id');
             const displayName = formData.get('display_name');
@@ -667,16 +749,18 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
     .forEach(checkbox => checkbox.addEventListener("change", updateAccessibilityLevel));
 
   function showReviews(placeId) {
-  fetch(`fetch_reviews.php?place_id=${placeId}`)
-    .then(response => response.json())
-    .then(reviewsData => {
-      let reviewsHtml = "No reviews yet.";
-      if (reviewsData.reviews && reviewsData.reviews.length > 0) {
-        reviewsHtml = reviewsData.reviews.map(review => {
-          const starsHtml = Array.from({length: 5}, (_, i) => 
-            `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`
-          ).join("");
-          return `
+    fetch(`fetch_reviews.php?place_id=${placeId}`)
+      .then(response => response.json())
+      .then(reviewsData => {
+        let reviewsHtml = "No reviews yet.";
+        if (reviewsData.reviews && reviewsData.reviews.length > 0) {
+          reviewsHtml = reviewsData.reviews.map(review => {
+            const starsHtml = Array.from({
+                length: 5
+              }, (_, i) =>
+              `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`
+            ).join("");
+            return `
             <div class="review">
               <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
               <div class="stars">${starsHtml}</div>
@@ -684,16 +768,16 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
             </div>
             <hr>
           `;
-        }).join("");
-      }
-      document.getElementById("reviewsContent").innerHTML = reviewsHtml;
-      $("#reviewsModal").modal("show");
-    })
-    .catch(error => {
-      console.error("Error fetching reviews:", error);    
-      document.getElementById("reviewsContent").innerHTML = "Error loading reviews.";
-      $("#reviewsModal").modal("show");
-    });
+          }).join("");
+        }
+        document.getElementById("reviewsContent").innerHTML = reviewsHtml;
+        $("#reviewsModal").modal("show");
+      })
+      .catch(error => {
+        console.error("Error fetching reviews:", error);
+        document.getElementById("reviewsContent").innerHTML = "Error loading reviews.";
+        $("#reviewsModal").modal("show");
+      });
   }
 
   function openPlaceDetailsPanel() {
@@ -706,7 +790,7 @@ function openReviewModal(placeId, displayName, formattedAddress, photoUrl, place
     document.getElementById('map').classList.remove('panel-open');
   }
 
-document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
+  document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
 </script>
 </body>
 

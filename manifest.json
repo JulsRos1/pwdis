@@ -1,0 +1,21 @@
+{
+  "name": "PWDIS",
+  "short_name": "PWDIS",
+  "start_url": "/user_login.php",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "description": "A brief description of your app.",
+  "icons": [
+    {
+      "src": "./images/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

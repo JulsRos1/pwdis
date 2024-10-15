@@ -55,7 +55,7 @@ form > div {
 }
 form label {
   flex-shrink: 0;
-  height: 50px;
+  height: 35px;
   width: 50px;
   background-color: var(--accent-color);
   fill: var(--base-color);
@@ -71,7 +71,7 @@ form input {
   box-sizing: border-box;
   flex-grow: 1;
   min-width: 0;
-  height: 50px;
+  height: 30px;
   padding: 1em;
   font: inherit;
   border-radius: 0 10px 10px 0;
@@ -92,6 +92,25 @@ form input {
   background-color: var(--input-color);
   transition: 150ms ease;
 }
+#barangay-input {
+  width: 150px; /* Adjust width as needed */
+  height: 30px; /* Adjust height as needed */
+  font-size: 14px; /* Adjust font size as needed */
+}
+.barangay-label {
+  flex-shrink: 0;
+  height: 30px; /* Adjust height as needed */
+  width: 50px; /* Adjust width as needed */
+  background-color: var(--accent-color);
+  color: var(--base-color);
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1rem; /* Adjust font size as needed */
+  font-weight: 500;
+}
+
 form input:hover {
   border-color: var(--accent-color);
 }
@@ -106,7 +125,8 @@ form input::placeholder {
   color: var(--text-color);
 }
 form button {
-  margin-top: 10px;
+  font-size: 12px !important;
+  margin-top: 5px;
   border: none;
   border-radius: 1000px;
   padding: 0.85em 4em;

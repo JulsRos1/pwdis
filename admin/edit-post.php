@@ -33,7 +33,7 @@ if (strlen($_SESSION['login']) == 0) {
         <!-- App favicon -->
         <link rel="shortcut icon" href="assets/images/favicon.ico">
         <!-- App title -->
-        <title>Newsportal | Add Post</title>
+        <title>PWDIS | Add Post</title>
 
         <!-- Summernote css -->
         <link href="../plugins/summernote/summernote.css" rel="stylesheet" />
@@ -166,7 +166,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <div class="card-box">
-                                                            <h4 class="m-b-30 m-t-0 header-title"><b>Post Image</b></h4>
+                                                            <h4 class="m-b-30 m-t-0 header-title"><b>Featured Image</b></h4>
                                                             <img src="postimages/<?php echo htmlentities($row['PostImage']); ?>" width="300" />
                                                             <br />
                                                             <a href="change-image.php?pid=<?php echo htmlentities($row['postid']); ?>">Update Image</a>

@@ -48,17 +48,14 @@
 
 @media (max-width: 768px) {
   .legend {
-    top: 10px;
-    right: 10px;
-    max-width: calc(100% - 20px); /* Adjust max width for smaller screens */
+    display: none;
   }
-}
-
-@media (max-width: 480px) {
-  .legend {
-    font-size: 12px; /* Smaller font size for very small screens */
-    padding: 5px;
-    max-width: calc(100% - 10px); /* Further adjust width */
+  .place-details-panel {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    position: relative;
+    left: 0;
   }
 }
 
@@ -86,12 +83,12 @@
   display: flex;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   overflow-x: auto;
   max-width: 90%;
   padding: 5px;
-  margin-left:5em;
+  margin-left: 3em;
 }
 
 .category-button {
@@ -108,7 +105,7 @@
 
 .category-button:hover {
   background-color: black;
-  color:white;
+  color: white;
 }
 
 .category-button i {
@@ -157,30 +154,14 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  #map-container {
-    flex-direction: column;
-  }
-
-  .sidebar, .place-details-panel {
-    width: 100%;
-    height: auto;
-    max-height: 50%;
-    position: relative;
-    left: 0;
-  }
-
-  .sidebar.open, .place-details-panel.open {
-    width: 100%;
-  }
-
-  #map {
-    height: 50%;
+  .legend {
+    display: none;
   }
 }
 
 /* Adjust other existing styles as needed */
 
-.no-bullet{
+.no-bullet {
   list-style-type: none;
 }
 /*Reviews Summary Style */
@@ -197,11 +178,16 @@
   align-items: center;
   font-size: 24px;
 }
+.placeimage img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
 
 .rating-number {
   font-size: 48px;
   font-weight: bold;
-  color: #34A853;
+  color: #34a853;
 }
 
 .stars {
@@ -212,7 +198,7 @@
 
 .stars i {
   font-size: 22px;
-  color: #FFD700;
+  color: #ffd700;
 }
 
 .total-reviews {
@@ -242,7 +228,6 @@
   margin-bottom: 10px;
 }
 /*REviews summary style end*/
-
 
 /*Write Reviews modal */
 .star-rating {
@@ -322,5 +307,3 @@
   border: none;
 }
 /*Write Reviews modal END*/
-
-

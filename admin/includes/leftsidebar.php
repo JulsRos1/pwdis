@@ -47,6 +47,18 @@
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
+                        <i class="mdi mdi-note-plus"></i> 
+                        <span> Materials</span> 
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <ul class="list-unstyled">
+                        <li><a href="upload_files.php">Add Materials</a></li>
+                        <li><a href="manage_files.php">Manage Materials</a></li>
+                    </ul>
+                </li>
+
+                <li class="has_sub">
+                    <a href="javascript:void(0);" class="waves-effect">
                         <i class="mdi mdi-file-document"></i> 
                         <span> Pages </span> 
                         <span class="menu-arrow"></span>

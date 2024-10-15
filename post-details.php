@@ -69,7 +69,7 @@ if (isset($_POST['submit'])) {
     .post-images {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 10px;
+      gap: 20px;
     }
 
     .post-image {
@@ -144,7 +144,7 @@ if (isset($_POST['submit'])) {
       </div>
 
       <!-- Sidebar Widgets Column -->
-      <?php include('includes/sidebar.php'); ?>
+      <?php include('includes/right-sidebar.php'); ?>
     </div>
     <!-- /.row -->
     <!---Comment Section --->

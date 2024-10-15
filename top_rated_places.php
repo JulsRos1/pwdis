@@ -7,7 +7,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 // Function to calculate weighted rating
-function calculateWeightedRating($rating, $numReviews) {
+function calculateWeightedRating($rating, $numReviews)
+{
     $minReviews = 5;
     $averageRating = 3.5;
     $effectiveReviews = min($numReviews, 10);
@@ -15,7 +16,8 @@ function calculateWeightedRating($rating, $numReviews) {
 }
 
 // Function to format place type for display
-function formatPlaceType($placeType) {
+function formatPlaceType($placeType)
+{
     $formatted = str_replace(['_', '-'], ' ', $placeType);
     return ucwords($formatted);
 }
@@ -62,7 +64,7 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Sort places by weighted rating
-usort($places, function($a, $b) {
+usort($places, function ($a, $b) {
     if ($a['avg_rating'] >= 4.5 && $b['avg_rating'] < 4.5) {
         return -1;
     } elseif ($a['avg_rating'] < 4.5 && $b['avg_rating'] >= 4.5) {
@@ -80,127 +82,149 @@ usort($places, function($a, $b) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Rated Places</title>
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/modern-business.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-    .place-card {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px; /* Margin between cards */
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        overflow: hidden;
-        height: 100%; /* Ensures all cards stretch to fill the height */
-    }
+        .place-card {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            /* Margin between cards */
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            height: 100%;
+            /* Ensures all cards stretch to fill the height */
+        }
 
-    /* Ensures consistent spacing */
-    .row {
-        margin-top: 20px; /* Add margin to the row to ensure top spacing */
-    }
+        /* Ensures consistent spacing */
+        .row {
+            margin-top: 20px;
+            /* Add margin to the row to ensure top spacing */
+        }
 
-    /* If using Bootstrap's grid system, you can also use Bootstrap classes for spacing */
-    .col-md-4 {
-        padding: 0 15px; /* Add horizontal padding for the columns */
-    }
-    .place-image {
-        width: 100%;
-        height: 230px;
-        object-fit: cover;
-    }
-    .place-info {
-        padding: 15px;
-        flex-grow: 1; /* Ensures this section takes up remaining space */
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Pushes the content apart */
-    }
-    .place-name {
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
-    .place-address {
-        color: #666;
-        font-size: 0.9em;
-        margin-bottom: 5px;
-    }
-    .place-rating {
-        color: #fbbc04;
-        font-weight: bold;
-    }
-    .review-count {
-        color: #666;
-        font-size: 0.9em;
-    }
-    .rank-badge {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 3px;
-    }
-    .rating-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        /* If using Bootstrap's grid system, you can also use Bootstrap classes for spacing */
+        .col-md-4 {
+            padding: 0 15px;
+            /* Add horizontal padding for the columns */
+        }
 
-    /* Modal and Reviews CSS */
-    .stars i {
-      font-size: 22px;
-      color: #FFD700;
-    }
-    .starsaverage i {
-      font-size: 40px;
-      color: #FFD700;
-    }
+        .place-image {
+            width: 100%;
+            height: 230px;
+            object-fit: cover;
+        }
 
-    .total-reviews {
-      margin-top:10px;
-      margin-bottom:10px;
-      font-size: 16px;
-      color: black;
-      font-weight: 600;
-    }
+        .place-info {
+            padding: 15px;
+            flex-grow: 1;
+            /* Ensures this section takes up remaining space */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            /* Pushes the content apart */
+        }
 
-    .recent-reviews h4 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
+        .place-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-    .reviews-list {
-      border-top: 1px solid #ddd;
-      padding-top: 10px;
-    }
+        .place-address {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
 
-    .review-item {
-      margin-bottom: 10px;
-    }
-    .reviewsummary{
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 10px;
-    }
-    .filter-button {
-        margin-bottom: 20px;
-    }
-    .place-type {
-        font-size: 0.9em;
-        color: #666;
-        margin-top: 5px;
-    }
-    #filterModal .modal-body {
-        max-height: 300px;
-        overflow-y: auto;
-    }
+        .place-rating {
+            color: #fbbc04;
+            font-weight: bold;
+        }
+
+        .review-count {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .rank-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .rating-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Modal and Reviews CSS */
+        .stars i {
+            font-size: 22px;
+            color: #FFD700;
+        }
+
+        .starsaverage i {
+            font-size: 40px;
+            color: #FFD700;
+        }
+
+        .total-reviews {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+        }
+
+        .recent-reviews h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .reviews-list {
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+
+        .review-item {
+            margin-bottom: 10px;
+        }
+
+        .reviewsummary {
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .filter-button {
+            margin-bottom: 20px;
+        }
+
+        .place-type {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        #filterModal .modal-body {
+            max-height: 300px;
+            overflow-y: auto;
+        }
     </style>
 </head>
+
 <body>
-<?php include('includes/header.php'); ?>
+    <?php include('includes/header.php'); ?>
     <div class="container mt-4">
         <div class="filter-button">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
@@ -210,7 +234,7 @@ usort($places, function($a, $b) {
                 <a href="?type=all" class="btn btn-outline-secondary">Clear Filter</a>
             <?php endif; ?>
         </div>
-        
+
         <?php if (empty($places)): ?>
             <div class="alert alert-warning">No places found for the selected type. Try a different filter.</div>
         <?php else: ?>
@@ -219,8 +243,8 @@ usort($places, function($a, $b) {
                     <div class="col-md-4 mb-4">
                         <div class="place-card position-relative" data-place-id="<?php echo htmlspecialchars($place['place_id']); ?>">
                             <div class="rank-badge"><?php echo $index + 1; ?></div>
-                            <img src="<?php echo $place['photo_url'] ? htmlspecialchars($place['photo_url']) : 'https://via.placeholder.com/350x150'; ?>" 
-                                alt="<?php echo htmlspecialchars($place['display_name']); ?>" 
+                            <img src="<?php echo $place['photo_url'] ? htmlspecialchars($place['photo_url']) : 'https://via.placeholder.com/350x150'; ?>"
+                                alt="<?php echo htmlspecialchars($place['display_name']); ?>"
                                 class="place-image">
                             <div class="place-info">
                                 <div class="place-name"><?php echo htmlspecialchars($place['display_name']); ?></div>
@@ -309,7 +333,9 @@ usort($places, function($a, $b) {
                 $.ajax({
                     url: 'fetch_reviews.php',
                     type: 'GET',
-                    data: { place_id: placeId },
+                    data: {
+                        place_id: placeId
+                    },
                     success: function(response) {
                         var data = JSON.parse(response);
                         var reviewsHtml = '';
@@ -388,7 +414,8 @@ usort($places, function($a, $b) {
                 return seconds + " seconds ago";
             }
         });
-</script>
+    </script>
 
 </body>
+
 </html>

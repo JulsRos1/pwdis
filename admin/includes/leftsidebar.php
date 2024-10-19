@@ -8,22 +8,36 @@
 
                 <li class="has_sub">
                     <a href="dashboard.php" class="waves-effect">
-                        <i class="mdi mdi-view-dashboard"></i> 
-                        <span> Dashboard </span> 
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span> Dashboard </span>
                     </a>
                 </li>
 
                 <li class="has_sub">
                     <a href="manage_user.php" class="waves-effect">
-                        <i class="mdi mdi-account-multiple"></i> 
-                        <span> Manage Users</span> 
+                        <i class="fas fa-users"></i>
+                        <span> Manage Users</span>
+                    </a>
+                </li>
+
+                <li class="has_sub">
+                    <a href="manage_reviews.php" class="waves-effect">
+                        <i class="fa-regular fa-star"></i>
+                        <span> Manage Reviews</span>
+                    </a>
+                </li>
+
+                <li class="has_sub">
+                    <a href="manage_accessibility.php" class="waves-effect">
+                        <i class="fas fa-universal-access"></i>
+                        <span> Accessibility</span>
                     </a>
                 </li>
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
-                        <i class="mdi mdi-folder"></i> 
-                        <span> Category </span> 
+                        <i class="fas fa-folder"></i>
+                        <span> Category </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
@@ -34,8 +48,8 @@
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
-                        <i class="mdi mdi-note-plus"></i> 
-                        <span> Posts </span> 
+                        <i class="fas fa-pencil-alt"></i>
+                        <span> Posts </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
@@ -47,8 +61,8 @@
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
-                        <i class="mdi mdi-note-plus"></i> 
-                        <span> Materials</span> 
+                        <i class="fas fa-file-upload"></i>
+                        <span> Materials</span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
@@ -59,8 +73,8 @@
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
-                        <i class="mdi mdi-file-document"></i> 
-                        <span> Pages </span> 
+                        <i class="fas fa-file-alt"></i>
+                        <span> Pages </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
@@ -71,8 +85,8 @@
 
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
-                        <i class="mdi mdi-comment-multiple-outline"></i> 
-                        <span> Comments </span> 
+                        <i class="fas fa-comments"></i>
+                        <span> Comments </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">

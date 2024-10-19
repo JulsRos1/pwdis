@@ -6,66 +6,35 @@ error_reporting(0);
 if (strlen($_SESSION['login']) == 0) {
     header('location:index.php');
 } else {
-    // For uploading files
     if (isset($_POST['submit'])) {
-        $fileTitle = $_POST['filetitle'];
+        $hotlineTitle = $_POST['hotline_title'];
+        $hotlineNumber = $_POST['hotline_number'];
 
-        // Handle file upload
-        if ($_FILES["uploadfile"]["name"] != '') {
-            $file = $_FILES["uploadfile"]["name"];
-            $fileTempName = $_FILES["uploadfile"]["tmp_name"];
-
-            // Get the file extension
-            $extension = pathinfo($file, PATHINFO_EXTENSION);
-            $allowed = array("pdf", "doc", "docx");
-
-            // Check if the uploaded file is a PDF or Word file
-            if (in_array($extension, $allowed)) {
-                // Set the target directory (absolute path)
-                $targetDir = "uploaded_files/";
-
-                // Create the target directory if it doesn't exist
-                if (!is_dir($targetDir)) {
-                    mkdir($targetDir, 0755, true);
-                }
-
-                // Set the full file path
-                $targetFilePath = $targetDir . basename($file);
-
-                // Move the uploaded file to the desired location
-                if (move_uploaded_file($fileTempName, $targetFilePath)) {
-                    // Insert the file details into the database
-                    $query = mysqli_query($con, "INSERT INTO uploaded_files(title, file_name, file_path, date_created) VALUES('$fileTitle', '$file', '/uploaded_files/$file', NOW())");
-
-                    if ($query) {
-                        $msg = "File successfully uploaded";
-                    } else {
-                        $error = "Error inserting into database";
-                    }
-                } else {
-                    $error = "Failed to upload file";
-                }
+        if ($hotlineTitle != '' && $hotlineNumber != '') {
+            // Validate hotline number length
+            if (strlen($hotlineNumber) < 10 || strlen($hotlineNumber) > 11) {
+                $error = "Hotline number must be 10 or 11 digits long";
             } else {
-                $error = "Only PDF and Word files are allowed";
+                $query = mysqli_query($con, "INSERT INTO emergency_hotlines(title, number) VALUES('$hotlineTitle', '$hotlineNumber')");
+                if ($query) {
+                    $msg = "Hotline successfully uploaded";
+                } else {
+                    $error = "Error inserting into database";
+                }
             }
         } else {
-            $error = "Please choose a file to upload";
+            $error = "Please fill all fields";
         }
     }
-
 ?>
+
     <!DOCTYPE html>
     <html lang="en">
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
-        <meta name="author" content="Coderthemes">
-
-        <title>PWDIS | Upload Files</title>
-
-        <!-- App css -->
+        <title>PWDIS | Upload Emergency Hotlines</title>
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
@@ -74,28 +43,20 @@ if (strlen($_SESSION['login']) == 0) {
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
         <script src="assets/js/modernizr.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
     </head>
 
     <body class="fixed-left">
         <div id="wrapper">
-            <!-- Top Bar Start -->
             <?php include('includes/topheader.php'); ?>
-            <!-- ========== Left Sidebar Start ========== -->
             <?php include('includes/leftsidebar.php'); ?>
-            <!-- Left Sidebar End -->
 
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->
             <div class="content-page">
-                <!-- Start content -->
                 <div class="content">
                     <div class="container">
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="page-title-box">
-                                    <h4 class="page-title">Upload Files</h4>
+                                    <h4 class="page-title">Upload Emergency Hotlines</h4>
                                     <div class="clearfix"></div>
                                 </div>
                             </div>
@@ -103,14 +64,11 @@ if (strlen($_SESSION['login']) == 0) {
 
                         <div class="row">
                             <div class="col-sm-6">
-                                <!-- Success Message -->
                                 <?php if ($msg) { ?>
                                     <div class="alert alert-success" role="alert">
                                         <strong>Success!</strong> <?php echo htmlentities($msg); ?>
                                     </div>
                                 <?php } ?>
-
-                                <!-- Error Message -->
                                 <?php if ($error) { ?>
                                     <div class="alert alert-danger" role="alert">
                                         <strong>Error!</strong> <?php echo htmlentities($error); ?>
@@ -122,25 +80,21 @@ if (strlen($_SESSION['login']) == 0) {
                         <div class="row">
                             <div class="col-md-8 col-md-offset-2">
                                 <div class="p-6">
-                                    <div class="">
-                                        <form name="uploadfile" method="post" enctype="multipart/form-data">
-                                            <div class="form-group m-b-20">
-                                                <label for="filetitle">File Title</label>
-                                                <input type="text" class="form-control" id="filetitle" name="filetitle" placeholder="Enter file title" required>
-                                            </div>
-
-                                            <div class="control-group form-group">
-                                                <div class="controls">
-                                                    <label>Select File (PDF or Word):</label>
-                                                    <input type="file" class="form-control" name="uploadfile" required>
-                                                </div>
-                                            </div>
-
-                                            <button type="submit" name="submit" class="btn btn-success waves-effect waves-light">Upload File</button>
-                                            <button type="button" class="btn btn-danger waves-effect waves-light">Cancel</button>
-                                        </form>
-                                    </div>
-                                </div> <!-- end p-20 -->
+                                    <form method="post">
+                                        <div class="form-group m-b-20">
+                                            <label for="hotline_title">Hotline Title</label>
+                                            <input type="text" class="form-control" id="hotline_title" name="hotline_title" placeholder="Enter hotline title" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="hotline_number">Hotline Number</label>
+                                            <input type="text" class="form-control" id="hotline_number" name="hotline_number"
+                                                placeholder="Enter hotline number"
+                                                pattern="^\d{10,11}$" title="Please enter a number of 10 to 11 digits length and no spacing" required>
+                                        </div>
+                                        <button type="submit" name="submit" class="btn btn-success waves-effect waves-light">Upload Hotline</button>
+                                        <button type="button" class="btn btn-danger waves-effect waves-light">Cancel</button>
+                                    </form>
+                                </div>
                             </div> <!-- end col -->
                         </div> <!-- end row -->
                     </div> <!-- container -->

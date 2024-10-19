@@ -19,82 +19,7 @@ session_start();
 <body>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <nav class="navbar navbar-expand-lg custom-navbar shadow-sm py-3">
-    <div class="container-fluid">
-      <div class="header-logo">
-        <a href="index.php" class="navbar-brand"><i class='fa fa-wheelchair custom-wheelchair blue-icon'></i>PWDIS</a>
-      </div>
-
-      <!-- Toggler for mobile view -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon">&#9776;</span>
-      </button>
-
-      <!-- Navbar links and Search Form -->
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <!-- Search Form (appears on mobile within the collapsible menu) -->
-        <form class="form-inline d-lg-none mt-3" name="search" action="search.php" method="post">
-          <div class="input-group w-100">
-            <input type="text" name="searchtitle" class="form-control" placeholder="Search for..." required>
-            <div class="input-group-append">
-              <button class="btn btn-secondary" type="submit">Go!</button>
-            </div>
-          </div>
-        </form>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="index.php">
-              <i class="fas fa-home"></i> Home <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="view_uploaded_files.php">
-              <i class="far fa-file"></i> Materials
-            </a>
-          </li>
-
-          <li class="nav-item">
-            <a class="nav-link" href="mapping.php">
-              <i class="fas fa-map-marked-alt"></i> Map Accessibility
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="top_rated_places.php">
-              <i class="fas fa-map-marked-alt"></i> Popular Places
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="about-us.php">
-              <i class="fas fa-info-circle"></i> About
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ml-auto mr-5">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userProfileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <?php
-              $avatarUrl = isset($_SESSION['avatar_url']) && !empty($_SESSION['avatar_url'])
-                ? $_SESSION['avatar_url']
-                : 'path/to/default/avatar.png';
-              ?>
-              <img src="<?php echo htmlspecialchars($avatarUrl); ?>" alt="User Avatar" class="user-avatar rounded-circle" width="30" height="30">
-            </a>
-            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userProfileDropdown">
-              <a class="dropdown-item text-center font-weight-bold" href="#">Hi, <?php echo $_SESSION['name'] . " " . $_SESSION['lname'] ?></a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="profile.php">View Profile</a>
-              <a class="dropdown-item" href="logout.php">Logout</a>
-            </div>
-          </li>
-          <li class="nav-item mt-1">
-            <a href="messages.php" class="nav-link"> <i class="fa-solid fa-message"></i> Chats</a>
-          </li>
-        </ul>
-
-      </div>
-    </div>
-  </nav>
-
+  <?php include("includes/header.php"); ?>
   <div id="map-container">
     <div id="map"></div>
     <div class="top-button-bar">
@@ -128,82 +53,168 @@ session_start();
       <div id="place-details-content"></div>
     </div>
   </div>
-</body>
 
 
-<!-- Write Reviews Modal -->
-<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form action="submit_review.php" method="POST">
-          <div class="rating-box">
-            <header>How was your experience?</header>
-            <div class="stars">
-              <i class="fa-solid fa-star" data-value="1"></i>
-              <i class="fa-solid fa-star" data-value="2"></i>
-              <i class="fa-solid fa-star" data-value="3"></i>
-              <i class="fa-solid fa-star" data-value="4"></i>
-              <i class="fa-solid fa-star" data-value="5"></i>
+
+  <!-- Write Reviews Modal -->
+  <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="reviewModalLabel">Write a Review</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="submit_review.php" method="POST">
+            <div class="rating-box">
+              <header>How was your experience?</header>
+              <div class="stars">
+                <i class="fa-solid fa-star" data-value="1"></i>
+                <i class="fa-solid fa-star" data-value="2"></i>
+                <i class="fa-solid fa-star" data-value="3"></i>
+                <i class="fa-solid fa-star" data-value="4"></i>
+                <i class="fa-solid fa-star" data-value="5"></i>
+              </div>
+              <p>Leave a Review:</p>
+              <input type="hidden" id="rating_input" name="rating" value="">
+              <textarea id="review" name="review" rows="4" cols="50"></textarea>
+              <br>
+              <input type="hidden" name="place_type" id="place_type_modal">
+              <input type="hidden" name="display_name" id="display_name_modal">
+              <input type="hidden" name="place_id" id="place_id_modal">
+              <input type="hidden" name="photo_url" id="photo_url_modal">
+              <input type="hidden" name="formatted_address" id="formatted_address_modal">
+              <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
+              <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
+              <input type="hidden" name="review_date" id="review_date_modal" value="<?php echo date('Y-m-d H:i:s'); ?>">
+              <input type="hidden" name="avatar_url" id="avatar_url_modal">
+              <input type="submit" value="Submit" name="submit">
             </div>
-            <p>Leave a Review:</p>
-            <input type="hidden" id="rating_input" name="rating" value="">
-            <textarea id="review" name="review" rows="4" cols="50"></textarea>
-            <br>
-            <input type="hidden" name="place_type" id="place_type_modal">
-            <input type="hidden" name="display_name" id="display_name_modal">
-            <input type="hidden" name="place_id" id="place_id_modal">
-            <input type="hidden" name="photo_url" id="photo_url_modal">
-            <input type="hidden" name="formatted_address" id="formatted_address_modal">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accessibility Options Modal -->
+  <div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="accessibilityModalLabel">Update Accessibility Options</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info" role="alert">
+            <h5 class="alert-heading">Importance of Accurate Information</h5>
+            <p>Accurate accessibility information is vital for ensuring that all individuals can navigate public spaces with ease. This information helps people with disabilities plan their visits confidently, ensuring they can access essential services and facilities.
+            </p>
+          </div>
+
+          <div class="accessibility-criteria mb-4">
+            <h5>Criteria for Accessibility Features</h5>
+            <div class="accordion" id="accessibilityCriteriaAccordion">
+              <div class="card">
+                <div class="card-header" id="headingEntrance">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseEntrance">
+                      PWD - Accessible Entrance
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapseEntrance" class="collapse" aria-labelledby="headingEntrance" data-parent="#accessibilityCriteriaAccordion">
+                  <div class="card-body">
+                    <p><strong>Criteria:</strong> The entrance should be at least 3 feet wide and free of steps. If there are steps, a permanent or movable ramp must be available. Revolving doors should be marked as not accessible.</p>
+                    <p><strong>Why It Matters:</strong> A wide, step-free entrance allow individuals using wheelchairs, scooters, or other mobility devices to navigate spaces more easily.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" id="headingRestroom">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseRestroom">
+                      PWD - Accessible Restroom
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapseRestroom" class="collapse" aria-labelledby="headingRestroom" data-parent="#accessibilityCriteriaAccordion">
+                  <div class="card-body">
+                    <p><strong>Criteria:</strong> Must have designated restroom, the entrance must be at least 1 meter wide and accessible without steps. If stalls are present, their entrances should also be at least 1 meter wide.</p>
+                    <p><strong>Why It Matters:</strong> Accessible restrooms are crucial for the dignity and independence of users.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" id="headingSeating">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeating">
+                      PWD - Accessible Seating
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapseSeating" class="collapse" aria-labelledby="headingSeating" data-parent="#accessibilityCriteriaAccordion">
+                  <div class="card-body">
+                    <p><strong>Criteria:</strong> The main area must be accessible without stairs, with enough space for wheelchair users to navigate and sit comfortably at tables. if all tables are high (e.g. at standing level), the place does not have accessible seating.</p>
+                    <p><strong>Why It Matters:</strong> Ensures that everyone can enjoy dining or socializing in the space.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header" id="headingParking">
+                  <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseParking">
+                      PWD - Accessible Parking
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapseParking" class="collapse" aria-labelledby="headingParking" data-parent="#accessibilityCriteriaAccordion">
+                  <div class="card-body">
+                    <p><strong>Criteria:</strong> if there’s a parking spot specifically marked for those with accessibility needs. These spots are often marked with specific painting on the ground, placards, or signs. </p>
+                    <p><strong>Why It Matters:</strong> Accessible parking is essential for ensuring convenient access to the venue.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
+            <p>Check the accessibility features available. If there are none, don't check any and submit the form.</p>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
+              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="parking">Has PWD Accessible Parking</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
+              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i><label class="form-check-label" for="entrance">Has PWD Accessible Entrance</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="restroom" name="accessibilityOptions[]" value="wheelchairAccessibleRestroom">
+              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="restroom">Has PWD Accessible Restroom</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
+              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="seating">Has PWD Accessible Seating</label>
+            </div>
+            <input type="hidden" name="accessibility_level" id="accessibility_level">
+            <input type="hidden" name="display_name" id="display_name_modal1">
+            <input type="hidden" name="place_id" id="place_id_accessibility_modal">
             <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
             <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
-            <input type="hidden" name="review_date" id="review_date_modal" value="<?php echo date('Y-m-d H:i:s'); ?>">
-            <input type="submit" value="Submit" name="submit">
-          </div>
-        </form>
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-
-<!-- Accessibility Options Modal -->
-<div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="accessibilityModalLabel">Update Accessibility Options</h5>
-        <button type="button" class="btn btn-primary close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
-          <p>Check the accessibility features available, if there is none, dont check any and submit the form</p>
-          <input type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
-          <label for="parking">Has PWD Accessible Parking</label><br>
-          <input type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
-          <label for="entrance">Has PWD Accessible Entrance</label><br>
-          <input type="checkbox" id="restroom" name="accessibilityOptions[]" value="wheelchairAccessibleRestroom">
-          <label for="restroom">Has PWD Accessible Restroom</label><br>
-          <input type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
-          <label for="seating">Has PWD Accessible Seating</label><br>
-
-          <input type="hidden" name="accessibility_level" id="accessibility_level">
-          <input type="hidden" name="display_name" id="display_name_modal1">
-          <input type="hidden" name="place_id" id="place_id_accessibility_modal">
-          <input type="submit" value="Submit" name="submit">
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+</body>
 
 <!-- Show Reviews Modal -->
 <div class="modal fade" id="reviewsModal" tabindex="-1" role="dialog" aria-labelledby="reviewsModalLabel" aria-hidden="true">
@@ -295,7 +306,7 @@ session_start();
         // Adjust zoom level based on screen width
         const zoomLevel = window.innerWidth <= 768 ? 14 : 16; // Zoom out for mobile devices
         map = new google.maps.Map(document.getElementById("map"), {
-          center: losBanosLocation,
+          center: userLocation,
           zoom: zoomLevel,
           mapTypeControl: false, // This disables the default "Map" and "Satellite" buttons
           streetViewControl: false, // Optionally disable the Street View button
@@ -533,6 +544,7 @@ session_start();
   function createPlaceDetailsContent(place, reviewsData, accessibilityOptions, photo, placeType, isFromMapClick) {
     const averageRating = reviewsData.averageRating !== undefined ? reviewsData.averageRating.toFixed(1) : "No ratings yet";
     const reviewCount = reviewsData.reviewCount || "No reviews";
+    const avatarUrl = <?php echo json_encode($_SESSION['avatar_url'] ?? ''); ?>;
     const starsHtml = Array.from({
       length: 5
     }, (v, i) => `<i class="fa fa-star ${i < averageRating ? "active" : ""}"></i>`).join("");
@@ -568,10 +580,12 @@ session_start();
         length: 5
       }, (v, i) => `<i class="fa fa-star ${i < review.rating ? "active" : ""}"></i>`).join("");
       const reviewTimeAgo = timeAgo(review.review_date); // Use the review_date field here
-
       return `
             <div class="review">
-              <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
+              <div style="display: flex; align-items: center;">
+                <img src="${review.avatar_url}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                <p><strong>${review.full_name}</strong> - <strong>Rating:</strong> ${review.rating}</p>
+              </div>
               <div class="stars">${starsHtml}</div>
               <p>${review.review}</p>
               <p><small>${reviewTimeAgo}</small></p>  <!-- Display the time ago -->
@@ -584,7 +598,7 @@ session_start();
 
     // Create the photo HTML if a photo is available
     const photoHtml = photoUrl ? `
-      <div style="position: relative; width: 100%; max-height: 230px;" class="placeimage">
+      <div class="placeimage">
         <img src="${photoUrl}" alt="${place.displayName.text}"  </div>` : '';
     return `
 
@@ -607,7 +621,7 @@ session_start();
                 : "<li class='no-bullet'><i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> Has PWD Accessible Seating - Not Accessible</li>"}
             </ul>
             <div class="d-flex justify-content-center">
-               <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}', '${placeType}', ${isFromMapClick})">Write a Review</button>
+                <button class="btn btn-primary btn-sm" onclick="openReviewModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}', '${place.formattedAddress.replace(/'/g, "\\'")}', '${photoUrl.replace(/'/g, "\\'")}', '${placeType}', ${isFromMapClick}, '${avatarUrl.replace(/'/g, "\\'")}')">Write a Review</button>
                 <button class="btn btn-primary btn-sm" onclick="openAccessibilityModal('${place.id}', '${place.displayName.text.replace(/'/g, "\\'")}')">Update Accessibility</button>
             </div>
             
@@ -631,13 +645,14 @@ session_start();
     `;
   }
 
-  function openReviewModal(placeId, displayName, formattedAddress, photoUrl, placeType, isFromMapClick) {
-    console.log("Opening review modal for:", placeId, displayName, formattedAddress, placeType, isFromMapClick);
+  function openReviewModal(placeId, displayName, formattedAddress, photoUrl, placeType, isFromMapClick, avatarUrl) {
+    console.log("Opening review modal for:", placeId, displayName, formattedAddress, placeType, isFromMapClick, avatarUrl);
     document.getElementById('place_id_modal').value = placeId;
     document.getElementById('photo_url_modal').value = photoUrl || '';
     document.getElementById('display_name_modal').value = displayName;
     document.getElementById('formatted_address_modal').value = formattedAddress;
     document.getElementById('place_type_modal').value = isFromMapClick ? placeType : currentPlaceType;
+    document.getElementById('avatar_url_modal').value = avatarUrl;
     $('#reviewModal').modal('show');
   }
   // Eto yung logic sa stars in the ratings
@@ -783,12 +798,31 @@ session_start();
   function openPlaceDetailsPanel() {
     document.getElementById('place-details-panel').classList.add('open');
     document.getElementById('map').classList.add('panel-open');
+    adjustTopButtonBar();
   }
 
   function closePlaceDetailsPanel() {
     document.getElementById('place-details-panel').classList.remove('open');
     document.getElementById('map').classList.remove('panel-open');
+    adjustTopButtonBar();
   }
+
+  function adjustTopButtonBar() {
+    const topButtonBar = document.querySelector('.top-button-bar');
+    const placeDetailsPanel = document.getElementById('place-details-panel');
+    const isMobile = window.innerWidth <= 768;
+
+    if (placeDetailsPanel.classList.contains('open') && isMobile) {
+      topButtonBar.style.left = 'calc(37% + 320px)';
+    } else if (isMobile) {
+      topButtonBar.style.left = '37%';
+    } else {
+      topButtonBar.style.left = '45%';
+    }
+  }
+
+  // Add event listener for window resize
+  window.addEventListener('resize', adjustTopButtonBar);
 
   document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
 </script>

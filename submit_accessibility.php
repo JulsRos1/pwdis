@@ -5,6 +5,15 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $place_id = isset($_POST['place_id']) ? $_POST['place_id'] : '';
     $display_name = isset($_POST['display_name']) ? $_POST['display_name'] : '';
+    if (!isset($_SESSION['name']) || !isset($_SESSION['lname'])) {
+        echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
+        exit;
+    }
+
+    $first_name = $_SESSION['name'];
+    $last_name = $_SESSION['lname'];
+
+    $full_name = $first_name . ' ' . $last_name;
 
     // Get the accessibility level
     $accessibility_level = isset($_POST['accessibility_level']) ? $_POST['accessibility_level'] : '';
@@ -39,10 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("iiisss", $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $accessibility_level, $place_id);
     } else {
         // Insert new record
-        $query = "INSERT INTO place_accessibility (place_id, display_name, wheelchairAccessibleParking, wheelchairAccessibleEntrance, wheelchairAccessibleRestroom, wheelchairAccessibleSeating, accessibility_level, created_at)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        $query = "INSERT INTO place_accessibility (place_id, full_name, display_name, wheelchairAccessibleParking, wheelchairAccessibleEntrance, wheelchairAccessibleRestroom, wheelchairAccessibleSeating, accessibility_level, created_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $stmt = $con->prepare($query);
-        $stmt->bind_param("ssiiiss", $place_id, $display_name, $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $accessibility_level);
+        $stmt->bind_param("sssiiiss", $place_id, $full_name, $display_name, $wheelchairAccessibleParking, $wheelchairAccessibleEntrance, $wheelchairAccessibleRestroom, $wheelchairAccessibleSeating, $accessibility_level);
     }
 
     if ($stmt->execute()) {

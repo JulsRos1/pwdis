@@ -37,6 +37,7 @@ if (strlen($_SESSION['login']) == 0) {
         <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <script src="assets/js/modernizr.min.js"></script>
         <style>
             .table-modern {
@@ -58,7 +59,8 @@ if (strlen($_SESSION['login']) == 0) {
                 background-color: #f8f9fa;
             }
 
-            .table-modern th, .table-modern td {
+            .table-modern th,
+            .table-modern td {
                 padding: 12px 15px;
                 text-align: left;
                 vertical-align: middle;
@@ -100,7 +102,6 @@ if (strlen($_SESSION['login']) == 0) {
             .table-modern .fa-trash:hover {
                 color: #c82333;
             }
-
         </style>
 
     </head>
@@ -186,29 +187,29 @@ if (strlen($_SESSION['login']) == 0) {
                                         </div>
 
                                         <div class="table-responsive">
-    <table class="table table-striped table-hover table-bordered table-modern">
-        <thead class="thead-dark">
-            <tr>
-                <th>#</th>
-                <th>Category</th>
-                <th>Description</th>
-                <th>Posting Date</th>
-                <th>Last Updation Date</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from tblcategory where Is_Active=1");
-            $cnt = 1;
-            while ($row = mysqli_fetch_array($query)) {
-            ?>
-                <tr>
-                    <th scope="row"><?php echo htmlentities($cnt); ?></th>
-                    <td><?php echo htmlentities($row['CategoryName']); ?></td>
-                    <td><?php echo htmlentities($row['Description']); ?></td>
-                    <td><?php echo htmlentities($row['PostingDate']); ?></td>
-                    <td><?php echo htmlentities($row['UpdationDate']); ?></td>
+                                            <table class="table table-striped table-hover table-bordered table-modern">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Category</th>
+                                                        <th>Description</th>
+                                                        <th>Posting Date</th>
+                                                        <th>Last Updation Date</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    $query = mysqli_query($con, "Select id,CategoryName,Description,PostingDate,UpdationDate from tblcategory where Is_Active=1");
+                                                    $cnt = 1;
+                                                    while ($row = mysqli_fetch_array($query)) {
+                                                    ?>
+                                                        <tr>
+                                                            <th scope="row"><?php echo htmlentities($cnt); ?></th>
+                                                            <td><?php echo htmlentities($row['CategoryName']); ?></td>
+                                                            <td><?php echo htmlentities($row['Description']); ?></td>
+                                                            <td><?php echo htmlentities($row['PostingDate']); ?></td>
+                                                            <td><?php echo htmlentities($row['UpdationDate']); ?></td>
                                                             <td><a href="edit-category.php?cid=<?php echo htmlentities($row['id']); ?>"><i class="fa fa-pencil" style="color: #29b6f6;"></i></a>
                                                                 &nbsp;<a href="manage-categories.php?rid=<?php echo htmlentities($row['id']); ?>&&action=del"> <i class="fa fa-trash-o" style="color: #f05050"></i></a> </td>
                                                         </tr>
@@ -278,59 +279,59 @@ if (strlen($_SESSION['login']) == 0) {
 
 
 
-                                    </div>
+                        </div>
 
-                                </div>
-
-
-                            </div>
+                    </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        </div> <!-- container -->
-
-                    </div> <!-- content -->
-                    <?php include('includes/footer.php'); ?>
                 </div>
 
-            </div>
-            <!-- END wrapper -->
 
 
 
-            <script>
-                var resizefunc = [];
-            </script>
 
-            <!-- jQuery  -->
-            <script src="assets/js/jquery.min.js"></script>
-            <script src="assets/js/bootstrap.min.js"></script>
-            <script src="assets/js/detect.js"></script>
-            <script src="assets/js/fastclick.js"></script>
-            <script src="assets/js/jquery.blockUI.js"></script>
-            <script src="assets/js/waves.js"></script>
-            <script src="assets/js/jquery.slimscroll.js"></script>
-            <script src="assets/js/jquery.scrollTo.min.js"></script>
-            <script src="../plugins/switchery/switchery.min.js"></script>
 
-            <!-- App js -->
-            <script src="assets/js/jquery.core.js"></script>
-            <script src="assets/js/jquery.app.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+            </div> <!-- container -->
+
+        </div> <!-- content -->
+        <?php include('includes/footer.php'); ?>
+        </div>
+
+        </div>
+        <!-- END wrapper -->
+
+
+
+        <script>
+            var resizefunc = [];
+        </script>
+
+        <!-- jQuery  -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/bootstrap.min.js"></script>
+        <script src="assets/js/detect.js"></script>
+        <script src="assets/js/fastclick.js"></script>
+        <script src="assets/js/jquery.blockUI.js"></script>
+        <script src="assets/js/waves.js"></script>
+        <script src="assets/js/jquery.slimscroll.js"></script>
+        <script src="assets/js/jquery.scrollTo.min.js"></script>
+        <script src="../plugins/switchery/switchery.min.js"></script>
+
+        <!-- App js -->
+        <script src="assets/js/jquery.core.js"></script>
+        <script src="assets/js/jquery.app.js"></script>
 
     </body>
 

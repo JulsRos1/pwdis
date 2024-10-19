@@ -122,16 +122,26 @@ if (isset($_POST['register'])) {
         <label for="barangay-input" class="barangay-label">Brgy</label>
         <select name="Barangay" id="barangay-input" required>
           <option value="" disabled selected>Select Barangay</option>
+          <option value="Anos">Anos</option>
+          <option value="Bagong Silang">Bagong Silang</option>
+          <option value="Bambang">Bambang</option>
+          <option value="Batong Malake">Batong Malake</option>
+          <option value="Baybayin">Baybayin</option>
           <option value="Lalakay">Lalakay</option>
+          <option value="Maahas">Maahas</option>
+          <option value="Malinta">Malinta</option>
           <option value="Mayondon">Mayondon</option>
-          <option value="Bayog">Bayog</option>
+          <option value="Putho-Tuntungin">Putho-Tuntungin</option>
+          <option value="San Antonio">San Antonio</option>
+          <option value="Tadlac">Tadlac</option>
+          <option value="Timugan">Timugan</option>
         </select>
       </div>
 
       <button type="submit" name="register">Signup</button>
     </form>
 
-    <p class = "already">Already have an Account? <a href="user_login.php">Login</a></p>
+    <p class="already">Already have an Account? <a href="user_login.php">Login</a></p>
   </div>
 </body>
 

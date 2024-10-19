@@ -34,21 +34,4 @@
       </div>
     </div>
   </div>
-
-  <!-- Side Widget -->
-  <div class="card my-4 shadow-sm">
-    <h5 class="card-header">Recently Uploaded</h5>
-    <div class="card-body">
-      <ul class="recent-uploads mb-0">
-        <?php
-        $query = mysqli_query($con, "SELECT tblposts.id as pid, tblposts.PostTitle as posttitle FROM tblposts ORDER BY tblposts.PostingDate DESC LIMIT 8");
-        while ($row = mysqli_fetch_array($query)) {
-        ?>
-          <li>
-            <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="post-link"><?php echo htmlentities($row['posttitle']); ?></a>
-          </li>
-        <?php } ?>
-      </ul>
-    </div>
-  </div>
 </div>

@@ -34,10 +34,11 @@ if (strlen($_SESSION['login']) == 0) {
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
-       
+
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
         <script src="assets/js/modernizr.min.js"></script>
 
     </head>
@@ -236,7 +237,7 @@ if (strlen($_SESSION['login']) == 0) {
             <script src="assets/js/waves.js"></script>
             <script src="assets/js/jquery.slimscroll.js"></script>
             <script src="assets/js/jquery.scrollTo.min.js"></script>
-     
+
 
             <!-- App js -->
             <script src="assets/js/jquery.core.js"></script>

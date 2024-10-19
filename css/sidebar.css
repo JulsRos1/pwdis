@@ -1,90 +1,141 @@
-body {
-  font-family: "Poppins", sans-serif;
-  overflow-x: hidden;
-}
-
-/* Sidebar Styles */
-#sidebar-wrapper {
-  min-height: 100vh;
+.sidebar {
+  height: 100%;
   width: 250px;
-  margin-left: 0;
-  transition: margin 0.25s ease-out;
-  background-color: #1f2937 !important;
   position: fixed;
-  z-index: 1;
-}
-btn-link {
-  background-color: black;
-}
-
-#sidebar-wrapper .sidebar-heading {
-  padding: 0.875rem 1.25rem;
-  font-size: 1.2rem;
-  color: #ffffff;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: #1F2937;
+  overflow-x: hidden;
+  padding-top: 60px;
+  transition: 0.5s;
 }
 
-#sidebar-wrapper .list-group {
-  width: 250px;
+.sidebar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #ffff;
+  display: block;
+  transition: 0.3s;
 }
 
-#sidebar-wrapper .list-group-item {
-  background-color: transparent;
-  color: #ffffff;
+.sidebar a:hover {
+  color: #007bff;
+}
+
+.openbtn {
+  font-size: 20px;
+  cursor: pointer;
+  background-color: #111;
+  color: white;
+  padding: 10px 15px;
   border: none;
-  padding: 0.75rem 1.25rem;
-}
-
-#sidebar-wrapper .list-group-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #007bff;
-}
-
-.blue-icon {
-  color: #007bff;
-}
-
-/* Custom styles for the toggle button */
-#menu-toggle {
   display: none;
-}
-.list-group-item.active {
-  background-color: #007bff; /* Change this color as needed */
-  color: white; /* Change text color if necessary */
+  margin-left: 10px;
+  margin-top: 10px;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 767px) {
-  #sidebar-wrapper {
-    margin-left: -250px;
-  }
-  .mobvar {
-    background-color: #1f2937 !important;
+.openbtn:hover {
+  background-color: #444;
+}
+.category-link,
+.post-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.category-link:hover,
+.post-link:hover {
+  color: #007bff;
+  /* Change the color as desired */
+}
+
+.card-header {
+  background-color: #1f2937;
+  color: #fff;
+}
+
+.card-header:hover {
+  background-color: #0056b3;
+  /* Darker color on hover */
+}
+
+.card-body {
+  transition: background-color 0.3s ease;
+}
+
+.card:hover .card-body {
+  background-color: #f8f9fa;
+  /* Lighter background color on hover */
+}
+.dropdown a:hover{
+  color:black;
+}
+
+/* Always show the sidebar on desktop */
+@media screen and (min-width: 961px){
+  .sidebar {
+    width: 250px;
   }
 
-  #wrapper.toggled #sidebar-wrapper {
+  #main {
+    margin-left: 250px;
+    transition: margin-left 0.5s;
+  }
+
+  .openbtn {
+    display: none;
+  }
+
+  .sidebar .closebtn {
+    display: none;
+  }
+  .card-container {
+    max-width: 630px;
+    margin: 0 auto;
+  }
+  .image-container {
+    width: 100%;
+    height: 450px;
+    /* Fixed height */
+    overflow: hidden;
+    /* Ensures image does not overflow container */
+    position: relative;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;/
+  }
+}
+
+/* Make the sidebar toggleable for mobile and tablet devices */
+@media (max-width: 960px) {
+  .sidebar {
+    width: 0;
+    position: fixed;
+  }
+
+  #main {
     margin-left: 0;
   }
 
-  #menu-toggle {
+  .openbtn {
     display: block;
-    border: none;
-    background-color: transparent;
-    color: white;
-  }
-  #menu-toggle:hover {
-    color: #007bff;
   }
 }
-@media (min-width: 951px) {
-  footer {
-    width: calc(100% - 250px); /* Account for sidebar width */
-    margin-left: 250px; /* Align with content */
-    position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
+
+/* Styles for mobile responsiveness */
+@media screen and (max-height: 450px) {
+  .sidebar {
+    padding-top: 15px;
   }
-  .exit-button {
-    display: none;
+
+  .sidebar a {
+    font-size: 18px;
   }
 }

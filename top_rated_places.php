@@ -88,8 +88,9 @@ usort($places, function ($a, $b) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Top Rated Places</title>
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="css/modern-business.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="css/sidebar.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/sidebar.css">
     <style>
         .place-card {
             display: flex;
@@ -224,97 +225,102 @@ usort($places, function ($a, $b) {
 </head>
 
 <body>
-    <?php include('includes/header.php'); ?>
-    <div class="container mt-4">
-        <div class="filter-button">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
-                Filter Place
-            </button>
-            <?php if ($selectedType != 'all'): ?>
-                <a href="?type=all" class="btn btn-outline-secondary">Clear Filter</a>
+    <!-- Sidebar -->
+    <?php include("includes/sidebar.php"); ?>
+    <!-- Page Content -->
+    <div id="main">
+        <button class="openbtn" onclick="openNav()">&#9776;</button>
+        <div class="container mt-4">
+            <div class="filter-button">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
+                    Filter Place
+                </button>
+                <?php if ($selectedType != 'all'): ?>
+                    <a href="?type=all" class="btn btn-outline-secondary">Clear Filter</a>
+                <?php endif; ?>
+            </div>
+
+            <?php if (empty($places)): ?>
+                <div class="alert alert-warning">No places found for the selected type. Try a different filter.</div>
+            <?php else: ?>
+                <div class="row">
+                    <?php foreach ($places as $index => $place): ?>
+                        <div class="col-md-4 mb-4">
+                            <div class="place-card position-relative" data-place-id="<?php echo htmlspecialchars($place['place_id']); ?>">
+                                <div class="rank-badge"><?php echo $index + 1; ?></div>
+                                <img src="<?php echo $place['photo_url'] ? htmlspecialchars($place['photo_url']) : 'https://via.placeholder.com/350x150'; ?>"
+                                    alt="<?php echo htmlspecialchars($place['display_name']); ?>"
+                                    class="place-image">
+                                <div class="place-info">
+                                    <div class="place-name"><?php echo htmlspecialchars($place['display_name']); ?></div>
+                                    <div class="place-address"><?php echo htmlspecialchars($place['formatted_address']); ?></div>
+                                    <div>
+                                        <span class="place-rating"><?php echo number_format($place['avg_rating'], 1); ?></span>
+                                        <span class="review-count">(<?php echo $place['review_count']; ?> reviews)</span>
+                                    </div>
+                                    <div class="place-type"><?php echo htmlspecialchars($place['formatted_place_type']); ?></div>
+                                    <button class="btn btn-primary mt-2 read-reviews-btn">See Reviews</button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
         </div>
 
-        <?php if (empty($places)): ?>
-            <div class="alert alert-warning">No places found for the selected type. Try a different filter.</div>
-        <?php else: ?>
-            <div class="row">
-                <?php foreach ($places as $index => $place): ?>
-                    <div class="col-md-4 mb-4">
-                        <div class="place-card position-relative" data-place-id="<?php echo htmlspecialchars($place['place_id']); ?>">
-                            <div class="rank-badge"><?php echo $index + 1; ?></div>
-                            <img src="<?php echo $place['photo_url'] ? htmlspecialchars($place['photo_url']) : 'https://via.placeholder.com/350x150'; ?>"
-                                alt="<?php echo htmlspecialchars($place['display_name']); ?>"
-                                class="place-image">
-                            <div class="place-info">
-                                <div class="place-name"><?php echo htmlspecialchars($place['display_name']); ?></div>
-                                <div class="place-address"><?php echo htmlspecialchars($place['formatted_address']); ?></div>
-                                <div>
-                                    <span class="place-rating"><?php echo number_format($place['avg_rating'], 1); ?></span>
-                                    <span class="review-count">(<?php echo $place['review_count']; ?> reviews)</span>
-                                </div>
-                                <div class="place-type"><?php echo htmlspecialchars($place['formatted_place_type']); ?></div>
-                                <button class="btn btn-primary mt-2 read-reviews-btn">See Reviews</button>
-                            </div>
+        <!-- Review Modal -->
+        <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel">Place Reviews</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="reviews-content">
+                            <!-- Reviews will be loaded here dynamically -->
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <!-- Review Modal -->
-    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reviewModalLabel">Place Reviews</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="reviews-content">
-                        <!-- Reviews will be loaded here dynamically -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="filterModalLabel">Filter by Place Type</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="filterForm" action="" method="get">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="type" id="typeAll" value="all" <?php echo $selectedType == 'all' ? 'checked' : ''; ?>>
-                            <label class="form-check-label" for="typeAll">
-                                All Types
-                            </label>
-                        </div>
-                        <?php foreach ($placeTypes as $type): ?>
+        <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filter by Place Type</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="filterForm" action="" method="get">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="type" id="type<?php echo htmlspecialchars($type); ?>" value="<?php echo htmlspecialchars($type); ?>" <?php echo $selectedType == $type ? 'checked' : ''; ?>>
-                                <label class="form-check-label" for="type<?php echo htmlspecialchars($type); ?>">
-                                    <?php echo formatPlaceType($type); ?>
+                                <input class="form-check-input" type="radio" name="type" id="typeAll" value="all" <?php echo $selectedType == 'all' ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="typeAll">
+                                    All Types
                                 </label>
                             </div>
-                        <?php endforeach; ?>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="document.getElementById('filterForm').submit();">Apply Filter</button>
+                            <?php foreach ($placeTypes as $type): ?>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="type" id="type<?php echo htmlspecialchars($type); ?>" value="<?php echo htmlspecialchars($type); ?>" <?php echo $selectedType == $type ? 'checked' : ''; ?>>
+                                    <label class="form-check-label" for="type<?php echo htmlspecialchars($type); ?>">
+                                        <?php echo formatPlaceType($type); ?>
+                                    </label>
+                                </div>
+                            <?php endforeach; ?>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('filterForm').submit();">Apply Filter</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -414,6 +420,17 @@ usort($places, function ($a, $b) {
                 return seconds + " seconds ago";
             }
         });
+
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+            document.getElementById("main").style.marginLeft = "250px";
+        }
+
+        // Function to close sidebar
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
     </script>
 
 </body>

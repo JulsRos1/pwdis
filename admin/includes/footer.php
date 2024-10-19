@@ -1,3 +1,3 @@
 <footer class="footer text-right">
-   2024 © Developed by Jenn Julian Ros - BSIT WMAD
+   Persons with Disabilities Affairs Office - PDAO Los Baños
 </footer>

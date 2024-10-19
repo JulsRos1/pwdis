@@ -189,7 +189,7 @@
         <h4>Chatbox</h4>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
         <ul class="chat-options">
-            <li id="allChat">All Chat</li>
+            <li id="allChat">Users Forum</li>
         </ul>
         <ul id="userList" class="user-list">
             <!-- User list will be populated here -->
@@ -197,7 +197,7 @@
     </div>
 
     <div class="chat-container">
-        <h4 id="chatHeader">All Chat - Users Forum</h4>
+        <h4 id="chatHeader">Users Forum</h4>
         <div class="message-list" id="messageList">
             <!-- Messages will be displayed here -->
         </div>

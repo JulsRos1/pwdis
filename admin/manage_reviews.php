@@ -114,12 +114,12 @@ if (strlen($_SESSION['login']) == 0) {
                             <div class="col-lg-12">
                                 <h4 class="header-title">Manage Reviews</h4>
                                 <div class="table-responsive">
-                                    <table class="table table-colored table-centered table-inverse m-0">
+                                    <table class="table table-colored table-bordered table-centered table-inverse m-0">
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th>ID</th>
-                                                <th>Full Name</th>
-                                                <th>Display Name</th>
+                                                <th>Contributor</th>
+                                                <th>Place Name</th>
                                                 <th>Place</th>
                                                 <th>Review</th>
                                                 <th>Rating</th>

@@ -80,35 +80,12 @@ form input {
   background-color: var(--input-color);
   transition: 150ms ease;
 }
-.select-barangay {
-  box-sizing: border-box;
-  flex-grow: 1;
-  min-width: 0;
-  height: 50px;
-  padding: 1em;
-  border-radius: 0 10px 10px 0;
-  border: 2px solid var(--input-color);
-  border-left: none;
-  background-color: var(--input-color);
-  transition: 150ms ease;
+.column {
 }
-#barangay-input {
+#select-input {
   width: 150px; /* Adjust width as needed */
   height: 30px; /* Adjust height as needed */
   font-size: 14px; /* Adjust font size as needed */
-}
-.barangay-label {
-  flex-shrink: 0;
-  height: 30px; /* Adjust height as needed */
-  width: 50px; /* Adjust width as needed */
-  background-color: var(--accent-color);
-  color: var(--base-color);
-  border-radius: 10px 0 0 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1rem; /* Adjust font size as needed */
-  font-weight: 500;
 }
 
 form input:hover {
@@ -166,4 +143,14 @@ form div.incorrect input {
 }
 #error-message {
   color: #f06272;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }

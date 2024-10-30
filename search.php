@@ -22,10 +22,23 @@ include('includes/config.php');
 
   <!-- Custom styles for this template -->
   <link href="css/sidebar.css" rel="stylesheet">
+  <style>
+    .card {
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+  </style>
 
 </head>
 
 <body>
+  <div class="top-header">
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+  </div>
 
   <!-- Sidebar -->
   <?php include("includes/sidebar.php"); ?>
@@ -141,6 +154,15 @@ include('includes/config.php');
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
+      function toggleNav() {
+        const sidebar = document.getElementById("mySidebar");
+        if (sidebar.style.width === "250px") {
+          closeNav();
+        } else {
+          openNav();
+        }
+      }
+
       function openNav() {
         document.getElementById("mySidebar").style.width = "250px";
         document.getElementById("main").style.marginLeft = "250px";

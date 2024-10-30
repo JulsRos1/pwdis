@@ -10,21 +10,33 @@ if (strlen($_SESSION['login']) == 0) {
     if (isset($_GET['del'])) {
         $id = intval($_GET['del']);
 
-        // Delete the file entry from the database
-        $query = mysqli_query($con, "SELECT file_path FROM uploaded_Files WHERE id = $id");
-        $result = mysqli_fetch_assoc($query);
-        $filePath = $result['file_path'];
+        // Fetch the file path from the database
+        $query = mysqli_query($con, "SELECT file_path FROM uploaded_files WHERE id = $id");
+        if ($query) {
+            $result = mysqli_fetch_assoc($query);
+            $filePath = $result['file_path'];
 
-        // Delete the file from the directory
-        if (file_exists($filePath)) {
-            unlink($filePath); // Delete the file
+            // Construct the correct file path
+            $fullPath = '.' . $filePath;
+
+            // Check if the file exists and delete it
+            if ($filePath && file_exists($fullPath)) {
+                if (unlink($fullPath)) { // Delete the file
+                    // Delete the record from the database
+                    mysqli_query($con, "DELETE FROM uploaded_files WHERE id = $id");
+                    echo "<script>alert('File deleted successfully from both database and folder');</script>";
+                } else {
+                    echo "<script>alert('Error deleting file from folder. Database record not deleted.');</script>";
+                }
+            } else {
+                echo "<script>alert('File not found in the folder. Deleting database record only.');</script>";
+                mysqli_query($con, "DELETE FROM uploaded_files WHERE id = $id");
+            }
+        } else {
+            echo "<script>alert('Error fetching file details.');</script>";
         }
-
-        // Delete the record from the database
-        mysqli_query($con, "DELETE FROM uploaded_Files WHERE id = $id");
-
-        echo "<script>alert('File deleted successfully');</script>";
     }
+
 
     // Handle Update action (from modal)
     if (isset($_POST['update'])) {
@@ -86,7 +98,7 @@ if (strlen($_SESSION['login']) == 0) {
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="page-title-box">
-                                    <h4 class="page-title">Manage Uploaded Files</h4>
+                                    <h4 class="page-title">Manage Disability Laws and Rights files</h4>
                                     <ol class="breadcrumb p-0 m-0">
                                         <li>
                                             <a href="#">Admin</a>
@@ -108,9 +120,14 @@ if (strlen($_SESSION['login']) == 0) {
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card-box">
+                                    <div class="m-b-30">
+                                        <a href="upload_materials.php">
+                                            <button id="addToTable" class="btn btn-success waves-effect waves-light">Add <i class="mdi mdi-plus-circle-outline"></i></button>
+                                        </a>
+                                    </div>
                                     <h4 class="m-t-0 header-title">Uploaded Files</h4>
                                     <div class="table-responsive">
-                                        <table class="table table-colored table-centered table-inverse m-0">
+                                        <table class="table table-colored table-bordered table-centered table-inverse m-0">
                                             <thead>
                                                 <tr>
                                                     <th>ID</th>

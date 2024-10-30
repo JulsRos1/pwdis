@@ -21,14 +21,39 @@ if (!isset($_SESSION['user_login'])) {
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/sidebar.css">
+  <style>
+    .card-body p {
+      background-color: #e9f5e9;
+      /* Light green background */
+      padding: 10px;
+      /* Add some padding */
+      border-radius: 5px;
+      /* Rounded corners */
+      transition: background-color 0.3s;
+      /* Smooth transition */
+    }
+
+    .category:hover {
+      transform: scale(1.05);
+    }
+
+    .categorybtn {
+      font-size: 12px;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="top-header">
+    <div class="logo-header">
+      <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+    </div>
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+  </div>
   <!-- Sidebar -->
   <?php include("includes/sidebar.php"); ?>
   <!-- Page Content -->
   <div id="main">
-    <button class="openbtn" onclick="openNav()">&#9776;</button>
 
     <!-- Rest of your page content -->
     <div class="container">
@@ -57,7 +82,7 @@ if (!isset($_SESSION['user_login'])) {
               </div>
               <div class="card-body">
                 <h5 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h5>
-                <p><b>Category:</b> <a href="category.php?catid=<?php echo htmlentities($row['cid']) ?>"><?php echo htmlentities($row['category']); ?></a></p>
+                <p><b>Category:</b> <a href="category.php?catid=<?php echo htmlentities($row['cid']) ?>" class="category"><?php echo htmlentities($row['category']); ?></a></p>
                 <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary btn-read-more">Read More &rarr;</a>
               </div>
               <div class="card-footer text-muted">
@@ -94,6 +119,15 @@ if (!isset($_SESSION['user_login'])) {
 
   <script>
     // Function to open sidebar
+    function toggleNav() {
+      const sidebar = document.getElementById("mySidebar");
+      if (sidebar.style.width === "250px") {
+        closeNav();
+      } else {
+        openNav();
+      }
+    }
+
     function openNav() {
       document.getElementById("mySidebar").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";

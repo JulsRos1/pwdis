@@ -101,35 +101,40 @@ usort($places, function ($a, $b) {
             border-radius: 4px;
             overflow: hidden;
             height: 100%;
-            /* Ensures all cards stretch to fill the height */
         }
 
-        /* Ensures consistent spacing */
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .review-item {
+            padding: 10px 0;
+        }
+
+
         .row {
             margin-top: 20px;
-            /* Add margin to the row to ensure top spacing */
         }
 
-        /* If using Bootstrap's grid system, you can also use Bootstrap classes for spacing */
         .col-md-4 {
             padding: 0 15px;
-            /* Add horizontal padding for the columns */
         }
 
         .place-image {
             width: 100%;
-            height: 230px;
+            height: 250px;
             object-fit: cover;
         }
 
         .place-info {
             padding: 15px;
             flex-grow: 1;
-            /* Ensures this section takes up remaining space */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            /* Pushes the content apart */
         }
 
         .place-name {
@@ -169,7 +174,6 @@ usort($places, function ($a, $b) {
             align-items: center;
         }
 
-        /* Modal and Reviews CSS */
         .stars i {
             font-size: 22px;
             color: #FFD700;
@@ -221,15 +225,34 @@ usort($places, function ($a, $b) {
             max-height: 300px;
             overflow-y: auto;
         }
+
+        .img-fluid {
+            width: 85%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .img-fluid {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div class="top-header">
+        <div class="logo-header">
+            <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+        </div>
+        <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+    </div>
     <!-- Sidebar -->
     <?php include("includes/sidebar.php"); ?>
     <!-- Page Content -->
     <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776;</button>
         <div class="container mt-4">
             <div class="filter-button">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
@@ -355,7 +378,7 @@ usort($places, function ($a, $b) {
                         if (data.reviews.length > 0 && data.reviews[0].photo_url) {
                             reviewsHtml += `
                                 <div class="mb-3">
-                                    <img src="${data.reviews[0].photo_url}" alt="Review Photo" class="img-fluid" style="width: 60%; height: 250px; object-fit: cover;">   
+                                    <img src="${data.reviews[0].photo_url}" alt="Review Photo" class="img-fluid">   
                                 </div>`;
                         }
 
@@ -371,13 +394,18 @@ usort($places, function ($a, $b) {
 
                         // Add the reviews list
                         data.reviews.forEach(function(review) {
-                            const reviewTimeAgo = timeAgo(review.review_date); // Get time ago for review date
+                            const reviewTimeAgo = timeAgo(review.review_date);
                             reviewsHtml += `
                                 <div class="review-item">
-                                    <strong>${review.full_name}</strong>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="${review.avatar_url || 'path/to/default-avatar.png'}" 
+                                            alt="User Avatar" 
+                                            class="rounded-circle me-2 review-avatar">
+                                        <strong>${review.full_name}</strong>
+                                    </div>
                                     <div class="stars">${getStars(review.rating)}</div>
                                     <p>${review.review}</p>
-                                    <small>${reviewTimeAgo}</small> <!-- Display time ago -->
+                                    <small>${reviewTimeAgo}</small>
                                 </div>
                                 <hr>`;
                         });
@@ -420,6 +448,15 @@ usort($places, function ($a, $b) {
                 return seconds + " seconds ago";
             }
         });
+
+        function toggleNav() {
+            const sidebar = document.getElementById("mySidebar");
+            if (sidebar.style.width === "250px") {
+                closeNav();
+            } else {
+                openNav();
+            }
+        }
 
         function openNav() {
             document.getElementById("mySidebar").style.width = "250px";

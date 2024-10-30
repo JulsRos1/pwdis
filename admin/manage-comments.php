@@ -124,8 +124,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                         <th> Name</th>
                                                         <th>Email Id</th>
                                                         <th width="300">Comment</th>
-                                                        <th>Status</th>
-                                                        <th>Post / News</th>
+                                                        <th>Post / Resources</th>
                                                         <th>Posting Date</th>
                                                         <th>Action</th>
                                                     </tr>
@@ -142,13 +141,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                             <td><?php echo htmlentities($row['name']); ?></td>
                                                             <td><?php echo htmlentities($row['email']); ?></td>
                                                             <td><?php echo htmlentities($row['comment']); ?></td>
-                                                            <td><?php $st = $row['status'];
-                                                                if ($st == '0') :
-                                                                    echo "Wating for approval";
-                                                                else :
-                                                                    echo "Approved";
-                                                                endif;
-                                                                ?></td>
+
 
 
                                                             <td><a href="edit-post.php?pid=<?php echo htmlentities($row['postid']); ?>"><?php echo htmlentities($row['PostTitle']); ?></a> </td>

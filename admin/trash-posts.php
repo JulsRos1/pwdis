@@ -22,30 +22,41 @@ if (strlen($_SESSION['login']) == 0) {
     if ($_GET['presid']) {
         $id = intval($_GET['presid']);
 
-        // Retrieve associated images of the post
+        // Retrieve the featured image filename
+        $getFeaturedImageQuery = mysqli_query($con, "SELECT PostImage FROM tblposts WHERE id = '$id'");
+        $featuredImageRow = mysqli_fetch_assoc($getFeaturedImageQuery);
+        $featuredImageToDelete = $featuredImageRow['PostImage'];
+
+        // Delete the featured image if it exists
+        if (!empty($featuredImageToDelete)) {
+            $featuredImagePath = "postimages/" . $featuredImageToDelete;
+            if (file_exists($featuredImagePath)) {
+                unlink($featuredImagePath);
+            }
+        }
+
+        // Retrieve and delete associated post images
         $getImagesQuery = mysqli_query($con, "SELECT image FROM tblpostimages WHERE postId = '$id'");
         while ($imageRow = mysqli_fetch_assoc($getImagesQuery)) {
             $imageToDelete = $imageRow['image'];
-            // Delete the image file from the server
-            unlink("postimages/" . $imageToDelete);
+            $imagePath = "postimages/" . $imageToDelete;
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
         }
 
         // Delete associated images from tblpostimages
         $deleteImagesQuery = mysqli_query($con, "DELETE FROM tblpostimages WHERE postId = '$id'");
 
-        // Proceed with deleting the post from tblposts if images are deleted successfully
-        if ($deleteImagesQuery) {
-            $deletePostQuery = mysqli_query($con, "DELETE FROM tblposts WHERE id = '$id'");
-            if ($deletePostQuery) {
-                $delmsg = "Post deleted forever";
-            } else {
-                $error = "Failed to delete post";
-            }
+        // Delete the post from tblposts
+        $deletePostQuery = mysqli_query($con, "DELETE FROM tblposts WHERE id = '$id'");
+
+        if ($deletePostQuery) {
+            $delmsg = "Post and all associated images deleted successfully";
         } else {
-            $error = "Failed to delete associated images";
+            $error = "Failed to delete post";
         }
     }
-
 ?>
 
     <!DOCTYPE html>

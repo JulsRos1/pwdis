@@ -2,13 +2,20 @@
 session_start();
 include('includes/config.php');
 error_reporting(0);
+function convertLinksToButtons($content)
+{
+    $pattern = '/<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1[^>]*>(.*?)<\/a>/i';
+    $replacement = '<a href="$2" target="_blank" style="display: inline-block; padding: 5px 10px; font-size:12px; background-color: #161C27; color: #ffffff !important; text-decoration: none; border-radius: 4px; margin: 4px; border: 1px solid #007bff; font-weight: 500; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor=\'#0b5ed7\'; this.style.borderColor=\'#0a58ca\';" onmouseout="this.style.backgroundColor=\'#161C27\'; this.style.borderColor=\'#007bff\';">$3</a>';
+    return preg_replace($pattern, $replacement, $content);
+}
 if (strlen($_SESSION['login']) == 0) {
     header('location:index.php');
 } else {
     if (isset($_POST['update'])) {
-        $posttitle = $_POST['posttitle'];
+        $posttitle = mysqli_real_escape_string($con, $_POST['posttitle']); // Escape the title
         $catid = $_POST['category'];
-        $postdetails = $_POST['postdescription'];
+        $postdetails = mysqli_real_escape_string($con, convertLinksToButtons($_POST['postdescription']));
+
         $arr = explode(" ", $posttitle);
         $url = implode("-", $arr);
         $status = 1;
@@ -237,19 +244,52 @@ if (strlen($_SESSION['login']) == 0) {
 
         <script>
             jQuery(document).ready(function() {
-
                 $('.summernote').summernote({
-                    height: 240, // set editor height
-                    minHeight: null, // set minimum height of editor
-                    maxHeight: null, // set maximum height of editor
-                    focus: false // set focus to editable area after initializing summernote
-                });
-                // Select2
-                $(".select2").select2();
+                    height: 240,
+                    minHeight: null,
+                    maxHeight: null,
+                    focus: false,
+                    callbacks: {
+                        onCreateLink: function(url) {
+                            // Get the selected node
+                            const selection = window.getSelection();
+                            const range = selection.getRangeAt(0);
+                            const links = range.commonAncestorContainer.getElementsByTagName('a');
 
-                $(".select2-limiting").select2({
-                    maximumSelectionLength: 2
+                            for (let link of links) {
+                                // Add target="_blank" and styling
+                                link.setAttribute('target', '_blank');
+                                link.style.display = 'inline-block';
+                                link.style.padding = '8px 16px';
+                                link.style.backgroundColor = '#007bff';
+                                link.style.color = '#ffffff';
+                                link.style.textDecoration = 'none';
+                                link.style.borderRadius = '4px';
+                                link.style.margin = '4px';
+                                link.style.border = 'none';
+                                link.style.fontWeight = '500';
+                            }
+                            return url;
+                        }
+                    },
+                    toolbar: [
+                        ['style', ['style']],
+                        ['font', ['bold', 'underline', 'clear']],
+                        ['fontname', ['fontname']],
+                        ['color', ['color']],
+                        ['para', ['ul', 'ol', 'paragraph']],
+                        ['table', ['table']],
+                        ['insert', ['link', 'picture', 'video']],
+                        ['view', ['fullscreen', 'codeview', 'help']]
+                    ]
                 });
+            });
+
+            // Select2
+            $(".select2").select2();
+
+            $(".select2-limiting").select2({
+                maximumSelectionLength: 2
             });
         </script>
         <script src="../plugins/switchery/switchery.min.js"></script>

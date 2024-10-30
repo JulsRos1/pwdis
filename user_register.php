@@ -9,6 +9,8 @@ if (isset($_POST['register'])) {
   $username = $_POST['username'];
   $password = $_POST['password'];
   $confirm_password = $_POST['confirm_password'];
+  $disability_type = $_POST['disability_type'];
+  $Gender = $_POST['Gender'];
 
   // Check if the email or username already exists in the database
   $check_query = "SELECT * FROM users WHERE Email = ? OR username = ?";
@@ -18,24 +20,21 @@ if (isset($_POST['register'])) {
   $check_result = $stmt->get_result();
 
   if ($check_result->num_rows > 0) {
-    // Email or username already exists
     echo "Error: The username or email is already taken.";
     exit;
   }
 
-  // Verify the confirm password
   if ($password !== $confirm_password) {
     echo "Error: Passwords do not match.";
     exit;
   }
 
-  // Hash the password
   $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
   // Insert data into the database
-  $insert_query = "INSERT INTO users (FirstName, LastName, Barangay, Email, username, password) VALUES (?, ?, ?, ?, ?, ?)";
+  $insert_query = "INSERT INTO users (FirstName, LastName, Barangay, Email, username, password, disability_type, Gender) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
   $stmt = $con->prepare($insert_query);
-  $stmt->bind_param("ssssss", $FirstName, $LastName, $Barangay, $Email, $username, $hashed_password);
+  $stmt->bind_param("ssssssss", $FirstName, $LastName, $Barangay, $Email, $username, $hashed_password, $disability_type, $Gender);
   $result = $stmt->execute();
 
   if ($result) {
@@ -44,7 +43,6 @@ if (isset($_POST['register'])) {
     echo "Error: " . $stmt->error;
   }
 
-  // Close the statement and connection
   $stmt->close();
   $con->close();
 }
@@ -118,24 +116,56 @@ if (isset($_POST['register'])) {
       </div>
 
       <!-- Barangay -->
-      <div>
-        <label for="barangay-input" class="barangay-label">Brgy</label>
-        <select name="Barangay" id="barangay-input" required>
-          <option value="" disabled selected>Select Barangay</option>
-          <option value="Anos">Anos</option>
-          <option value="Bagong Silang">Bagong Silang</option>
-          <option value="Bambang">Bambang</option>
-          <option value="Batong Malake">Batong Malake</option>
-          <option value="Baybayin">Baybayin</option>
-          <option value="Lalakay">Lalakay</option>
-          <option value="Maahas">Maahas</option>
-          <option value="Malinta">Malinta</option>
-          <option value="Mayondon">Mayondon</option>
-          <option value="Putho-Tuntungin">Putho-Tuntungin</option>
-          <option value="San Antonio">San Antonio</option>
-          <option value="Tadlac">Tadlac</option>
-          <option value="Timugan">Timugan</option>
-        </select>
+      <div class="column">
+        <div>
+          <label for="barangay" class="sr-only">Barangay</label>
+          <select name="Barangay" id="select-input" required>
+            <option value="" disabled selected>Select Barangay</option>
+            <option value="Anos">Anos</option>
+            <option value="Bagong Silang">Bagong Silang</option>
+            <option value="Bambang">Bambang</option>
+            <option value="Batong Malake">Batong Malake</option>
+            <option value="Baybayin">Baybayin</option>
+            <option value="Lalakay">Lalakay</option>
+            <option value="Maahas">Maahas</option>
+            <option value="Malinta">Malinta</option>
+            <option value="Mayondon">Mayondon</option>
+            <option value="Tuntungin-Putho">Tuntungin-Putho</option>
+            <option value="San Antonio">San Antonio</option>
+            <option value="Tadlac">Tadlac</option>
+            <option value="Timugan">Timugan</option>
+          </select>
+        </div>
+        <!-- Barangay -->
+        <div>
+          <label for="disability_type" class="sr-only">Barangay</label>
+          <select name="disability_type" id="select-input" required>
+            <option value="" disabled selected>Disability Type</option>
+            <option value="Deaf or Hard of Hearing">Deaf or Hard of Hearing</option>
+            <option value="Intellectual Disability">Intellectual Disability</option>
+            <option value="Learning Disability">Learning Disability</option>
+            <option value="Physical Disability">Physical Disability</option>
+            <option value="Psychosocial Disability">Psychosocial Disability</option>
+            <option value="Speech and Language Impairment">Speech and Language Impairment</option>
+            <option value="Visual Disability">Visual Disability</option>
+            <option value="Cancer(RA 11215)">Cancer (RA 11215)</option>
+            <option value="Rare Disease(RA 10747)">Rare Disease (RA 10747)</option>
+          </select>
+        </div>
+      </div>
+      <!-- Barangay -->
+      <div class="column">
+        <div>
+          <label for="Gender" class="sr-only">Barangay</label>
+          <select name="Gender" id="select-input" required>
+            <option value="" disabled selected>Gender</option>
+            <option value="Anos">Male</option>
+            <option value="Anos">Female</option>
+            <option value="Anos">Others</option>
+
+          </select>
+        </div>
+
       </div>
 
       <button type="submit" name="register">Signup</button>

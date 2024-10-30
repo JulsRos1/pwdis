@@ -69,9 +69,15 @@ if (!isset($_SESSION['user_login'])) {
     </head>
 
     <body class="fixed-left">
+        <div class="top-header">
+            <div class="logo-header">
+                <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+            </div>
+            <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+        </div>
+        </div>
         <?php include("includes/sidebar.php"); ?>
         <div id="main">
-            <button class="openbtn" onclick="openNav()">&#9776;</button>
             <div id="wrapper1">
                 <div class="content-page">
                     <div class="content">
@@ -127,9 +133,24 @@ if (!isset($_SESSION['user_login'])) {
             <script src="vendor/jquery/jquery.min.js"></script>
             <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
             <script>
+                function toggleNav() {
+                    const sidebar = document.getElementById("mySidebar");
+                    if (sidebar.style.width === "250px") {
+                        closeNav();
+                    } else {
+                        openNav();
+                    }
+                }
+                // Function to open sidebar
                 function openNav() {
                     document.getElementById("mySidebar").style.width = "250px";
                     document.getElementById("main").style.marginLeft = "250px";
+                }
+
+                // Function to close sidebar
+                function closeNav() {
+                    document.getElementById("mySidebar").style.width = "0";
+                    document.getElementById("main").style.marginLeft = "0";
                 }
             </script>
     </body>

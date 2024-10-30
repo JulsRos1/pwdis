@@ -33,18 +33,22 @@ session_start();
       </button>
       <button class="category-button" onclick="updatePlaces('hospital')">
         <i class="fas fa-hospital"></i>
-        Healthcare
+        Hospital
       </button>
-      <button class="category-button" onclick="updatePlaces('grocery_store')">
-        <i class="fas fa-shopping-cart"></i>
-        Grocery Store
+      <button class="category-button" onclick="updatePlaces('hotel')">
+        <i class="fa-solid fa-hotel"></i>
+        Hotel
+      </button>
+      <button class="category-button" onclick="updatePlaces('community_center')">
+        <i class="fas fa-users"></i>
+        Community Center
       </button>
     </div>
     <div class="legend">
       <h4>Legend</h4>
       <ul>
         <li><span style="background-color: red"></span> Not Accessible (0 Options)</li>
-        <li><span style="background-color: blue"></span> Accessible (1-2 Options)</li>
+        <li><span style="background-color: blue"></span> Partially Accessible (1-2 Options)</li>
         <li><span style="background-color: green"></span> Highly Accessible (3-4 Options)</li>
       </ul>
     </div>
@@ -755,7 +759,7 @@ session_start();
 
     let accessibilityLevel = "Not Accessible";
     if (accessibilityCount > 2) accessibilityLevel = "Highly Accessible";
-    else if (accessibilityCount > 0) accessibilityLevel = "Accessible";
+    else if (accessibilityCount > 0) accessibilityLevel = "Partially Accessible";
 
     document.getElementById("accessibility_level").value = accessibilityLevel;
   }

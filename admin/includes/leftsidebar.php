@@ -49,7 +49,7 @@
                 <li class="has_sub">
                     <a href="javascript:void(0);" class="waves-effect">
                         <i class="fas fa-pencil-alt"></i>
-                        <span> Posts </span>
+                        <span> Manage Resources </span>
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
@@ -58,42 +58,26 @@
                         <li><a href="trash-posts.php">Trash Posts</a></li>
                     </ul>
                 </li>
-
                 <li class="has_sub">
-                    <a href="javascript:void(0);" class="waves-effect">
+                    <a href="manage_materials.php" class="waves-effect">
                         <i class="fas fa-file-upload"></i>
-                        <span> Materials</span>
-                        <span class="menu-arrow"></span>
+                        <span>Disability Materials</span>
                     </a>
-                    <ul class="list-unstyled">
-                        <li><a href="upload_files.php">Add Materials</a></li>
-                        <li><a href="manage_files.php">Manage Materials</a></li>
-                    </ul>
+                </li>
+                <li class="has_sub">
+                    <a href="manage_hotlines.php" class="waves-effect">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Emergency Hotlines</span>
+                    </a>
                 </li>
 
                 <li class="has_sub">
-                    <a href="javascript:void(0);" class="waves-effect">
-                        <i class="fas fa-file-alt"></i>
-                        <span> Pages </span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <ul class="list-unstyled">
-                        <li><a href="aboutus.php">About us</a></li>
-                        <li><a href="contactus.php">Contact us</a></li>
-                    </ul>
-                </li>
-
-                <li class="has_sub">
-                    <a href="javascript:void(0);" class="waves-effect">
+                    <a href="manage-comments.php" class="waves-effect">
                         <i class="fas fa-comments"></i>
-                        <span> Comments </span>
-                        <span class="menu-arrow"></span>
+                        <span>Comments</span>
                     </a>
-                    <ul class="list-unstyled">
-                        <li><a href="unapprove-comment.php">Waiting for Approval </a></li>
-                        <li><a href="manage-comments.php">Approved Comments</a></li>
-                    </ul>
                 </li>
+
 
             </ul>
         </div>

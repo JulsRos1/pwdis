@@ -39,70 +39,7 @@ if (strlen($_SESSION['login']) == 0) {
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <script src="assets/js/modernizr.min.js"></script>
-        <style>
-            .table-modern {
-                border-collapse: separate;
-                border-spacing: 0;
-                width: 100%;
-                background-color: #fff;
-                border-radius: 8px;
-                overflow: hidden;
-                box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            }
 
-            .table-modern thead {
-                background-color: #343a40;
-                color: #fff;
-            }
-
-            .table-modern tbody tr:hover {
-                background-color: #f8f9fa;
-            }
-
-            .table-modern th,
-            .table-modern td {
-                padding: 12px 15px;
-                text-align: left;
-                vertical-align: middle;
-                border-top: 1px solid #dee2e6;
-            }
-
-            .table-modern th {
-                font-weight: bold;
-            }
-
-            .table-modern td {
-                border-bottom: 1px solid #dee2e6;
-            }
-
-            .table-modern td .text-primary {
-                color: #007bff !important;
-            }
-
-            .table-modern td .text-danger {
-                color: #dc3545 !important;
-            }
-
-            .table-modern .fa {
-                font-size: 1.2em;
-            }
-
-            .table-modern .fa-pencil-alt {
-                transition: color 0.2s ease;
-            }
-
-            .table-modern .fa-pencil-alt:hover {
-                color: #0056b3;
-            }
-
-            .table-modern .fa-trash {
-                transition: color 0.2s ease;
-            }
-
-            .table-modern .fa-trash:hover {
-                color: #c82333;
-            }
-        </style>
 
     </head>
 

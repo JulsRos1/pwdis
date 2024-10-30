@@ -79,15 +79,67 @@ if (isset($_POST['submit'])) {
       width: 30px;
       height: 30px;
     }
+
+    .card {
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
+
+    .category:hover {
+      transform: scale(1.05);
+    }
+
+    .categorybtn {
+      font-size: 12px;
+    }
+
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-text a {
+      display: inline-block;
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: 4px;
+      transition: all 0.3s ease;
+      border: none;
+      font-weight: 500;
+    }
+
+    .card-text a:hover {
+      background-color: #0056b3;
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Add this if you want the link to appear "pressed" when clicked */
+    .card-text a:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary {
+      font-size: 14px;
+    }
   </style>
 </head>
 
 <body>
+  <div class="top-header">
+    <div class="logo-header">
+      <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+    </div>
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+  </div>
   <!-- Sidebar -->
   <?php include("includes/sidebar.php"); ?>
   <!-- Page Content -->
   <div id="main">
-    <button class="openbtn" onclick="openNav()">&#9776;</button>
     <div class="container">
       <div class="row" style="margin-top: 4%">
         <!-- Blog Entries Column -->
@@ -100,10 +152,12 @@ if (isset($_POST['submit'])) {
           ?>
             <div class="card mb-4">
               <div class="card-body">
-                <h2 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h2>
+                <h5 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h5>
                 <p><b>Category : </b> <a href="category.php?catid=<?php echo htmlentities($row['cid']) ?>"><?php echo htmlentities($row['category']); ?></a> |
                 </p>
                 <hr />
+                <p class="card-text"><?php echo $row['postdetails']; ?></p>
+
                 <?php
                 $postId = $row['id'];
                 $imageQuery = mysqli_query($con, "SELECT image FROM tblpostimages WHERE postId='$postId'");
@@ -128,7 +182,6 @@ if (isset($_POST['submit'])) {
                 <?php } else { ?>
                 <?php } // End if 
                 ?>
-                <p class="card-text"><?php echo substr($row['postdetails'], 0); ?></p>
               </div>
               <div class="card-footer text-muted"></div>
             </div>
@@ -196,6 +249,15 @@ if (isset($_POST['submit'])) {
         }
       });
     });
+
+    function toggleNav() {
+      const sidebar = document.getElementById("mySidebar");
+      if (sidebar.style.width === "250px") {
+        closeNav();
+      } else {
+        openNav();
+      }
+    }
     // Function to open sidebar
     function openNav() {
       document.getElementById("mySidebar").style.width = "250px";

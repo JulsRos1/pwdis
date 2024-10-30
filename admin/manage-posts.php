@@ -108,10 +108,14 @@ if (strlen($_SESSION['login']) == 0) {
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="card-box">
-
+                                    <div class="m-b-30">
+                                        <a href="add-post.php">
+                                            <button id="addToTable" class="btn btn-success waves-effect waves-light">Add <i class="mdi mdi-plus-circle-outline"></i></button>
+                                        </a>
+                                    </div>
 
                                     <div class="table-responsive">
-                                        <table class="table table-colored table-centered table-inverse m-0">
+                                        <table class="table table-striped table-hover table-bordered table-modern">
                                             <thead>
                                                 <tr>
 

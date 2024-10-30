@@ -63,7 +63,7 @@ if (strlen($_SESSION['login']) == 0) {
         <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
         <meta name="author" content="Coderthemes">
 
-        <title>PWDIS | Upload Files</title>
+        <title>PWDIS | Upload Disability Materials</title>
 
         <!-- App css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -95,7 +95,7 @@ if (strlen($_SESSION['login']) == 0) {
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="page-title-box">
-                                    <h4 class="page-title">Upload Files</h4>
+                                    <h4 class="page-title">Upload Disability Laws and Rights files</h4>
                                     <div class="clearfix"></div>
                                 </div>
                             </div>

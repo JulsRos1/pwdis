@@ -23,11 +23,72 @@ include('includes/config.php');
   <!-- Custom styles for this template -->
   <link href="css/sidebar.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .card {
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+    }
 
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .category-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 25px;
+      border-radius: 12px;
+      font-size: 2rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0 30px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-left: 5px solid #007bff;
+      color: #2c3e50;
+    }
+
+    .category:hover {
+      transform: scale(1.05);
+    }
+
+    .categorybtn {
+      font-size: 12px;
+    }
+
+    .breadcrumb-nav {
+      background: transparent;
+      padding: 10px 0;
+      margin-bottom: 20px;
+    }
+
+    .breadcrumb-nav .separator {
+      color: #6c757d;
+      margin: 0 8px;
+    }
+
+    .breadcrumb-nav a {
+      color: #007bff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb-nav a:hover {
+      color: #0056b3;
+    }
+
+    .breadcrumb-nav .current-page {
+      color: #6c757d;
+      font-weight: 500;
+    }
+  </style>
 </head>
 
 <body>
-
+  <div class="top-header">
+    <div class="logo-header">
+      <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+    </div>
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+  </div>
   <!-- Sidebar -->
   <?php include("includes/sidebar.php"); ?>
   <!-- Page Content -->
@@ -39,7 +100,7 @@ include('includes/config.php');
       <div class="row" style="margin-top: 4%">
 
         <!-- Blog Entries Column -->
-        <div class="col-md-8">
+        <div class="col-md-8 card-container">
 
           <!-- Blog Post -->
           <?php
@@ -71,17 +132,18 @@ include('includes/config.php');
 
 
           ?>
-              <h4><?php echo htmlentities($row['category']); ?> </h4>
+              <h4 class="category-header"><?php echo htmlentities($row['category']); ?> Page</h4>
               <div class="card mb-4">
-                <img class="card-img-top" src="admin/postimages/<?php echo htmlentities($row['PostImage']); ?>" alt="<?php echo htmlentities($row['posttitle']); ?>">
+                <div class="image-container">
+                  <img class="card-img-top fade-in" src="admin/postimages/<?php echo htmlentities($row['PostImage']); ?>" alt="<?php echo htmlentities($row['posttitle']); ?>">
+                </div>
                 <div class="card-body">
-                  <h2 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h2>
-
-                  <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary">Read More &rarr;</a>
+                  <h5 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h5>
+                  <p><b>Category:</b> <a href="category.php?catid=<?php echo htmlentities($row['cid']) ?>"><?php echo htmlentities($row['category']); ?></a></p>
+                  <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary btn-read-more">Read More &rarr;</a>
                 </div>
                 <div class="card-footer text-muted">
                   Posted on <?php echo htmlentities($row['postingdate']); ?>
-
                 </div>
               </div>
             <?php } ?>
@@ -137,6 +199,15 @@ include('includes/config.php');
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script>
+    function toggleNav() {
+      const sidebar = document.getElementById("mySidebar");
+      if (sidebar.style.width === "250px") {
+        closeNav();
+      } else {
+        openNav();
+      }
+    }
+
     function openNav() {
       document.getElementById("mySidebar").style.width = "250px";
       document.getElementById("main").style.marginLeft = "250px";

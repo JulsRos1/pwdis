@@ -80,14 +80,17 @@ if (strlen($_SESSION['login']) == 0) {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PWDIS | Admin Dashboard</title>
+        <!-- App css -->
         <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/core.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/components.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+        <link href="assets/css/pages.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/menu.css" rel="stylesheet" type="text/css" />
         <link href="assets/css/responsive.css" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <link rel="stylesheet" href="../plugins/switchery/switchery.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <style>
             /* Custom CSS for SweetAlert */
             .swal-popup {
@@ -141,7 +144,7 @@ if (strlen($_SESSION['login']) == 0) {
                             <div class="col-lg-12">
                                 <h4 class="header-title">Manage Users</h4>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover">
+                                    <table class="table table-colored table-bordered table-centered table-inverse m-0">
                                         <thead class="thead-dark">
                                             <tr>
                                                 <th>ID</th>
@@ -212,7 +215,7 @@ if (strlen($_SESSION['login']) == 0) {
             </div>
         </div>
 
-        <!-- jQuery and other scripts -->
+        <!-- jQuery  -->
         <script src="assets/js/jquery.min.js"></script>
         <script src="assets/js/bootstrap.min.js"></script>
         <script src="assets/js/detect.js"></script>
@@ -220,6 +223,8 @@ if (strlen($_SESSION['login']) == 0) {
         <script src="assets/js/jquery.blockUI.js"></script>
         <script src="assets/js/jquery.slimscroll.js"></script>
         <script src="assets/js/jquery.scrollTo.min.js"></script>
+
+        <!-- App js -->
         <script src="assets/js/jquery.core.js"></script>
         <script src="assets/js/jquery.app.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -44,6 +44,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="hotlines.php">
+                        <i class="fa-solid fa-phone"></i> Emergency Hotlines
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="about-us.php">
                         <i class="fas fa-info-circle"></i> About
                     </a>

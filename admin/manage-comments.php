@@ -117,7 +117,7 @@ if (strlen($_SESSION['login']) == 0) {
                                     <div class="demo-box m-t-20">
 
                                         <div class="table-responsive">
-                                            <table class="table m-0 table-colored-bordered table-bordered-primary">
+                                            <table class="table table-striped table-hover table-bordered table-modern">
                                                 <thead>
                                                     <tr>
                                                         <th>#</th>

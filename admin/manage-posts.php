@@ -57,6 +57,17 @@ if (strlen($_SESSION['login']) == 0) {
 
         <script src="assets/js/modernizr.min.js"></script>
 
+        <!-- Add this style section -->
+        <style>
+            #postSearch {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+        </style>
+
     </head>
 
 
@@ -112,6 +123,13 @@ if (strlen($_SESSION['login']) == 0) {
                                         <a href="add-post.php">
                                             <button id="addToTable" class="btn btn-success waves-effect waves-light">Add <i class="mdi mdi-plus-circle-outline"></i></button>
                                         </a>
+                                    </div>
+
+                                    <!-- Add search input -->
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <input type="text" id="postSearch" placeholder="Search posts...">
+                                        </div>
                                     </div>
 
                                     <div class="table-responsive">
@@ -199,6 +217,34 @@ if (strlen($_SESSION['login']) == 0) {
         <!-- App js -->
         <script src="assets/js/jquery.core.js"></script>
         <script src="assets/js/jquery.app.js"></script>
+
+        <!-- Add this before the closing body tag -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Real-time search functionality
+                var postSearch = document.getElementById('postSearch');
+                var table = document.querySelector('.table-modern');
+
+                if (postSearch && table) {
+                    postSearch.addEventListener('keyup', function() {
+                        var searchValue = this.value.toLowerCase();
+                        var rows = table.getElementsByTagName('tr');
+
+                        // Start from index 1 to skip the header row
+                        for (var i = 1; i < rows.length; i++) {
+                            var row = rows[i];
+                            var rowText = row.textContent.toLowerCase();
+
+                            if (rowText.indexOf(searchValue) > -1) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+            });
+        </script>
 
     </body>
 

@@ -17,10 +17,8 @@ include('includes/config.php');
 
   <title>PWDIS | Search Page</title>
 
-  <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
   <link href="css/sidebar.css" rel="stylesheet">
   <style>
     .card {
@@ -37,6 +35,11 @@ include('includes/config.php');
 
 <body>
   <div class="top-header">
+    <div class="logo-header">
+      <a href="dashboard.php">
+        <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+      </a>
+    </div>
     <button class="openbtn" onclick="toggleNav()">&#9776;</button>
   </div>
 

@@ -152,6 +152,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
                                                 <th>Barangay</th>
+                                                <th>Disability Type</th>
                                                 <th>Email</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -167,6 +168,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                         <td><?php echo htmlspecialchars($row['FirstName']); ?></td>
                                                         <td><?php echo htmlspecialchars($row['LastName']); ?></td>
                                                         <td><?php echo htmlspecialchars($row['Barangay']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['disability_type']); ?></td>
                                                         <td><?php echo htmlspecialchars($row['Email']); ?></td>
                                                         <td>
                                                             <a href="#" class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $row['id']; ?>">Delete</a>

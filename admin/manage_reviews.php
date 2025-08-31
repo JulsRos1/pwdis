@@ -112,6 +112,12 @@ if (strlen($_SESSION['login']) == 0) {
 
                         <div class="row">
                             <div class="col-lg-12">
+                                <input type="text" id="reviewSearch" placeholder="Search reviews..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
                                 <h4 class="header-title">Manage Reviews</h4>
                                 <div class="table-responsive">
                                     <table class="table table-colored table-bordered table-centered table-inverse m-0">
@@ -127,7 +133,7 @@ if (strlen($_SESSION['login']) == 0) {
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="reviewTableBody">
                                             <?php
                                             if (mysqli_num_rows($reviewResult) > 0) {
                                                 while ($row = mysqli_fetch_assoc($reviewResult)) {
@@ -141,7 +147,8 @@ if (strlen($_SESSION['login']) == 0) {
                                                         <td data-label="Rating"><?php echo $row['rating']; ?></td>
                                                         <td data-label="Review Date"><?php echo $row['review_date']; ?></td>
                                                         <td data-label="Actions">
-                                                            <a href="#" class="btn btn-danger btn-sm delete-btn" data-id="<?php echo $row['id']; ?>">Delete</a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-sm delete-record" 
+                                                               data-id="<?php echo $row['id']; ?>">Delete</a>
                                                         </td>
                                                     </tr>
                                             <?php
@@ -161,33 +168,69 @@ if (strlen($_SESSION['login']) == 0) {
             </div>
         </div>
 
-        <div id="confirmationModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this review? This action cannot be undone.</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <a id="confirmDeleteBtn" href="#" class="btn btn-danger">Delete</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <script>
-            $(document).ready(function() {
-                $('.delete-btn').on('click', function(event) {
-                    event.preventDefault();
-                    var reviewId = $(this).data('id');
-                    $('#confirmDeleteBtn').attr('href', 'manage_reviews.php?delete=' + reviewId);
-                    $('#confirmationModal').modal('show');
+            document.addEventListener('DOMContentLoaded', function() {
+                // Real-time search functionality
+                var reviewSearch = document.getElementById('reviewSearch');
+                var reviewTableBody = document.getElementById('reviewTableBody');
+
+                if (reviewSearch && reviewTableBody) {
+                    reviewSearch.addEventListener('keyup', function() {
+                        var searchValue = this.value.toLowerCase();
+                        var rows = reviewTableBody.getElementsByTagName('tr');
+
+                        for (var i = 0; i < rows.length; i++) {
+                            var row = rows[i];
+                            var rowText = row.textContent.toLowerCase();
+
+                            if (rowText.indexOf(searchValue) > -1) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+
+                // Delete functionality using AJAX
+                $(document).on('click', '.delete-record', function(e) {
+                    e.preventDefault();
+                    const id = $(this).data('id');
+                    
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: 'manage_reviews.php',
+                                type: 'GET',
+                                data: { delete: id },
+                                success: function(response) {
+                                    // Remove the row from the table
+                                    $(e.target).closest('tr').remove();
+                                    
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'Review has been deleted.',
+                                        'success'
+                                    );
+                                },
+                                error: function() {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Something went wrong.',
+                                        'error'
+                                    );
+                                }
+                            });
+                        }
+                    });
                 });
             });
         </script>

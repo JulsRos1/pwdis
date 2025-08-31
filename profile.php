@@ -1,16 +1,15 @@
 <?php
 session_start();
 include('includes/config.php');
+if (!isset($_SESSION['user_login'])) {
+    // Redirect the user to the login page if not logged in
+    header("Location: user_login.php");
+    exit;
+}
 
 // Initialize variables for alert messages
 $alert = '';
 $alert_type = '';
-
-// Redirect to login if user is not logged in
-if (!isset($_SESSION['user_login'])) {
-    header("Location: user_login.php");
-    exit;
-}
 
 // Fetch user data from the database
 $user_id = $_SESSION['user_id'];
@@ -21,38 +20,55 @@ $userData = mysqli_fetch_assoc($result);
 // Update profile information
 if (isset($_POST['update_profile'])) {
     $new_username = mysqli_real_escape_string($con, $_POST['username']);
+    $new_firstname = mysqli_real_escape_string($con, $_POST['FirstName']);
+    $new_lastname = mysqli_real_escape_string($con, $_POST['LastName']);
+    $new_email = mysqli_real_escape_string($con, $_POST['Email']);
 
-    // Update username
-    $update_query = "UPDATE users SET username = '$new_username' WHERE id = '$user_id'";
-    if (mysqli_query($con, $update_query)) {
-        $_SESSION['user'] = $new_username; // Update session username
-        $alert = "Profile updated successfully!";
-        $alert_type = "success";
-    } else {
-        $alert = "Error updating profile: " . mysqli_error($con);
+    // Check if email is already taken by another user
+    $email_check_query = "SELECT id FROM users WHERE Email = '$new_email' AND id != '$user_id'";
+    $email_check_result = mysqli_query($con, $email_check_query);
+
+    if (mysqli_num_rows($email_check_result) > 0) {
+        $alert = "Error: Email address is already in use by another account.";
         $alert_type = "danger";
+    } else {
+        // Update user information
+        $update_query = "UPDATE users SET 
+            username = '$new_username',
+            FirstName = '$new_firstname',
+            LastName = '$new_lastname',
+            Email = '$new_email'
+            WHERE id = '$user_id'";
+
+        if (mysqli_query($con, $update_query)) {
+            $_SESSION['user'] = $new_username; // Update session username
+            $alert = "Profile updated successfully!";
+            $alert_type = "success";
+
+            // Refresh user data
+            $result = mysqli_query($con, $query);
+            $userData = mysqli_fetch_assoc($result);
+        } else {
+            $alert = "Error updating profile: " . mysqli_error($con);
+            $alert_type = "danger";
+        }
     }
 
-    // Upload new profile picture
+    // Upload new profile picture (existing code remains the same)
     if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] == 0) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($_FILES['avatar']['type'], $allowed_types)) {
             $target_dir = "uploads/";
-            // Ensure unique file name
             $file_ext = pathinfo($_FILES["avatar"]["name"], PATHINFO_EXTENSION);
             $target_file = $target_dir . 'avatar_' . $user_id . '.' . $file_ext;
 
-            // Validate and move the file to the uploads directory
             if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
-                // Update the avatar_url in the database
                 $update_avatar_query = "UPDATE users SET avatar_url = '$target_file' WHERE id = '$user_id'";
                 if (mysqli_query($con, $update_avatar_query)) {
                     $alert = "Profile picture updated successfully!";
                     $alert_type = "success";
-                    $userData['avatar_url'] = $target_file; // Update the local variable to reflect the change
-                    $_SESSION['avatar_url'] = $target_file; // Store the avatar URL in the session
-
-
+                    $userData['avatar_url'] = $target_file;
+                    $_SESSION['avatar_url'] = $target_file;
                 } else {
                     $alert = "Error updating profile picture: " . mysqli_error($con);
                     $alert_type = "danger";
@@ -151,21 +167,6 @@ $con->close();
             border-right: none;
         }
 
-        button {
-            background-color: #007bff;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 25px;
-            color: white;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
         .profile-image {
             border-radius: 50%;
             margin-bottom: 1em;
@@ -194,12 +195,6 @@ $con->close();
             border-radius: 8px;
         }
 
-        .home-button {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -208,16 +203,6 @@ $con->close();
             .profile-image {
                 width: 100px;
                 height: 100px;
-            }
-
-            button {
-                font-size: 14px;
-                padding: 8px 20px;
-            }
-
-            .home-button {
-                left: 10px;
-                top: 10px;
             }
         }
     </style>
@@ -228,17 +213,17 @@ $con->close();
     <!-- Sidebar -->
     <?php include("includes/sidebar.php"); ?>
     <!-- Page Content -->
+    <div class="top-header">
+        <div class="logo-header">
+            <a href="dashboard.php">
+                <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+            </a>
+        </div>
+        <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+    </div>
     <div id="main">
-        <button class="openbtn" onclick="openNav()">&#9776;</button>
 
         <div class="container">
-            <!-- Alert Section -->
-            <?php if ($alert != '') : ?>
-                <div class="alert alert-<?php echo $alert_type; ?> alert-dismissible fade show" role="alert">
-                    <?php echo $alert; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
 
             <h2><i class="fas fa-user-circle"></i> Profile Page</h2>
 
@@ -249,6 +234,38 @@ $con->close();
                     <div class="form-group">
                         <img src="<?php echo $userData['avatar_url']; ?>" alt="Profile Picture" class="profile-image">
                         <br>
+                        <label for="username">Username:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" id="username" name="username" value="<?php echo $userData['username']; ?>" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="FirstName">First Name:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" id="FirstName" name="FirstName" value="<?php echo $userData['FirstName']; ?>" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="LastName">Last Name:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" id="LastName" name="LastName" value="<?php echo $userData['LastName']; ?>" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Email">Email:</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" id="Email" name="Email" value="<?php echo $userData['Email']; ?>" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label for="username">Username:</label>
                         <div class="input-group">
                             <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -302,6 +319,29 @@ $con->close();
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            // Function to open sidebar
+            function toggleNav() {
+                const sidebar = document.getElementById("mySidebar");
+                if (sidebar.style.width === "250px") {
+                    closeNav();
+                } else {
+                    openNav();
+                }
+            }
+
+            function openNav() {
+                document.getElementById("mySidebar").style.width = "250px";
+                document.getElementById("main").style.marginLeft = "250px";
+            }
+
+            // Function to close sidebar
+            function closeNav() {
+                document.getElementById("mySidebar").style.width = "0";
+                document.getElementById("main").style.marginLeft = "0";
+            }
+        </script>
     </div>
 </body>
 

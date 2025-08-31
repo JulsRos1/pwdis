@@ -34,8 +34,9 @@ if (strlen($_SESSION['login']) == 0) {
 
                 // Move the uploaded file to the desired location
                 if (move_uploaded_file($fileTempName, $targetFilePath)) {
-                    // Insert the file details into the database
-                    $query = mysqli_query($con, "INSERT INTO uploaded_files(title, file_name, file_path, date_created) VALUES('$fileTitle', '$file', '/uploaded_files/$file', NOW())");
+                    $description = mysqli_real_escape_string($con, $_POST['description']);
+                    $query = mysqli_query($con, "INSERT INTO uploaded_files(title, description, file_name, file_path, date_created) 
+                                                VALUES('$fileTitle', '$description', '$file', '/uploaded_files/$file', NOW())");
 
                     if ($query) {
                         $msg = "File successfully uploaded";
@@ -127,6 +128,11 @@ if (strlen($_SESSION['login']) == 0) {
                                             <div class="form-group m-b-20">
                                                 <label for="filetitle">File Title</label>
                                                 <input type="text" class="form-control" id="filetitle" name="filetitle" placeholder="Enter file title" required>
+                                            </div>
+
+                                            <div class="form-group m-b-20">
+                                                <label for="description">Description(optional)</label>
+                                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter file description"></textarea>
                                             </div>
 
                                             <div class="control-group form-group">

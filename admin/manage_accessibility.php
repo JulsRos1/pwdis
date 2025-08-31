@@ -9,6 +9,14 @@ if (strlen($_SESSION['login']) == 0) {
     exit;
 }
 
+// Display messages
+$delmsg = isset($_SESSION['delete_success']) ? 'Accessibility entry deleted successfully' : '';
+$error = isset($_SESSION['error']) ? $_SESSION['error'] : '';
+$success = isset($_SESSION['success']) ? $_SESSION['success'] : '';
+unset($_SESSION['delete_success']);
+unset($_SESSION['error']);
+unset($_SESSION['success']);
+
 // Fetch accessibility data from the database
 $accessibilityQuery = "SELECT * FROM place_accessibility";
 $accessibilityResult = mysqli_query($con, $accessibilityQuery);
@@ -97,63 +105,24 @@ if (isset($_POST['update'])) {
             $accessibilityId
         );
 
-        mysqli_stmt_execute($stmt);
+        if (mysqli_stmt_execute($stmt)) {
+            // Commit transaction
+            mysqli_commit($con);
 
-        // Commit transaction
-        mysqli_commit($con);
+            // Set session variable for success
+            $_SESSION['success'] = "Accessibility features updated successfully";
 
-        // Set session variable for success
-        $_SESSION['update_success'] = true;
-
-        // Redirect to avoid form resubmission
-        header("Location: manage_accessibility.php");
-        exit;
+            // Redirect to avoid form resubmission
+            header("Location: manage_accessibility.php");
+            exit;
+        }
     } catch (Exception $e) {
         // Rollback transaction if there was an error
         mysqli_rollback($con);
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong. Please try again.',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        customClass: { popup: 'swal-popup' }
-                    });
-                });
-              </script>";
+        $_SESSION['error'] = "Something went wrong. Please try again.";
+        header("Location: manage_accessibility.php");
+        exit;
     }
-}
-
-// Display success messages
-if (isset($_SESSION['update_success'])) {
-    echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Accessibility features updated successfully!',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    customClass: { popup: 'swal-popup' }
-                });
-            });
-          </script>";
-    unset($_SESSION['update_success']); // Clear the session variable
-}
-
-if (isset($_SESSION['delete_success'])) {
-    echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Accessibility entry deleted successfully!',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    customClass: { popup: 'swal-popup' }
-                });
-            });
-          </script>";
-    unset($_SESSION['delete_success']); // Clear the session variable
 }
 ?>
 
@@ -207,6 +176,23 @@ if (isset($_SESSION['delete_success'])) {
             margin-right: 5px;
             /* Adjust the value as needed */
         }
+
+        .custom-control-input {
+            transform: scale(1.5);
+            margin-right: 10px;
+        }
+        .custom-control-label {
+            font-size: 1.2em;
+            padding-left: 10px;
+        }
+        .modal-header {
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #e5e5e5;
+        }
+        .modal-footer {
+            background-color: #f7f7f7;
+            border-top: 1px solid #e5e5e5;
+        }
     </style>
 </head>
 
@@ -224,6 +210,26 @@ if (isset($_SESSION['delete_success'])) {
                                 <h4 class="page-title">Accessibility Management</h4>
                                 <div class="clearfix"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <?php if ($success) { ?>
+                                <div class="alert alert-success" role="alert">
+                                    <strong>Success!</strong> <?php echo htmlentities($success); ?>
+                                </div>
+                            <?php } ?>
+                            <?php if ($delmsg) { ?>
+                                <div class="alert alert-success" role="alert">
+                                    <strong>Success!</strong> <?php echo htmlentities($delmsg); ?>
+                                </div>
+                            <?php } ?>
+                            <?php if ($error) { ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Error!</strong> <?php echo htmlentities($error); ?>
+                                </div>
+                            <?php } ?>
                         </div>
                     </div>
 
@@ -267,51 +273,78 @@ if (isset($_SESSION['delete_success'])) {
                                                     <td><?php echo htmlspecialchars($row['wheelchairAccessibleSeating'] ? 'Yes' : 'No'); ?></td>
                                                     <td>
                                                         <div class="btn-group" role="group">
-                                                            <a href="#editModal<?php echo $row['id']; ?>" data-toggle="modal" class="btn btn-warning btn-xs">Edit</a>
-                                                            <a href="?delete=<?php echo $row['id']; ?>" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this entry?');">Delete</a>
+                                                            <a href="#" class="btn btn-warning btn-xs" data-toggle="modal" 
+                                                               data-target="#updateModal<?php echo $row['id']; ?>">Edit</a>
+                                                            <a href="javascript:void(0);" class="btn btn-danger btn-xs delete-record" 
+                                                               data-id="<?php echo $row['id']; ?>">Delete</a>
                                                         </div>
                                                     </td>
                                                 </tr>
 
-                                                <!-- Edit Modal -->
-                                                <div class="modal fade" id="editModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog">
+                                                <!-- Update Modal -->
+                                                <div class="modal fade" id="updateModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
-                                                            <form method="POST" action="">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">Edit Accessibility for <?php echo htmlspecialchars($row['display_name']); ?></h5>
-                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                        <span aria-hidden="true">&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Update Accessibility for <?php echo htmlspecialchars($row['display_name']); ?></h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form method="POST" action="">
                                                                     <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                                    
                                                                     <div class="form-group">
-                                                                        <input type="checkbox" name="wheelchairAccessibleParking" value="1" <?php echo $row['wheelchairAccessibleParking'] ? 'checked' : ''; ?>>
-                                                                        <label for="wheelchairAccessibleParking">PWD Accessible Parking</label>
-
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" 
+                                                                                   id="parking<?php echo $row['id']; ?>" 
+                                                                                   name="wheelchairAccessibleParking" value="1" 
+                                                                                   <?php echo $row['wheelchairAccessibleParking'] ? 'checked' : ''; ?>>
+                                                                            <label class="custom-control-label" 
+                                                                                   for="parking<?php echo $row['id']; ?>">PWD Accessible Parking</label>
+                                                                        </div>
                                                                     </div>
+
                                                                     <div class="form-group">
-                                                                        <input type="checkbox" name="wheelchairAccessibleEntrance" value="1" <?php echo $row['wheelchairAccessibleEntrance'] ? 'checked' : ''; ?>>
-                                                                        <label for="wheelchairAccessibleEntrance">PWD Accessible Entrance</label>
-
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" 
+                                                                                   id="entrance<?php echo $row['id']; ?>" 
+                                                                                   name="wheelchairAccessibleEntrance" value="1" 
+                                                                                   <?php echo $row['wheelchairAccessibleEntrance'] ? 'checked' : ''; ?>>
+                                                                            <label class="custom-control-label" 
+                                                                                   for="entrance<?php echo $row['id']; ?>">PWD Accessible Entrance</label>
+                                                                        </div>
                                                                     </div>
+
                                                                     <div class="form-group">
-                                                                        <input type="checkbox" name="wheelchairAccessibleRestroom" value="1" <?php echo $row['wheelchairAccessibleRestroom'] ? 'checked' : ''; ?>>
-                                                                        <label for="wheelchairAccessibleRestroom">PWD Accessible Restroom</label>
-
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" 
+                                                                                   id="restroom<?php echo $row['id']; ?>" 
+                                                                                   name="wheelchairAccessibleRestroom" value="1" 
+                                                                                   <?php echo $row['wheelchairAccessibleRestroom'] ? 'checked' : ''; ?>>
+                                                                            <label class="custom-control-label" 
+                                                                                   for="restroom<?php echo $row['id']; ?>">PWD Accessible Restroom</label>
+                                                                        </div>
                                                                     </div>
+
                                                                     <div class="form-group">
-                                                                        <input type="checkbox" name="wheelchairAccessibleSeating" value="1" <?php echo $row['wheelchairAccessibleSeating'] ? 'checked' : ''; ?>>
-                                                                        <label for="wheelchairAccessibleSeating">PWD Accessible Seating</label>
-
+                                                                        <div class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" 
+                                                                                   id="seating<?php echo $row['id']; ?>" 
+                                                                                   name="wheelchairAccessibleSeating" value="1" 
+                                                                                   <?php echo $row['wheelchairAccessibleSeating'] ? 'checked' : ''; ?>>
+                                                                            <label class="custom-control-label" 
+                                                                                   for="seating<?php echo $row['id']; ?>">PWD Accessible Seating</label>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                                    <button type="submit" name="update" class="btn btn-primary">Save changes</button>
-                                                                </div>
-                                                            </form>
+
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                        <button type="submit" name="update" class="btn btn-success">Update</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -336,40 +369,17 @@ if (isset($_SESSION['delete_success'])) {
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="assets/js/detect.js"></script>
     <script src="assets/js/fastclick.js"></script>
-    <script src="assets/js/jquery.slimscroll.js"></script>
     <script src="assets/js/jquery.blockUI.js"></script>
-    <script src="assets/js/waves.js"></script>
-    <script src="assets/js/jquery.nicescroll.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/jquery.slimscroll.js"></script>
+    <script src="assets/js/jquery.scrollTo.min.js"></script>
+
+    <!-- App js -->
+    <script src="assets/js/jquery.core.js"></script>
+    <script src="assets/js/jquery.app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Show the confirmation modal and set the href of the delete button
-            $('.delete-btn').on('click', function(event) {
-                event.preventDefault();
-                var accessibilityId = $(this).data('id');
-                $('#confirmDeleteBtn').attr('href', 'manage_accessibility.php?delete=' + accessibilityId);
-                $('#confirmationModal').modal('show');
-            });
-
-            // Show the edit modal and populate the fields
-            $('.edit-btn').on('click', function(event) {
-                event.preventDefault();
-                var accessibilityId = $(this).data('id');
-                var parking = $(this).data('parking');
-                var entrance = $(this).data('entrance');
-                var restroom = $(this).data('restroom');
-                var seating = $(this).data('seating');
-
-                $('#editId').val(accessibilityId);
-                $('#editParking').prop('checked', parking == 1);
-                $('#editEntrance').prop('checked', entrance == 1);
-                $('#editRestroom').prop('checked', restroom == 1);
-                $('#editSeating').prop('checked', seating == 1);
-
-                $('#editModal').modal('show');
-            });
-
             // Real-time search functionality
             var accessibilitySearch = document.getElementById('accessibilitySearch');
             var accessibilityTableBody = document.getElementById('accessibilityTableBody');
@@ -391,7 +401,58 @@ if (isset($_SESSION['delete_success'])) {
                     }
                 });
             }
+
+            // Delete functionality
+            $(document).on('click', '.delete-record', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: 'manage_accessibility.php',
+                            type: 'GET',
+                            data: { delete: id },
+                            success: function(response) {
+                                // Remove the row from the table
+                                $(e.target).closest('tr').remove();
+                                
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Accessibility Update Successfuly Deleted!',
+                                    'success'
+                                );
+                            },
+                            error: function() {
+                                Swal.fire(
+                                    'Error!',
+                                    'Something went wrong.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
         });
+    </script>
+
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.getElementsByClassName('alert');
+            for(var i = 0; i < alerts.length; i++) {
+                alerts[i].style.display = 'none';
+            }
+        }, 5000);
     </script>
 
 </body>

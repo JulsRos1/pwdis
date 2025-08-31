@@ -71,10 +71,11 @@ if (!isset($_SESSION['user_login'])) {
     <body class="fixed-left">
         <div class="top-header">
             <div class="logo-header">
-                <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+                <a href="dashboard.php">
+                    <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+                </a>
             </div>
             <button class="openbtn" onclick="toggleNav()">&#9776;</button>
-        </div>
         </div>
         <?php include("includes/sidebar.php"); ?>
         <div id="main">
@@ -85,11 +86,12 @@ if (!isset($_SESSION['user_login'])) {
                             <div class="row">
                                 <div class="col-12">
                                     <div class="page-title-box">
-                                        <h4 class="page-title">Emergency Hotlines</h4>
+                                        <h4 class="page-title">Emergency and Support Hotlines</h4>
                                         <div class="clearfix"></div>
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="row">
                                 <?php

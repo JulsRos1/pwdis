@@ -1,10 +1,11 @@
 <?php
-include('includes/config.php');
 session_start();
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+include('includes/config.php');
+if (!isset($_SESSION['user_login'])) {
+    // Redirect the user to the login page if not logged in
+    header("Location: user_login.php");
+    exit;
+}
 
 // Function to calculate weighted rating
 function calculateWeightedRating($rating, $numReviews)
@@ -96,7 +97,6 @@ usort($places, function ($a, $b) {
             display: flex;
             flex-direction: column;
             margin-bottom: 20px;
-            /* Margin between cards */
             border: 1px solid #ddd;
             border-radius: 4px;
             overflow: hidden;
@@ -232,12 +232,74 @@ usort($places, function ($a, $b) {
             object-fit: cover;
         }
 
+        .heading-section {
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            background-color: #1F2937;
+            color: white;
+            padding: 40px 20px;
+            border-radius: 8px;
+        }
+
+        .heading-section h1,
+        .heading-section p {
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);/
+        }
+
+        .display-4 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .lead {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-light {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+
+        .btn-outline-light {
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            color: white;
+        }
+
+        .form-check {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .form-check-input {
+            transform: scale(1.5);
+            margin-right: 10px;
+        }
+
         @media only screen and (max-width: 768px) {
             .img-fluid {
                 width: 100%;
                 height: 250px;
                 object-fit: cover;
             }
+
+            .display-4 {
+                font-size: 1.8rem;
+                font-weight: bold;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+
+            .lead {
+                font-size: 1rem;
+                margin-bottom: 20px;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+
         }
     </style>
 </head>
@@ -245,7 +307,9 @@ usort($places, function ($a, $b) {
 <body>
     <div class="top-header">
         <div class="logo-header">
-            <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+            <a href="dashboard.php">
+                <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+            </a>
         </div>
         <button class="openbtn" onclick="toggleNav()">&#9776;</button>
     </div>
@@ -254,6 +318,11 @@ usort($places, function ($a, $b) {
     <!-- Page Content -->
     <div id="main">
         <div class="container mt-4">
+            <div class="heading-section text-center mb-4">
+                <h1 class="display-4">Discover Top-Rated Places</h1>
+                <p class="lead">Explore the best places based on user reviews.</p>
+            </div>
+
             <div class="filter-button">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
                     Filter Place
@@ -351,7 +420,6 @@ usort($places, function ($a, $b) {
 
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
     <script>
         $(document).ready(function() {
             // Handle click on Read Reviews button

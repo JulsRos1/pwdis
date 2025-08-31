@@ -1,6 +1,13 @@
 <?php
 session_start();
+include('includes/config.php');
+if (!isset($_SESSION['user_login'])) {
+    // Redirect the user to the login page if not logged in
+    header("Location: user_login.php");
+    exit;
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -174,7 +181,7 @@ session_start();
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s ease;
         }
 
@@ -233,7 +240,7 @@ session_start();
             background: white;
             border: 1px solid #ddd;
             border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             display: none;
             z-index: 1000;
         }
@@ -320,15 +327,15 @@ session_start();
             </div>
             <i class="fas fa-chevron-down"></i>
             <div class="dropdown-menu">
-                <a href="index.php" class="btn btn-primary btn-home">Exit</a>
+                <a href="dashboard.php" class="btn btn-primary btn-home">Exit</a>
             </div>
         </div>
         <div class="separator"></div>
         <ul class="chat-options">
-          <li id="allChat">  <i class="fa-solid fa-users"></i>Go to Community Forum</li>
+            <li id="allChat"> <i class="fa-solid fa-users"></i>Go to Community Forum</li>
         </ul>
         <input type="text" id="searchInput" class="form-control search-input" placeholder="Search users...">
-      
+
         <ul id="userList" class="user-list">
             <!-- User list will be populated here -->
         </ul>
@@ -464,7 +471,7 @@ session_start();
             $('#chatHeader').text('Chatting with ' + fullname);
             chatMode = 'private';
             fetchMessages();
-            
+
             // Close sidebar on mobile
             if (window.innerWidth <= 768) {
                 sidebar.classList.remove('open');
@@ -478,7 +485,7 @@ session_start();
             $('#chatHeader').text('Community Forum');
             chatMode = 'group';
             fetchMessages();
-            
+
             // Close sidebar on mobile
             if (window.innerWidth <= 768) {
                 sidebar.classList.remove('open');

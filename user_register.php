@@ -1,5 +1,6 @@
 <?php
 include('includes/config.php');
+session_start();
 
 if (isset($_POST['register'])) {
   $FirstName = $_POST['FirstName'];
@@ -38,9 +39,13 @@ if (isset($_POST['register'])) {
   $result = $stmt->execute();
 
   if ($result) {
-    echo "Registration successful! You can now login to the System";
+    $_SESSION['registration_success'] = true;
+    header("Location: user_login.php");
+    exit();
   } else {
-    echo "Error: " . $stmt->error;
+    $_SESSION['registration_error'] = $stmt->error;
+    header("Location: user_register.php");
+    exit();
   }
 
   $stmt->close();
@@ -62,6 +67,12 @@ if (isset($_POST['register'])) {
 <body>
   <div class="wrapper">
     <h1>Signup</h1>
+    <?php
+    if (isset($_SESSION['registration_error'])) {
+      echo '<div class="alert alert-danger">' . $_SESSION['registration_error'] . '</div>';
+      unset($_SESSION['registration_error']);
+    }
+    ?>
     <p id="error-message"></p>
 
     <!-- Send data to user_register.php for processing -->
@@ -126,6 +137,7 @@ if (isset($_POST['register'])) {
             <option value="Bambang">Bambang</option>
             <option value="Batong Malake">Batong Malake</option>
             <option value="Baybayin">Baybayin</option>
+            <option value="Bayog">Bayog</option>
             <option value="Lalakay">Lalakay</option>
             <option value="Maahas">Maahas</option>
             <option value="Malinta">Malinta</option>

@@ -5,7 +5,7 @@ include('includes/config.php');
 
 if (isset($_SESSION['user_login'])) {
   // Redirect the user to another page, for example, index.php
-  header("Location: index.php");
+  header("Location: dashboard.php");
   exit;
 }
 if (isset($_POST['login'])) {
@@ -33,7 +33,7 @@ if (isset($_POST['login'])) {
       $_SESSION['Email'] = ($row['Email']);
       $_SESSION['avatar_url'] = !empty($row['avatar_url']) ? $row['avatar_url'] : './uploads/default_avatar.png';
 
-      header("Location: index.php");
+      header("Location: dashboard.php");
       die;
       // You can redirect the user to the dashboard or any other page here
     } else {
@@ -58,7 +58,6 @@ $con->close();
   <title>Login</title>
   <link rel="stylesheet" href="css/style.css" />
   <script type="text/javascript" src="js/login_validation.js" defer></script>
-  <link rel="manifest" href="manifest.json">
 
 </head>
 
@@ -68,13 +67,13 @@ $con->close();
     <p id="error-message"></p>
     <form id="form" method="POST">
       <div>
-        <label for="email-input">
+        <label for="email-input" class="loginlabel">
           <span>@</span>
         </label>
-        <input type="text" name="usernameOrEmail" id="email-input" placeholder="Username or Email">
+        <input type="text" class="loginput" name="usernameOrEmail" id="email-input" placeholder="Username or Email">
       </div>
       <div>
-        <label for="password-input">
+        <label for="password-input" class="loginlabel">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24"
@@ -87,6 +86,7 @@ $con->close();
         <input
           type="password"
           name="password"
+          class="loginput"
           id="password-input"
           placeholder="Password" />
       </div>
@@ -94,17 +94,7 @@ $con->close();
     </form>
     <p>New here? <a href="user_register.php">Create an Account</a></p>
   </div>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js').then((registration) => {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope);
-        }).catch((error) => {
-          console.log('ServiceWorker registration failed: ', error);
-        });
-      });
-    }
-  </script>
+
 
 </body>
 

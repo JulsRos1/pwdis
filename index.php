@@ -1,145 +1,264 @@
-<?php
-session_start();
-include('includes/config.php');
-if (!isset($_SESSION['user_login'])) {
-  // Redirect the user to the login page if not logged in
-  header("Location: user_login.php");
-  exit;
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="author" content="">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+
   <title>PWDIS</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- CSS FILES -->
+  <link href="landingstyles/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="css/sidebar.css">
-  <style>
-    .card-body p {
-      background-color: #e9f5e9;
-      /* Light green background */
-      padding: 10px;
-      /* Add some padding */
-      border-radius: 5px;
-      /* Rounded corners */
-      transition: background-color 0.3s;
-      /* Smooth transition */
-    }
+  <link href="landingstyles/landing.css" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json">
+  <!--
 
-    .category:hover {
-      transform: scale(1.05);
-    }
+TemplateMo 581 Kind Heart Charity
 
-    .categorybtn {
-      font-size: 12px;
-    }
-  </style>
+https://templatemo.com/tm-581-kind-heart-charity
+
+-->
 </head>
 
-<body>
-  <div class="top-header">
-    <div class="logo-header">
-      <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
-    </div>
-    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
-  </div>
-  <!-- Sidebar -->
-  <?php include("includes/sidebar.php"); ?>
-  <!-- Page Content -->
-  <div id="main">
-
-    <!-- Rest of your page content -->
+<body id="section_1">
+  <nav class="navbar navbar-expand-lg bg-light shadow-lg">
     <div class="container">
-      <div class="row" style="margin-top: 4%">
-        <div class="col-md-8 card-container card-custom">
-          <?php
-          if (isset($_GET['pageno'])) {
-            $pageno = $_GET['pageno'];
-          } else {
-            $pageno = 1;
-          }
-          $no_of_records_per_page = 8;
-          $offset = ($pageno - 1) * $no_of_records_per_page;
+      <div class="logo">
+        <a href="index.php">
+          <img src="landingimages/pwdislogo.png" alt="pwdislogo">
+        </a>
+      </div>
 
-          $total_pages_sql = "SELECT COUNT(*) FROM tblposts";
-          $result = mysqli_query($con, $total_pages_sql);
-          $total_rows = mysqli_fetch_array($result)[0];
-          $total_pages = ceil($total_rows / $no_of_records_per_page);
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-          $query = mysqli_query($con, "SELECT tblposts.id as pid, tblposts.PostTitle as posttitle, tblposts.PostImage, tblcategory.CategoryName as category, tblcategory.id as cid, tblposts.PostingDate as postingdate FROM tblposts LEFT JOIN tblcategory ON tblcategory.id=tblposts.CategoryId WHERE tblposts.Is_Active=1 ORDER BY tblposts.id DESC LIMIT $offset, $no_of_records_per_page");
-          while ($row = mysqli_fetch_array($query)) {
-          ?>
-            <div class="card mb-4">
-              <div class="image-container">
-                <img class="card-img-top fade-in" src="admin/postimages/<?php echo htmlentities($row['PostImage']); ?>" alt="<?php echo htmlentities($row['posttitle']); ?>">
-              </div>
-              <div class="card-body">
-                <h5 class="card-title"><?php echo htmlentities($row['posttitle']); ?></h5>
-                <p><b>Category:</b> <a href="category.php?catid=<?php echo htmlentities($row['cid']) ?>" class="category"><?php echo htmlentities($row['category']); ?></a></p>
-                <a href="post-details.php?nid=<?php echo htmlentities($row['pid']) ?>" class="btn btn-primary btn-read-more">Read More &rarr;</a>
-              </div>
-              <div class="card-footer text-muted">
-                Posted on <?php echo htmlentities($row['postingdate']); ?>
-              </div>
-            </div>
-          <?php } ?>
-
-          <!-- Pagination -->
-          <ul class="pagination justify-content-center mb-4">
-            <li class="page-item"><a href="?pageno=1" class="page-link">First</a></li>
-            <li class="page-item <?php if ($pageno <= 1) echo 'disabled'; ?>">
-              <a href="<?php if ($pageno > 1) echo "?pageno=" . ($pageno - 1); ?>" class="page-link">Prev</a>
-            </li>
-            <li class="page-item <?php if ($pageno >= $total_pages) echo 'disabled'; ?>">
-              <a href="<?php if ($pageno < $total_pages) echo "?pageno=" . ($pageno + 1); ?>" class="page-link">Next</a>
-            </li>
-            <li class="page-item"><a href="?pageno=<?php echo $total_pages; ?>" class="page-link">Last</a></li>
-          </ul>
-        </div>
-
-        <!-- Sidebar Widgets Column -->
-        <?php include('includes/right-sidebar.php'); ?>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link click-scroll" href="#top">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link click-scroll" href="#section_3">Services</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link click-scroll" href="usermanual.php" target="_blank">Installation Guide</a>
+          </li>
+          <li class="nav-item ms-3">
+            <a
+              class="nav-link custom-btn custom-border-btn btn"
+              href="user_login.php">Login</a>
+          </li>
+        </ul>
       </div>
     </div>
-    <!-- Footer -->
-    <?php include('includes/footer.php'); ?>
-  </div>
+  </nav>
+
+  <main>
+    <section class="hero-section hero-section-full-height">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 col-12 p-0">
+            <div id="hero-slide" class="carousel carousel-fade slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <!-- First Carousel Item -->
+                <div class="carousel-item active">
+                  <img src="landingimages/PWD.jpg" class="carousel-image img-fluid" alt="..." />
+                  <!-- Dark Overlay and Text Content -->
+                  <div class="carousel-overlay">
+                    <div class="carousel-content text-center">
+                      <h2 class="carousel-title">Empowering People with Disabilities</h2>
+                      <p class="carousel-text">Join us in creating a more inclusive world. Access inclusive information and resources, map accessibility, and connect with the community.</p>
+                      <a href="user_register.php" class="btn btn-primary carousel-cta">Join Us!</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Second Carousel Item -->
+                <div class="carousel-item">
+                  <img src="landingimages/pwdbg.jpg" class="carousel-image img-fluid" alt="..." />
+                  <!-- Dark Overlay and Text Content -->
+                  <div class="carousel-overlay">
+                    <div class="carousel-content text-center">
+                      <h2 class="carousel-title">Together, We Break Barriers</h2>
+                      <p class="carousel-text">Your support makes a difference. Help us promote accessibility and foster community inclusion.</p>
+                      <a href="user_register.php" class="btn btn-primary carousel-cta">Join Us!</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#hero-slide" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+
+              <button class="carousel-control-next" type="button" data-bs-target="#hero-slide" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <section class="section-padding">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-10 col-12 text-center mx-auto">
+            <h2 class="mb-5">Welcome to PWDIS</h2>
+          </div>
 
-  <script>
-    // Function to open sidebar
-    function toggleNav() {
-      const sidebar = document.getElementById("mySidebar");
-      if (sidebar.style.width === "250px") {
-        closeNav();
-      } else {
-        openNav();
+          <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 text-center">
+            <div class="featured-block d-flex justify-content-center align-items-center">
+              <a href="donate.html" class="d-block">
+                <img src="landingimages/map-location.png" class="featured-block-image img-fluid" alt="" />
+                <p class="featured-block-text"> <strong>Mapping Accessibility</strong></p>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 text-center">
+            <div class="featured-block d-flex justify-content-center align-items-center">
+              <a href="donate.html" class="d-block">
+                <img src="landingimages/working.png" class="featured-block-image img-fluid" alt="" />
+                <p class="featured-block-text"><strong>Information and Resources</strong></p>
+              </a>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0 text-center">
+            <div class="featured-block d-flex justify-content-center align-items-center">
+              <a href="donate.html" class="d-block">
+                <img src="landingimages/partners.png" class="featured-block-image img-fluid" alt="" />
+                <p class="featured-block-text"><strong>Community</strong></p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+
+    <section class="section-padding" id="section_3">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 col-12 text-center mb-4">
+            <h2>What we provide</h2>
+          </div>
+          <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+            <div class="custom-block-wrap">
+              <img
+                src="landingimages/needaccess.jpg"
+                class="custom-block-image img-fluid"
+                alt="" />
+
+              <div class="custom-block">
+                <div class="custom-block-body">
+                  <h5 class="mb-3">Mapping Accessibility</h5>
+
+                  <p class="text-justify" style="text-align: justify;">
+                    Mapping accessibility is crucial for empowering individuals with disabilities by providing them with the necessary information to navigate spaces confidently.
+                    Our system enables users to document and share accessibility features of various locations, such as wheelchair-accessible entrances, parking areas, restrooms,
+                    and seating options. Users can contribute by rating and reviewing these features, helping others make informed decisions about accessibility. This collaborative
+                    effort not only enriches the map with up-to-date information but also fosters a community of awareness and support for accessibility.
+                  </p>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+            <div class="custom-block-wrap">
+              <img
+                src="landingimages/info.jpg"
+                class="custom-block-image img-fluid"
+                alt="" />
+
+              <div class="custom-block">
+                <div class="custom-block-body">
+                  <h5 class="mb-3">Information and Resources</h5>
+
+                  <p class="text-justify" style="text-align: justify;">
+                    Access to inclusive information and resources is vital for individuals with disabilities to fully engage in their community. Our system aims to centralize essential
+                    resources such as programs for persons with disabilities (PWD), events, assistance services, disability rights materials, and emergency support hotlines, and more.
+                    By providing a comprehensive repository of information, we empower users to easily find the help they need, stay informed about their rights, and connect with resources
+                    that promote independence and inclusion.
+                  </p>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+            <div class="custom-block-wrap">
+              <img
+                src="landingimages/community.jpg"
+                class="custom-block-image img-fluid"
+                alt="" />
+
+              <div class="custom-block">
+                <div class="custom-block-body">
+                  <h5 class="mb-3">Community</h5>
+
+                  <p>
+                    Our system brings a platform for real-time communication among individuals with disabilities. Users can engage in private conversations or participate in community forum,
+                    fostering a supportive environment where they can exchange experiences, advice, and information. This interaction not only builds connections but also creates a sense of belonging, empowering
+                    users to share challenges, celebrate successes, and collaborate on solutions. By strengthening community ties, we promote collective advocacy and enhance the overall quality of life for individuals
+                    with disabilities.
+                  </p>
+
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <?php include("includes/footer.php"); ?>
+
+    </footer>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('service-worker.js').then((registration) => {
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+          }).catch((error) => {
+            console.log('ServiceWorker registration failed: ', error);
+          });
+        });
       }
-    }
+    </script>
 
-    function openNav() {
-      document.getElementById("mySidebar").style.width = "250px";
-      document.getElementById("main").style.marginLeft = "250px";
-    }
-
-    // Function to close sidebar
-    function closeNav() {
-      document.getElementById("mySidebar").style.width = "0";
-      document.getElementById("main").style.marginLeft = "0";
-    }
-  </script>
-
+    <!-- JAVASCRIPT FILES -->
+    <script src="landingjs/jquery.min.js"></script>
+    <script src="landingjs/bootstrap.min.js"></script>
+    <script src="landingjs/jquery.sticky.js"></script>
+    <script src="landingjs/click-scroll.js"></script>
+    <script src="landingjs/counter.js"></script>
+    <script src="landingjs/custom.js"></script>
 </body>
 
 </html>

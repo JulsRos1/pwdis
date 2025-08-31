@@ -1,7 +1,13 @@
 <?php
-include('includes/config.php');
 session_start();
+include('includes/config.php');
+if (!isset($_SESSION['user_login'])) {
+  // Redirect the user to the login page if not logged in
+  header("Location: user_login.php");
+  exit;
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 
@@ -9,41 +15,59 @@ session_start();
   <title>Navigate Accessibility in Los Baños, Laguna</title>
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="css/modern-business.css" rel="stylesheet" />
   <link rel="stylesheet" href="css/mapcontent.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&libraries=places" defer async></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="css/sidebar.css">
 </head>
 
-<body>
+<div>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <?php include("includes/header.php"); ?>
-  <div id="map-container">
-    <div id="map"></div>
-    <div class="top-button-bar">
-      <button class="category-button" onclick="updatePlaces('restaurant')">
-        <i class="fas fa-utensils"></i>
-        Restaurants
-      </button>
-      <button class="category-button" onclick="updatePlaces('school')">
-        <i class="fas fa-school"></i>
-        Schools
-      </button>
-      <button class="category-button" onclick="updatePlaces('hospital')">
-        <i class="fas fa-hospital"></i>
-        Hospital
-      </button>
-      <button class="category-button" onclick="updatePlaces('hotel')">
-        <i class="fa-solid fa-hotel"></i>
-        Hotel
-      </button>
-      <button class="category-button" onclick="updatePlaces('community_center')">
-        <i class="fas fa-users"></i>
-        Community Center
-      </button>
+  <div class="top-header">
+    <div class="logo-header">
+      <a href="dashboard.php">
+        <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+      </a>
     </div>
+    <button class="openbtn" onclick="toggleNav()">&#9776;</button>
+  </div>
+  <!-- Sidebar -->
+  <?php include("includes/sidebar.php"); ?>
+
+  <div id="map-container">
+    <div class="top-controls-container">
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search for a place...">
+        <div id="searchResults" class="search-results"></div>
+      </div>
+
+      <div class="top-button-bar">
+        <button class="category-button" onclick="updatePlaces('restaurant')">
+          <i class="fas fa-utensils"></i>
+          Restaurants
+        </button>
+        <button class="category-button" onclick="updatePlaces('school')">
+          <i class="fas fa-school"></i>
+          Educational Institutions
+        </button>
+        <button class="category-button" onclick="updatePlaces('hospital')">
+          <i class="fas fa-hospital"></i>
+          Healthcare
+        </button>
+        <button class="category-button" onclick="updatePlaces('grocery_store')">
+          <i class="fa-solid fa-cart-shopping"></i>
+          Grocery
+        </button>
+        <button class="category-button" data-toggle="modal" data-target="#moreCategoriesModal">
+          <i class="fas fa-ellipsis-h"></i>
+          More
+        </button>
+      </div>
+    </div>
+
+    <div id="map"></div>
     <div class="legend">
       <h4>Legend</h4>
       <ul>
@@ -57,8 +81,6 @@ session_start();
       <div id="place-details-content"></div>
     </div>
   </div>
-
-
 
   <!-- Write Reviews Modal -->
   <div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="reviewModalLabel" aria-hidden="true">
@@ -101,122 +123,163 @@ session_start();
       </div>
     </div>
   </div>
+</div
 
   <!-- Accessibility Options Modal -->
-  <div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="accessibilityModalLabel">Update Accessibility Options</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+<div class="modal fade" id="accessibilityModal" tabindex="-1" role="dialog" aria-labelledby="accessibilityModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="accessibilityModalLabel">Update Accessibility Options</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+          <h5 class="alert-heading">Importance of Accurate Information</h5>
+          <p>Accurate accessibility information is vital for ensuring that all individuals can navigate public spaces with ease. This information helps people with disabilities plan their visits confidently, ensuring they can access essential services and facilities.
+          </p>
         </div>
-        <div class="modal-body">
-          <div class="alert alert-info" role="alert">
-            <h5 class="alert-heading">Importance of Accurate Information</h5>
-            <p>Accurate accessibility information is vital for ensuring that all individuals can navigate public spaces with ease. This information helps people with disabilities plan their visits confidently, ensuring they can access essential services and facilities.
-            </p>
-          </div>
 
-          <div class="accessibility-criteria mb-4">
-            <h5>Criteria for Accessibility Features</h5>
-            <div class="accordion" id="accessibilityCriteriaAccordion">
-              <div class="card">
-                <div class="card-header" id="headingEntrance">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseEntrance">
-                      PWD - Accessible Entrance
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseEntrance" class="collapse" aria-labelledby="headingEntrance" data-parent="#accessibilityCriteriaAccordion">
-                  <div class="card-body">
-                    <p><strong>Criteria:</strong> The entrance should be at least 3 feet wide and free of steps. If there are steps, a permanent or movable ramp must be available. Revolving doors should be marked as not accessible.</p>
-                    <p><strong>Why It Matters:</strong> A wide, step-free entrance allow individuals using wheelchairs, scooters, or other mobility devices to navigate spaces more easily.</p>
-                  </div>
+        <div class="accessibility-criteria mb-4">
+          <h5>Criteria for Accessibility Features</h5>
+          <div class="accordion" id="accessibilityCriteriaAccordion">
+            <div class="card">
+              <div class="card-header" id="headingEntrance">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseEntrance">
+                    PWD - Accessible Entrance
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseEntrance" class="collapse" aria-labelledby="headingEntrance" data-parent="#accessibilityCriteriaAccordion">
+                <div class="card-body">
+                  <p><strong>Criteria:</strong> The entrance should be at least 3 feet wide and free of steps. If there are steps, a permanent or movable ramp must be available. Revolving doors should be marked as not accessible.</p>
+                  <p><strong>Why It Matters:</strong> A wide, step-free entrance allow individuals using wheelchairs, scooters, or other mobility devices to navigate spaces more easily.</p>
                 </div>
               </div>
+            </div>
 
-              <div class="card">
-                <div class="card-header" id="headingRestroom">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseRestroom">
-                      PWD - Accessible Restroom
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseRestroom" class="collapse" aria-labelledby="headingRestroom" data-parent="#accessibilityCriteriaAccordion">
-                  <div class="card-body">
-                    <p><strong>Criteria:</strong> Must have designated restroom, the entrance must be at least 1 meter wide and accessible without steps. If stalls are present, their entrances should also be at least 1 meter wide.</p>
-                    <p><strong>Why It Matters:</strong> Accessible restrooms are crucial for the dignity and independence of users.</p>
-                  </div>
+            <div class="card">
+              <div class="card-header" id="headingRestroom">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseRestroom">
+                    PWD - Accessible Restroom
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseRestroom" class="collapse" aria-labelledby="headingRestroom" data-parent="#accessibilityCriteriaAccordion">
+                <div class="card-body">
+                  <p><strong>Criteria:</strong> if the entrance to the restroom is at least one meter wide and can be reached without going up or down steps. If a person in a wheelchair would need to enter a stall inside the restroom, the stall’s entrance also needs to be one meter wide. (Remember, one meter is about the width of two people standing comfortably side by side.)</p>
+                  <p><strong>Why It Matters:</strong> Accessible restrooms are crucial for the dignity and independence of users.</p>
                 </div>
               </div>
+            </div>
 
-              <div class="card">
-                <div class="card-header" id="headingSeating">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeating">
-                      PWD - Accessible Seating
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseSeating" class="collapse" aria-labelledby="headingSeating" data-parent="#accessibilityCriteriaAccordion">
-                  <div class="card-body">
-                    <p><strong>Criteria:</strong> The main area must be accessible without stairs, with enough space for wheelchair users to navigate and sit comfortably at tables. if all tables are high (e.g. at standing level), the place does not have accessible seating.</p>
-                    <p><strong>Why It Matters:</strong> Ensures that everyone can enjoy dining or socializing in the space.</p>
-                  </div>
+            <div class="card">
+              <div class="card-header" id="headingSeating">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseSeating">
+                    PWD - Accessible Seating
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseSeating" class="collapse" aria-labelledby="headingSeating" data-parent="#accessibilityCriteriaAccordion">
+                <div class="card-body">
+                  <p><strong>Criteria:</strong> if the main area of the place can be accessed without stairs and there’s enough space for someone in a wheelchair to navigate to and sit at a table. If all tables are high (e.g. at standing level), the place isn’t wheelchair-friendly.</p>
+                  <p><strong>Why It Matters:</strong> Ensures equal access for persons with disabilities so that they can enjoy dining or socializing in the space.</p>
                 </div>
               </div>
+            </div>
 
-              <div class="card">
-                <div class="card-header" id="headingParking">
-                  <h2 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseParking">
-                      PWD - Accessible Parking
-                    </button>
-                  </h2>
-                </div>
-                <div id="collapseParking" class="collapse" aria-labelledby="headingParking" data-parent="#accessibilityCriteriaAccordion">
-                  <div class="card-body">
-                    <p><strong>Criteria:</strong> if there’s a parking spot specifically marked for those with accessibility needs. These spots are often marked with specific painting on the ground, placards, or signs. </p>
-                    <p><strong>Why It Matters:</strong> Accessible parking is essential for ensuring convenient access to the venue.</p>
-                  </div>
+            <div class="card">
+              <div class="card-header" id="headingParking">
+                <h2 class="mb-0">
+                  <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseParking">
+                    PWD - Accessible Parking
+                  </button>
+                </h2>
+              </div>
+              <div id="collapseParking" class="collapse" aria-labelledby="headingParking" data-parent="#accessibilityCriteriaAccordion">
+                <div class="card-body">
+                  <p><strong>Criteria:</strong>Accessible parking slot shall be located nearest to accessible main entrances and </p>
+                  <p><strong>Why It Matters:</strong> Accessible parking is essential for persons with disabilities ensuring convenient access to the venue.</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
-            <p>Check the accessibility features available. If there are none, don't check any and submit the form.</p>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
-              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="parking">Has PWD Accessible Parking</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
-              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i><label class="form-check-label" for="entrance">Has PWD Accessible Entrance</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="restroom" name="accessibilityOptions[]" value="wheelchairAccessibleRestroom">
-              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="restroom">Has PWD Accessible Restroom</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
-              <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="seating">Has PWD Accessible Seating</label>
-            </div>
-            <input type="hidden" name="accessibility_level" id="accessibility_level">
-            <input type="hidden" name="display_name" id="display_name_modal1">
-            <input type="hidden" name="place_id" id="place_id_accessibility_modal">
-            <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
-            <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
-          </form>
+        <form id="accessibilityForm" action="submit_accessibility.php" method="POST" onsubmit="updateAccessibilityLevel()">
+          <p>Check the accessibility features available. If there are none, don't check any and submit the form.</p>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="parking" name="accessibilityOptions[]" value="wheelchairAccessibleParking">
+            <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="parking">Has PWD Accessible Parking</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="entrance" name="accessibilityOptions[]" value="wheelchairAccessibleEntrance">
+            <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i><label class="form-check-label" for="entrance">Has PWD Accessible Entrance</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="restroom" name="accessibilityOptions[]" value="wheelchairAccessibleRestroom">
+            <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="restroom">Has PWD Accessible Restroom</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="seating" name="accessibilityOptions[]" value="wheelchairAccessibleSeating">
+            <i class='fa-solid fa-wheelchair' style='color: #007bff;'></i> <label class="form-check-label" for="seating">Has PWD Accessible Seating</label>
+          </div>
+          <input type="hidden" name="accessibility_level" id="accessibility_level">
+          <input type="hidden" name="display_name" id="display_name_modal1">
+          <input type="hidden" name="place_id" id="place_id_accessibility_modal">
+          <input type="hidden" name="first_name" value="<?php echo $_SESSION['name']; ?>">
+          <input type="hidden" name="last_name" value="<?php echo $_SESSION['lname']; ?>">
+          <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add this modal after your existing modals -->
+<div class="modal fade" id="moreCategoriesModal" tabindex="-1" role="dialog" aria-labelledby="moreCategoriesModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="moreCategoriesModalLabel">More Categories</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="category-grid">
+          <button class="category-button" onclick="updatePlaces('community_center')" data-dismiss="modal">
+            Community Center
+          </button>
+          <button class="category-button" onclick="updatePlaces('hotel')">
+            Hotel
+          </button>
+          <button class="category-button" onclick="updatePlaces('park')">
+            Park
+          </button>
+          <button class="category-button" onclick="updatePlaces('cafe')">
+            Cafe
+          </button>
+          <button class="category-button" onclick="updatePlaces('coffee_shop')">
+            Coffee Shop
+          </button>
+          <button class="category-button" onclick="updatePlaces('police')">
+            Police Station
+          </button>
+          <button class="category-button" onclick="updatePlaces('pharmacy')">
+            Pharmacy
+          </button>
+          <!-- Add more category buttons as needed -->
         </div>
       </div>
     </div>
   </div>
+</div>
 
 </body>
 
@@ -297,10 +360,6 @@ session_start();
   });
 
   function initMap() {
-    const losBanosLocation = {
-      lat: 14.1846,
-      lng: 121.2385
-    }
     navigator.geolocation.getCurrentPosition(
       (position) => {
         userLocation = {
@@ -344,15 +403,15 @@ session_start();
     currentPlaceType = type;
     // Clear existing markers (if any)
     clearMarkers();
-    map.setZoom(14);
+    map.setZoom(13.80);
     $('#moreCategoriesModal').modal('hide');
     const request = {
       includedTypes: [type],
       locationRestriction: {
         circle: {
           center: {
-            latitude: 14.1846,
-            longitude: 121.2385,
+            latitude: userLocation.lat,
+            longitude: userLocation.lng,
           },
           radius: 3000,
         },
@@ -802,33 +861,139 @@ session_start();
   function openPlaceDetailsPanel() {
     document.getElementById('place-details-panel').classList.add('open');
     document.getElementById('map').classList.add('panel-open');
-    adjustTopButtonBar();
   }
 
   function closePlaceDetailsPanel() {
     document.getElementById('place-details-panel').classList.remove('open');
     document.getElementById('map').classList.remove('panel-open');
-    adjustTopButtonBar();
   }
 
-  function adjustTopButtonBar() {
-    const topButtonBar = document.querySelector('.top-button-bar');
-    const placeDetailsPanel = document.getElementById('place-details-panel');
-    const isMobile = window.innerWidth <= 768;
+  document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
 
-    if (placeDetailsPanel.classList.contains('open') && isMobile) {
-      topButtonBar.style.left = 'calc(37% + 320px)';
-    } else if (isMobile) {
-      topButtonBar.style.left = '37%';
+  // Add these functions to your existing JavaScript
+  let searchTimeout;
+
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    const input = e.target.value;
+
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+
+    // Set new timeout to avoid too many API calls
+    searchTimeout = setTimeout(() => {
+      if (input.length >= 3) { // Only search if input is 3 or more characters
+        searchPlaces(input);
+      } else {
+        document.getElementById('searchResults').style.display = 'none';
+      }
+    }, 300);
+  });
+
+  function searchPlaces(input) {
+    const request = {
+      input: input,
+      locationBias: {
+        circle: {
+          center: {
+            latitude: 14.1846,
+            longitude: 121.2385
+          },
+          radius: 5000.0
+        }
+      }
+    };
+
+    fetch('https://places.googleapis.com/v1/places:autocomplete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': 'AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8'
+        },
+        body: JSON.stringify(request)
+      })
+      .then(response => response.json())
+      .then(data => {
+        displaySearchResults(data.suggestions);
+      })
+      .catch(error => {
+        console.error('Error fetching autocomplete results:', error);
+      });
+  }
+
+  function displaySearchResults(suggestions) {
+    const resultsDiv = document.getElementById('searchResults');
+    resultsDiv.innerHTML = '';
+
+    if (!suggestions || suggestions.length === 0) {
+      resultsDiv.style.display = 'none';
+      return;
+    }
+
+    suggestions.forEach(suggestion => {
+      if (suggestion.placePrediction) {
+        const place = suggestion.placePrediction;
+        const div = document.createElement('div');
+        div.className = 'search-result-item';
+        div.textContent = place.text.text;
+
+        div.addEventListener('click', () => {
+          handlePlaceSelection(place.place);
+          resultsDiv.style.display = 'none';
+          document.getElementById('searchInput').value = place.text.text;
+        });
+
+        resultsDiv.appendChild(div);
+      }
+    });
+
+    resultsDiv.style.display = 'block';
+  }
+
+  function handlePlaceSelection(placeId) {
+    // Fetch place details using Places API
+    fetch(`https://places.googleapis.com/v1/${placeId}`, {
+        headers: {
+          'X-Goog-Api-Key': 'AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8',
+          'X-Goog-FieldMask': 'id,displayName,formattedAddress,location,accessibilityOptions,photos,primaryType'
+        }
+      })
+      .then(response => response.json())
+      .then(place => {
+        // Center and zoom the map
+        const location = new google.maps.LatLng(
+          place.location.latitude,
+          place.location.longitude
+        );
+        map.setCenter(location);
+        map.setZoom(19);
+
+        // Use your existing functions to handle the place
+        fetchPlaceDetails(place, true, place.primaryType || 'Unknown', true);
+      })
+      .catch(error => {
+        console.error('Error fetching place details:', error);
+      });
+  }
+
+  function toggleNav() {
+    const sidebar = document.getElementById("mySidebar");
+    if (sidebar.style.width === "250px") {
+      closeNav();
     } else {
-      topButtonBar.style.left = '45%';
+      openNav();
     }
   }
 
-  // Add event listener for window resize
-  window.addEventListener('resize', adjustTopButtonBar);
+  function openNav() {
+    document.getElementById("mySidebar").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+  }
 
-  document.getElementById('close-details').addEventListener('click', closePlaceDetailsPanel);
+  // Function to close sidebar
+  function closeNav() {
+    document.getElementById("mySidebar").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
+  }
 </script>
 </body>
 

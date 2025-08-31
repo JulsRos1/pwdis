@@ -35,6 +35,21 @@ body{
   background-color: #007bff; /* Color of the line */
   margin-top: 10px; /* Space above the line */
 }
+.logo img {
+  max-height: 50px;
+  width: 110px;
+  display: block;
+  margin: 10px auto;
+  border-radius:5px;
+}
+.logo-header img{
+  max-height: 40px;
+  width: 80px;
+  display: block;
+  margin: 10px auto;
+  display:none;
+  border-radius:5px;
+}
 
 .sidebar a:hover {
   color: #007bff;
@@ -45,7 +60,30 @@ body{
 .logo{
   font-size: 30px;
 }
+.category-link,
+.post-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
 
+  /******************************************RIGHT SIDEBAR*******************************************/
+.category-link:hover,
+.post-link:hover {
+  color: #007bff;
+  /* Change the color as desired */
+}
+
+.card-header {
+  background-color: #1F2937;
+  color: #fff;
+}
+
+.card-header:hover {
+  background-color: #0056b3;
+  /* Darker color on hover */
+}
+  /******************************************RIGHT SIDEBAR END*******************************************/
 
 
 .openbtn {
@@ -164,19 +202,8 @@ body{
     align-items: center;
     position: relative;
   }
-
-  .logo-header {
-    font-size: 30px;
-    margin-left: 10px;
-  }
-
-  .logo-header a {
-    color: white;
-    text-decoration: none;
-  }
-
-  .logo-header i {
-    color: #007bff;
+  .logo-header img {
+    display: block; /* Change to block for mobile */
   }
 
   .openbtn {
@@ -185,6 +212,29 @@ body{
     cursor: pointer;
     font-size: 18px;
   }
+}
+@media screen and (min-width: 1680px){
+
+  .card-container {
+    max-width: 750px;
+    margin: 0 auto;
+  }
+  .image-container {
+    width: 100%;
+    height: 450px;
+    /* Fixed height */
+    overflow: hidden;
+    /* Ensures image does not overflow container */
+    position: relative;
+  }
+
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;/
+  }
+
 }
 
 /* Styles for mobile responsiveness */

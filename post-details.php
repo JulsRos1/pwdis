@@ -132,7 +132,9 @@ if (isset($_POST['submit'])) {
 <body>
   <div class="top-header">
     <div class="logo-header">
-      <a href="index.php"><i class='fa fa-wheelchair'></i><span>PWD<span>IS</span></span></a>
+      <a href="dashboard.php">
+        <img src="images/pwdislogo.png" alt="pwdislogo" class="logo-image">
+      </a>
     </div>
     <button class="openbtn" onclick="toggleNav()">&#9776;</button>
   </div>

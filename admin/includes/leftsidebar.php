@@ -1,3 +1,4 @@
+
 <div class="left side-menu">
     <div class="sidebar-inner slimscrollleft">
 
@@ -8,14 +9,14 @@
 
                 <li class="has_sub">
                     <a href="dashboard.php" class="waves-effect">
-                        <i class="fas fa-tachometer-alt"></i>
+                       <i class="fas fa-tachometer-alt"></i>
                         <span> Dashboard </span>
                     </a>
                 </li>
 
                 <li class="has_sub">
                     <a href="manage_user.php" class="waves-effect">
-                        <i class="fas fa-users"></i>
+                      <i class="fa-solid fa-users"></i>
                         <span> Manage Users</span>
                     </a>
                 </li>
@@ -53,7 +54,6 @@
                         <span class="menu-arrow"></span>
                     </a>
                     <ul class="list-unstyled">
-                        <li><a href="add-post.php">Add Posts</a></li>
                         <li><a href="manage-posts.php">Manage Posts</a></li>
                         <li><a href="trash-posts.php">Trash Posts</a></li>
                     </ul>

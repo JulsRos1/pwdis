@@ -5,8 +5,7 @@ error_reporting(0);
 function convertLinksToButtons($content)
 {
     $pattern = '/<a\s+(?:[^>]*?\s+)?href=(["\'])(.*?)\1[^>]*>(.*?)<\/a>/i';
-    $replacement = '<a href="$2" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: #007bff; color: #ffffff !important; text-decoration: none; border-radius: 4px; margin: 4px; border: 1px solid #007bff; font-weight: 500; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor=\'#0b5ed7\'; this.style.borderColor=\'#0a58ca\';" onmouseout="this.style.backgroundColor=\'#007bff\'; this.style.borderColor=\'#007bff\';">$3</a>';
-    return preg_replace($pattern, $replacement, $content);
+    $replacement = '<a href="$2" target="_blank" style="display: inline-block; padding: 5px 10px; font-size:12px; background-color: #161C27; color: #ffffff !important; text-decoration: none; border-radius: 4px; margin: 4px; border: 1px solid #007bff; font-weight: 500; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor=\'#0b5ed7\'; this.style.borderColor=\'#0a58ca\';" onmouseout="this.style.backgroundColor=\'#161C27\'; this.style.borderColor=\'#007bff\';">$3</a>';
 }
 
 if (strlen($_SESSION['login']) == 0) {

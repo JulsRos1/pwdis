@@ -1,10 +1,13 @@
 <?php
 session_start();
 include('includes/config.php');
+$config = include 'config.php';  // load key safely
+$apiKey = $config['GOOGLE_PLACES_API_KEY'];
 if (!isset($_SESSION['user_login'])) {
   // Redirect the user to the login page if not logged in
   header("Location: user_login.php");
   exit;
+  
 }
 ?>
 
@@ -17,7 +20,7 @@ if (!isset($_SESSION['user_login'])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="stylesheet" href="css/mapcontent.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&libraries=places" defer async></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E&libraries=places" defer async></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="css/sidebar.css">
 </head>
@@ -419,7 +422,7 @@ if (!isset($_SESSION['user_login'])) {
     };
 
     fetch(
-        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8", {
+        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -474,7 +477,7 @@ if (!isset($_SESSION['user_login'])) {
     };
 
     fetch(
-        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8", {
+        "https://places.googleapis.com/v1/places:searchNearby?key=AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -657,7 +660,7 @@ if (!isset($_SESSION['user_login'])) {
         `;
     }).join("");
 
-    const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?key=AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8&maxHeightPx=400&maxWidthPx=600` : '';
+    const photoUrl = photo ? `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=400&key=AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E` : '';
 
     // Create the photo HTML if a photo is available
     const photoHtml = photoUrl ? `
@@ -907,7 +910,7 @@ if (!isset($_SESSION['user_login'])) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Goog-Api-Key': 'AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8'
+          'X-Goog-Api-Key': 'AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E'
         },
         body: JSON.stringify(request)
       })
@@ -953,7 +956,7 @@ if (!isset($_SESSION['user_login'])) {
     // Fetch place details using Places API
     fetch(`https://places.googleapis.com/v1/${placeId}`, {
         headers: {
-          'X-Goog-Api-Key': 'AIzaSyBO23kIOUSOKRGYzYoVMbnEMmbriP6IvR8',
+          'X-Goog-Api-Key': 'AIzaSyBowuNI1xQJvodo3uooqXbVbFnoRtcOJ1E',
           'X-Goog-FieldMask': 'id,displayName,formattedAddress,location,accessibilityOptions,photos,primaryType'
         }
       })
